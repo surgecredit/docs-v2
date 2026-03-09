@@ -5,9 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default defineConfig({
-  aiCta: {
-    query: ({ location }) => `Read from ${location} so I can ask questions about it.`,
-  },
+  aiCta: true,
   description: "Bitcoin Native Credit Market. Secure Bitcoin collateral system with Taproot UTXOs, Decentralized Signers, and credit market infrastructure.",
   logoUrl: {
     light: "/logo/surge-icon-rec-light.svg",
