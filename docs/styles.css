@@ -11,6 +11,7 @@ html[data-auth="locked"] .surge-app-shell {
 html {
   scroll-behavior: smooth;
 }
+
 img {
   border-radius: 8px;
 }
@@ -26,21 +27,26 @@ img {
   --vocs-color_backgroundDark: #0d1111;
   --vocs-color_background4: #3c393f;
 }
+
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   border-radius: 9999px;
   background: #ececec;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #d9d9d9;
   border-radius: 9999px;
 }
+
 .dark ::-webkit-scrollbar-thumb {
   background: #4a4a4a;
   border-radius: 9999px;
 }
+
 .dark ::-webkit-scrollbar-track {
   background: #292929;
 }
@@ -51,43 +57,56 @@ img {
 .vocs_DocsLayout_sidebar {
   width: 23.75rem !important;
 }
+
 .dark .vocs_DocsLayout_sidebar {
   width: 23.75rem !important;
 }
+
 .vocs_Sidebar .vocs_Sidebar_logo a {
-  display: flex; /* Make sure the logos and text are in a horizontal line */
-  align-items: center; /* Vertically center the text with the logo */
+  display: flex;
+  /* Make sure the logos and text are in a horizontal line */
+  align-items: center;
+  /* Vertically center the text with the logo */
 }
 
 .dark .vocs_Sidebar .vocs_Sidebar_logo a:after {
   color: #fff;
 }
+
 .vocs_Sidebar .vocs_Sidebar_logo a:after {
-  content: "Surge Docs"; /* Add the text next to the logo */
+  content: "Surge Docs";
+  /* Add the text next to the logo */
   font-size: 16px;
   font-weight: 600;
   font: "Inter";
   color: #000;
-  margin-left: 10px; /* Adds space between the logo and the text */
-  display: inline-block; /* Ensure the text is displayed inline with the logo */
-  vertical-align: middle; /* Vertically align the text */
+  margin-left: 10px;
+  /* Adds space between the logo and the text */
+  display: inline-block;
+  /* Ensure the text is displayed inline with the logo */
+  vertical-align: middle;
+  /* Vertically align the text */
 }
 
 .vocs_NavLogo_logoImage {
-  height: 80%; /* Maintain existing logo image height */
-  display: inline-block; /* Ensure the logo images remain inline */
+  height: 80%;
+  /* Maintain existing logo image height */
+  display: inline-block;
+  /* Ensure the logo images remain inline */
 }
 
-.dark .vocs_DesktopTopNav_logo a > img {
+.dark .vocs_DesktopTopNav_logo a>img {
   content: url("/logo/logo-dark.png");
 }
-.vocs_DesktopTopNav_logo a > img {
+
+.vocs_DesktopTopNav_logo a>img {
   content: url("/logo/logo-light.png");
 }
 
 .vocs_Subtitle {
   white-space: normal !important;
 }
+
 .customBtn {
   white-space: normal !important;
   background: transparent !important;
@@ -97,6 +116,7 @@ img {
   padding: 0px !important;
   transition: all 0.2s linear !important;
 }
+
 .customBtn:hover {
   transform: scale(1.03);
 }
@@ -104,11 +124,16 @@ img {
 .vocs_Sidebar .vocs_Sidebar_sectionTitle {
   line-height: 1rem;
   font-weight: 600;
-  font-size: 0.75rem; /* text-xs */
-  padding-top: 0; /* py-0 */
-  padding-bottom: 0; /* py-0 */
-  padding-left: 0.5rem; /* px-2 */
-  padding-right: 0.5rem; /* px-2 */
+  font-size: 0.75rem;
+  /* text-xs */
+  padding-top: 0;
+  /* py-0 */
+  padding-bottom: 0;
+  /* py-0 */
+  padding-left: 0.5rem;
+  /* px-2 */
+  padding-right: 0.5rem;
+  /* px-2 */
 }
 
 .vocs_Sidebar .vocs_Sidebar_items {
@@ -116,12 +141,17 @@ img {
 }
 
 .vocs_Sidebar .vocs_Sidebar_item {
-  font-size: 0.875rem; /* text-sm */
+  font-size: 0.875rem;
+  /* text-sm */
   line-height: 1.25rem;
-  padding-top: 0.375rem; /* py-1.5 */
-  padding-bottom: 0.375rem; /* py-1.5 */
-  padding-left: 0.5rem; /* px-2 */
-  padding-right: 0.5rem; /* px-2 */
+  padding-top: 0.375rem;
+  /* py-1.5 */
+  padding-bottom: 0.375rem;
+  /* py-1.5 */
+  padding-left: 0.5rem;
+  /* px-2 */
+  padding-right: 0.5rem;
+  /* px-2 */
   font-weight: 400;
   border-radius: 0.3rem;
 }
@@ -130,6 +160,7 @@ img {
   font-weight: 600;
   transition: background-color 0.2s ease-in-out;
 }
+
 .vocs_Sidebar .vocs_Sidebar_item[data-active="true"]:hover {
   background-color: #f4431b1f;
 }
@@ -137,6 +168,7 @@ img {
 .dark .vocs_Sidebar_item[data-active="true"] {
   color: #f66949;
 }
+
 .dark .vocs_Sidebar_item[data-active="true"]:hover {
   background-color: #f4431b1f;
 }
@@ -155,6 +187,7 @@ img {
 .dark .vocs_HomePage_tagline {
   color: #ffffff !important;
 }
+
 .vocs_HomePage_tagline {
   color: #000000 !important;
 }
@@ -172,14 +205,18 @@ img {
 }
 
 .vocs_DesktopSearch_search {
-  border-color: #e7e7e7; /* Default and hover state */
+  border-color: #e7e7e7;
+  /* Default and hover state */
 }
 
 .dark .vocs_DesktopSearch_search {
-  border-color: #2a282d; /* Dark mode */
+  border-color: #2a282d;
+  /* Dark mode */
 }
+
 .dark .vocs_DesktopSearch_search:hover {
-  border-color: #e4e4e5; /* Dark hover */
+  border-color: #e4e4e5;
+  /* Dark hover */
 }
 
 .vocs_Sidebar .vocs_Sidebar_logo {
@@ -190,6 +227,7 @@ img {
 .vocs_Sidebar .vocs_Sidebar_logo {
   background-color: #ffffff;
 }
+
 .dark .vocs_Sidebar .vocs_Sidebar_logo {
   background-color: #0d1111;
 }
@@ -229,6 +267,7 @@ img {
 .dark .vocs_Paragraph {
   color: #cfcfcf;
 }
+
 .dark .vocs_Subtitle {
   color: #bdbdbe !important;
 }
@@ -242,8 +281,10 @@ img {
 }
 
 .vocs_DocsLayout_sidebar {
-  width: 23.75rem; /* 380px */
+  width: 23.75rem;
+  /* 380px */
 }
+
 .dark .vocs_Content {
   background: #0d1111 !important;
 }
@@ -261,14 +302,17 @@ img {
   transition: color 0.2s ease-in-out;
   font-size: 14px;
 }
+
 .vocs_Outline_link:hover {
   color: #f4431b;
 }
 
 .vocs_Outline_items {
+
   /* Apply margin-bottom to all direct children */
-  & > * {
-    margin-bottom: 1.25rem; /* mb-5 */
+  &>* {
+    margin-bottom: 1.25rem;
+    /* mb-5 */
   }
 }
 
@@ -354,8 +398,10 @@ img {
   background: linear-gradient(90deg, #f4431b 0%, #8e2710 100%);
   color: #ffffff;
   font-weight: 600;
-  padding: 0.75rem 1rem; /* py-3 px-4 */
-  border-radius: 0.5rem; /* rounded-lg */
+  padding: 0.75rem 1rem;
+  /* py-3 px-4 */
+  border-radius: 0.5rem;
+  /* rounded-lg */
   transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -366,7 +412,8 @@ img {
 }
 
 .auth-btn:disabled {
-  background: #6b7280; /* gray-500 */
+  background: #6b7280;
+  /* gray-500 */
   cursor: not-allowed;
   transform: none;
   opacity: 0.9;
@@ -381,9 +428,11 @@ img {
 .dark .logo-light {
   display: none !important;
 }
+
 .dark .logo-dark {
   display: inline !important;
 }
+
 .logo-dark {
   display: none;
 }
@@ -392,6 +441,7 @@ img {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -402,6 +452,144 @@ details summary {
   cursor: pointer;
 }
 
-details > *:not(summary) {
+details>*:not(summary) {
   padding-left: 1.2rem;
+}
+
+.surge-ai-menuitem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 240px;
+  border-radius: 0.5rem;
+  padding: 0.875rem 0.75rem;
+  text-decoration: none;
+  transition: background-color 0.1s ease;
+  cursor: pointer;
+}
+
+.surge-ai-item-icon {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.surge-ai-item-icon-image {
+  width: 1.1rem;
+  height: 1.1rem;
+  object-fit: contain;
+  opacity: 0.75;
+}
+
+.surge-ai-item-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.125rem;
+  flex: 1;
+}
+
+.surge-ai-item-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  line-height: 1.25rem;
+}
+
+.surge-ai-item-description {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1rem;
+}
+
+.surge-ai-menu {
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.surge-ai-menu [role="menuitem"]:hover,
+.surge-ai-menu [role="menuitem"]:focus,
+.surge-ai-menu [role="menuitem"]:active {
+  background: #f3f4f6;
+  outline: none;
+}
+
+.surge-ai-trigger {
+  border-radius: 0.5rem !important;
+  border: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  transition: background-color 0.1s ease, border-color 0.1s ease !important;
+  box-sizing: border-box !important;
+}
+
+.surge-ai-trigger:hover {
+  background: #f9fafb !important;
+  border-color: #d1d5db !important;
+}
+
+.surge-ai-trigger:focus,
+.surge-ai-trigger:active {
+  outline: none !important;
+}
+
+.dark .surge-ai-item-icon {
+  border-color: #374151;
+  background: #1f2937;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.dark .surge-ai-item-icon-image {
+  opacity: 0.9;
+}
+
+.dark .surge-ai-item-title {
+  color: #f3f4f6;
+}
+
+.dark .surge-ai-item-description {
+  color: #9ca3af;
+}
+
+.dark .surge-ai-menu {
+  background: #111827;
+  border-color: #374151;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+.dark .surge-ai-menu [role="menuitem"]:hover,
+.dark .surge-ai-menu [role="menuitem"]:focus,
+.dark .surge-ai-menu [role="menuitem"]:active {
+  background: #1f2937;
+  outline: none;
+}
+
+.dark .surge-ai-trigger {
+  border-color: #374151 !important;
+  background: #111827 !important;
+  color: #e5e7eb !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .surge-ai-trigger:hover {
+  background: #1f2937 !important;
+  border-color: #4b5563 !important;
 }

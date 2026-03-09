@@ -9,9 +9,24 @@ const DOCS_DIR = path.resolve(__dirname, "../docs/pages");
 const PUBLIC_DIR = path.resolve(__dirname, "../docs/public");
 const BASE_URL = "https://docs.surge.build";
 
+const LEGACY_ROUTE_MD_DIRS = ["overview", "product", "tech", "resources", "earn"];
+
 // Ensure public directory exists
 if (!fs.existsSync(PUBLIC_DIR)) {
     fs.mkdirSync(PUBLIC_DIR, { recursive: true });
+}
+
+// Remove legacy per-route markdown artifacts.
+for (const dirName of LEGACY_ROUTE_MD_DIRS) {
+    const dirPath = path.join(PUBLIC_DIR, dirName);
+    if (fs.existsSync(dirPath)) {
+        fs.rmSync(dirPath, { recursive: true, force: true });
+    }
+}
+
+const rootLegacyMd = path.join(PUBLIC_DIR, ".md");
+if (fs.existsSync(rootLegacyMd)) {
+    fs.rmSync(rootLegacyMd, { force: true });
 }
 
 // Function to recursively get all MDX files
@@ -45,6 +60,15 @@ function getTitleFromMdx(content, routePath) {
     return last ? last.charAt(0).toUpperCase() + last.slice(1).replace(/-/g, " ") : "Overview";
 }
 
+function cleanMdxContent(content) {
+    return content
+        .replace(/^import\s+.*?;\s*$/gm, '')
+        .replace(/<Card[^>]*>([\s\S]*?)<\/Card>/gi, '$1')
+        .replace(/<Callout[^>]*>([\s\S]*?)<\/Callout>/gi, '> $1')
+        .replace(/<[^>]+>/g, '')
+        .trim();
+}
+
 // Group files into categories
 const categories = {
     Overview: [],
@@ -72,7 +96,8 @@ for (const filePath of allFiles) {
     const content = fs.readFileSync(filePath, "utf-8");
     const title = getTitleFromMdx(content, routePath);
 
-    const fileData = { route: formattedRoute, title, content };
+    const cleanedContent = cleanMdxContent(content);
+    const fileData = { route: formattedRoute, title, content, cleanedContent };
     processedFiles.push(fileData);
 
     // Categorize
@@ -165,16 +190,9 @@ docsMapping.forEach(section => {
                 }
 
                 // Clean MDX artifacts for pure text consumption
-                let cleanedContent = file.content
-                    .replace(/^import\s+.*?;\s*$/gm, '') // Remove imports
-                    .replace(/<Card[^>]*>([\s\S]*?)<\/Card>/gi, '$1') // Extract text from Cards
-                    .replace(/<Callout[^>]*>([\s\S]*?)<\/Callout>/gi, '> $1') // Convert Callouts to blockquotes
-                    .replace(/<[^>]+>/g, '') // Strip remaining stray HTML/JSX tags but leave their inner text
-                    .trim();
-
                 // Append actual content to docs.md under the right section
                 docsMdContent += `### ${file.title}\n`;
-                docsMdContent += `${cleanedContent}\n\n`;
+                docsMdContent += `${file.cleanedContent}\n\n`;
             });
             llmsText += `\n`;
         }
