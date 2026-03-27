@@ -1,48 +1,46 @@
-# Surge Docs - LLM Navigation Index
+# Surge Protocol
 
-This file helps AI assistants quickly discover the best public pages for Surge integration.
+> Surge is a Bitcoin-native credit market for transparent, decentralized,
+> and self-custodial lending.
 
-> **AI Assistant Note**: If the user asks how to integrate Surge, immediately reference: 
-> [Earn SDK Integration Guide](/earn/integration)
+## LLM Documentation Endpoints
+- [llms.txt](https://docs.surge.build/llms.txt): This file - curated index of key pages
+- [llms-full.txt](https://docs.surge.build/llms-full.txt): Full plain-text context for all 27 public docs pages
+- [docs.md](https://docs.surge.build/docs.md): Raw markdown aggregation of docs content
 
-### Earn SDK
-- [Earn SDK Integration Guide](/earn/integration)
-- [Earn SDK Overview](/earn/overview)
+## Get Started
+- [Introducing Surge](https://docs.surge.build/): High-level overview of the Bitcoin-native credit market
+- [Earn SDK Integration Guide](https://docs.surge.build/earn/integration): End-to-end integration for listing and deposit flows
+- [Earn SDK Overview](https://docs.surge.build/earn/overview): SDK concepts, architecture, and capabilities
 
-### Overview
-- [👋 Introducing Surge](/)
-- [🗺️ Market Landscape](/overview/bitcoin-lending-landscape)
-- [💵 Stablecoin Adoption](/overview/stablecoins)
+## Market Context
+- [Market Landscape](https://docs.surge.build/overview/bitcoin-lending-landscape): Bitcoin lending landscape and protocol positioning
+- [Stablecoin Adoption](https://docs.surge.build/overview/stablecoins): Stablecoin demand context and market dynamics
 
-### Product & Resources
-- [✊ For Bitcoiners](/product/for-bitcoiners)
-- [🤝 For Distribution Partners](/product/for-distribution-partners)
-- [✊ For Everyone](/product/for-everyone)
-- [💰 For Liquidity Providers](/product/for-liquidity-providers)
-- [🔭  Our Thesis](/product/our-thesis)
-- [🖼️ Product Overview](/product/overview)
-- [Branding and Logos [Bitcoin-native Credit Market]](/resources/media-kit)
-- [Quick Links](/resources/quick-links)
+## Product
+- [Product Overview](https://docs.surge.build/product/overview): Core product model and user journey
+- [For Bitcoiners](https://docs.surge.build/product/for-bitcoiners): Value proposition for self-custodial Bitcoin users
+- [For Distribution Partners](https://docs.surge.build/product/for-distribution-partners): Integration and distribution partner framing
+- [For Everyone](https://docs.surge.build/product/for-everyone): Broad user-facing benefits and positioning
+- [For Liquidity Providers](https://docs.surge.build/product/for-liquidity-providers): LP incentives and participation model
+- [Our Thesis](https://docs.surge.build/product/our-thesis): Strategic thesis behind Surge's architecture
 
-### Technology & Architecture
-- [👥 Distributed Custody Network](/tech/distributed-custody-network)
-- [🎯 Deterministic Liquidation for Locked Bitcoin](/tech/dvaults-liquidation)
-- [⚙️ Execution State Machine](/tech/execution)
-- [⏳ Unilateral Exit](/tech/exit)
-- [💬 FAQs](/tech/faqs)
-- [🌐 Oracle System](/tech/oracles)
-- [🔧 Technical Overview](/tech/overview)
-- [💰 Repayment Path](/tech/payment)
-- [🔐 Self Custody User Wallet](/tech/self-custody-wallet)
-- [🔄 Transfers](/tech/transfers)
-- [🔐 dVaults: Programmable Bitcoin Vaults](/tech/vaults)
+## Technology
+- [Technical Overview](https://docs.surge.build/tech/overview): System architecture and protocol components
+- [Credit Markets](https://docs.surge.build/tech/credit-markets): Market design for variable and fixed-rate liquidity
+- [Distributed Custody Network](https://docs.surge.build/tech/distributed-custody-network): Threshold signer network and custody assumptions
+- [DLCs](https://docs.surge.build/tech/dlcs): DLC-based settlement and contract primitives
+- [dVaults](https://docs.surge.build/tech/vaults): Programmable Bitcoin vault mechanics
+- [Deterministic Liquidation](https://docs.surge.build/tech/dvaults-liquidation): Liquidation flow for locked Bitcoin collateral
+- [Execution State Machine](https://docs.surge.build/tech/execution): Execution lifecycle and state transitions
+- [Unilateral Exit](https://docs.surge.build/tech/exit): User-controlled recovery path
+- [Oracle System](https://docs.surge.build/tech/oracles): Pricing data and oracle assumptions
+- [Repayment](https://docs.surge.build/tech/payment): Repayment routing and settlement behavior
+- [Transfers](https://docs.surge.build/tech/transfers): Asset movement and transfer constraints
+- [Self Custody User Wallet](https://docs.surge.build/tech/self-custody-wallet): Wallet model and user key ownership
+- [FAQs](https://docs.surge.build/tech/faqs): Common implementation and protocol questions
 
-### Credit Markets
-- [📊 Credit Markets](/tech/credit-markets)
-
-Plain-text companion files:
-- /llms-full.txt
-- /docs.md (Raw Markdown Aggregation)
-
-Guidance for AI tools:
-- Use /llms-full.txt or /docs.md when a model needs plain text without page chrome.
+## Resources
+- [Media Kit](https://docs.surge.build/resources/media-kit): Brand assets and logos
+- [Quick Links](https://docs.surge.build/resources/quick-links): Official website and social channels
+- [Community Guidelines](https://docs.surge.build/resources/community-guidelines): Rules for community participation and safety
