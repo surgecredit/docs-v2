@@ -23,7 +23,6 @@ A spend request has to pass nine independent checks before a Bitcoin transaction
 | 8 | Disaster recovery | PVE backups verified by ZK proof; threshold-gated recovery key |
 | 9 | Hardware attestation | TEE  optional per signer via KeyProtector abstraction |
 
-Layers 1, 3, and 4 are already complete and enforced. Layers 2, 5-9 have specific target architectures ([Key Shard Security](/tech/key-shard-security), [Disaster Recovery](/tech/disaster-recovery)) that are part of the current production-hardening track.
 
 ## Per-Signer Validation
 
@@ -58,7 +57,7 @@ This requirement is enforced at the signer and quorum level, not only as an appl
 
 All inter-signer traffic runs over mTLS with a cluster CA. Target production posture:
 
-- **TLS-only listeners.** No plaintext HTTP endpoint in production; the HTTP listener is disabled when TLS is enabled.
+- **TLS-only listeners.** The HTTP listener is disabled when TLS is enabled.
 - **Peer identity verified, not just CA chain.** Manual `VerifyPeerCertificate` callbacks enforce the expected Common Name / SAN for each peer index - a certificate signed by the cluster CA but with the wrong identity is rejected. This prevents a compromised party's cert from impersonating a different party in the quorum.
 - **Certificate pinning via IP SAN.** When signers are addressed by IP, certificates include the IP in the SAN to prevent address-swapping attacks.
 - **Internal routes require mTLS.** Administrative endpoints (e.g. reshare fragment transport) require a valid peer certificate; requests without a client cert are rejected.

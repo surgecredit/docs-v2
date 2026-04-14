@@ -82,7 +82,7 @@ export default defineConfig({
           {
             text: "Taproot Vaults",
             link: "/tech/vaults",
-            collapsed: false,
+            collapsed: true,
             items: [
               {
                 text: "Repayment",
