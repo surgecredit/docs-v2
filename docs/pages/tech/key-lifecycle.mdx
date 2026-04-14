@@ -1,0 +1,69 @@
+---
+title: Key Lifecycle
+description: DKG, backup, verification, signing, proactive refresh, and recovery - the end-to-end lifecycle of a DCN key
+---
+
+# 🔄 Key Lifecycle
+
+A DCN key is not a file - it is a set of shares distributed across independent signer organizations, together with a published public key embedded in Vault scripts. This page describes the full lifecycle of such a key, from generation through refresh to disaster recovery, and the properties each stage provides.
+
+## Stages
+
+```
+1. Distributed Key Generation (EC-DKG)
+2. Backup (Publicly Verifiable Encryption)
+3. Verify backup     - key only enabled if every signer's proof is valid
+4. Secure storage    - envelope-encrypted, KEK in KMS / TEE
+5. Signing           - Lin24 (Schnorr / Bitcoin) or ECDSA-MPC (EVM)
+6. Proactive refresh - new shares, same public key
+7a. Recovery         - decrypt PVE backup, restore share
+7b. Rotation         - new DKG and on-chain migration
+```
+
+## 1. Distributed Key Generation (DKG)
+
+Signers run EC-DKG for the `t-of-n` threshold setup used for Bitcoin / Lin24. Feldman's Verifiable Secret Sharing is used so each party can verify its own share is consistent with the collective polynomial before accepting it - a malicious dealer cannot silently seed a bad share.
+
+The output is:
+
+- A single BIP340-compatible x-only public key - used as the `loanPubkey` in Vault paths.
+- One private share per signer.
+- No plaintext aggregate private key at any signer.
+
+The public key is recorded in coordination contracts and embedded in every new Vault. It never changes through deployment life except via explicit rotation (stage 7b).
+
+## 2. Backup - Publicly Verifiable Encryption (PVE)
+
+After DKG (and after every refresh), each signer encrypts its share under a **backup public key** and produces a zero-knowledge proof that the ciphertext correctly encrypts its true share. See [Disaster Recovery](/tech/disaster-recovery) for the detailed threat model.
+
+Two properties that matter for lifecycle:
+
+- **Backups are verified without being decrypted.** A verifier checks each ZK proof mathematically and gates key activation on all proofs passing. No one - not even Surge - holds the backup decryption key when the verification happens.
+- **Backup is interlocked with signing.** Signing is blocked if the PVE backup is older than the current key-share epoch. Every refresh cycle must complete `encrypt share → wrap DEK → persist → create PVE backup → verify backup` before signing resumes.
+
+## 3. Verify Backup
+
+The verification system checks all signers' ZK proofs as a batch. If any proof fails, the key is **not enabled for signing**, and the cluster re-runs DKG before putting the key into production. A partially-verifiable backup is worse than no backup because it gives a false sense of recoverability.
+
+## 4. Secure Storage
+
+Each signer serializes its share and encrypts it at rest using envelope encryption (AES-256-GCM with identity metadata bound into the AAD), with the Data Encryption Key (DEK) wrapped by a Key Encryption Key (KEK) that lives in hardware each signer organization controls independently. The KEK never leaves its hardware boundary. See [Key Shard Security](/tech/key-shard-security) for storage layout and KEK options.
+
+## 5. Signing
+
+A signing session is the only moment a share is briefly decrypted into process memory. The [Signing Policy](/tech/mpc-signing) page covers the validators that gate this. Memory hygiene controls (memory locking, secure zeroization, core-dump prevention) bound the exposure to the brief active session.
+
+## 6. Proactive Key Refresh
+
+Refresh is a threshold protocol in which all signers jointly generate **new share values for the same public key**. On-chain state is unchanged - addresses, vault scripts, and the public key stay identical. What changes is every signer's share.
+
+**Why refresh matters.** Old shares retain standalone value within their epoch: an attacker who slowly accumulates `t` shares from different compromised signers within the same epoch can reconstruct the key. Refresh invalidates the entire epoch: shares from two different epochs cannot be combined in a signing session, so an attacker's progress is reset the instant a new epoch begins.
+
+## 7. Recovery vs Rotation
+
+Two distinct incident classes demand two distinct responses:
+
+- **Loss or corruption** - a share is unrecoverable but there is no evidence of compromise. The PVE backup is decrypted by a quorum of recovery agents (threshold-gated, see [Disaster Recovery](/tech/disaster-recovery)), the share is restored, and a refresh immediately invalidates the restored share's epoch. Same private key, same addresses - no on-chain migration needed.
+- **Compromise or suspected compromise at or above threshold** - a new DKG is run to generate a fresh key. Funds are migrated on-chain from old addresses to new addresses. The old key is treated as toxic regardless of whether evidence conclusively proves compromise.
+
+Below-threshold compromise of a single share is handled by refresh alone: old shares (including the compromised one) are made cryptographically useless, and the signer in question is re-provisioned or rotated out via [reshare](/tech/reshare-onboarding).

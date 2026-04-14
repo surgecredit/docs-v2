@@ -1,0 +1,79 @@
+---
+title: Signing Policy
+description: How the DCN decides whether to sign - authentication, per-signer validation, the one-honest-node policy, and transport security
+---
+
+# 🧾 Signing Policy
+
+The [Lin24 protocol](/tech/distributed-custody-network) guarantees that no signature is produced without a threshold of honest signers. It does **not** decide *what* gets signed - that is enforced by Surge's signer policy and quorum access-structure configuration. This page describes the policy each signer enforces locally, the one-honest-node policy enforced across the cluster, and the transport guarantees between signers.
+
+## Defence-in-Depth Layers
+
+A spend request has to pass nine independent checks before a Bitcoin transaction leaves the DCN:
+
+| # | Layer | Role |
+|---|---|---|
+| 1 | Distributed trust | Lin24 threshold (`t-of-n`), no single party holds the key |
+| 2 | Encryption at rest | Envelope-encrypted key shards; KEK in HSM-class hardware |
+| 3 | Temporal invalidation | Proactive key refresh invalidates prior shards |
+| 4 | Policy enforcement | One honest node policy: Surge's party must be in every quorum |
+| 5 | Transport security | mTLS-only between signers with enforced peer identity |
+| 6 | Anti-replay | Session-ID binding; replayed requests rejected |
+| 7 | Memory hygiene | `mlock`, secure zeroization, core dumps disabled during signing |
+| 8 | Disaster recovery | PVE backups verified by ZK proof; threshold-gated recovery key |
+| 9 | Hardware attestation | TEE  optional per signer via KeyProtector abstraction |
+
+Layers 1, 3, and 4 are already complete and enforced. Layers 2, 5-9 have specific target architectures ([Key Shard Security](/tech/key-shard-security), [Disaster Recovery](/tech/disaster-recovery)) that are part of the current production-hardening track.
+
+## Per-Signer Validation
+
+Each signer independently evaluates every spend request against on-chain contract state and local invariants **before** participating in the Lin24 protocol. A signer that rejects the request contributes no share; if rejections put the cluster below threshold, the session aborts with no signature.
+
+Validator categories:
+
+- **Deposit & script validators.** Confirm the input UTXO matches a known Vault with the expected MAST tree; confirm the leaf being spent matches the authorization reason (Repayment vs Liquidation).
+- **Loan-state validators.** Read position state from contracts; confirm `debtUsd`, collateral ratio, and term match the authorization.
+- **Oracle validators.** Confirm the BTC/USD price used for the authorization is current, within deviation bounds, and consistent across signers.
+- **Output validators.** Confirm output addresses are in the expected set - user withdrawal address for Repayment, configured DCN sweep address for Liquidation. Reject any output going to a signer-controlled address.
+- **Timelock validators.** Confirm the Exit CSV on this vault has not yet expired. Once it has, the borrower's Exit path dominates and the DCN must refuse to spend.
+- **Session validators.** Confirm the session ID is well-formed and unused (anti-replay via a persistent `used_sessions` table).
+
+A request that fails any validator on any signer produces no signature on that signer. Because a Lin24 signing round needs at least `t` honest participants to produce an output, even a single well-placed validator failure stops the spend.
+
+## One Honest Node Policy
+
+The Lin24 protocol treats signers symmetrically, but Surge configures the signer set with a quorum access structure that requires the Surge policy-enforcing signer in every valid signing set (`AND(HonestSigner, THRESHOLD(m-of-n))`).
+
+This requirement is enforced at the signer and quorum level, not only as an application-layer convention. Local policy validators still run on every signer before shares are produced.
+
+- A hard enforcement point for critical invariants. A request that clears threshold math still does not sign unless the policy-enforcing signer accepts it.
+- Deterministic authorization behavior across the cluster. Requests that exclude or bypass the required signer are invalid by construction under the access structure.
+- Clear operational accountability. Approval and rejection decisions follow one auditable policy path instead of ad-hoc coordinator routing.
+- A deliberate liveness dependency on the required signer. If it is unavailable beyond timeout bounds, signing pauses even when other parties are online.
+- Higher availability requirements for policy infrastructure. Monitoring, failover readiness, and response procedures must be stronger for the required signer than for optional participants.
+
+**Failover.** A bounded, rate-limited, audit-logged override path lets multi-admin approval designate a temporary alternate policy-enforcing signer. Override windows are time-limited so an administrative compromise cannot permanently displace the required signer.
+
+## Transport Security
+
+All inter-signer traffic runs over mTLS with a cluster CA. Target production posture:
+
+- **TLS-only listeners.** No plaintext HTTP endpoint in production; the HTTP listener is disabled when TLS is enabled.
+- **Peer identity verified, not just CA chain.** Manual `VerifyPeerCertificate` callbacks enforce the expected Common Name / SAN for each peer index - a certificate signed by the cluster CA but with the wrong identity is rejected. This prevents a compromised party's cert from impersonating a different party in the quorum.
+- **Certificate pinning via IP SAN.** When signers are addressed by IP, certificates include the IP in the SAN to prevent address-swapping attacks.
+- **Internal routes require mTLS.** Administrative endpoints (e.g. reshare fragment transport) require a valid peer certificate; requests without a client cert are rejected.
+
+## Anti-Replay
+
+Every signing session carries a unique session identifier. Each signer records consumed identifiers and refuses any subsequent request that re-uses one. Identifier format is strictly validated so caller-controlled inputs cannot produce collisions.
+
+## Memory Hygiene
+
+Key-share material is only in plaintext memory for the brief duration of an active signing session. During that window:
+
+- Memory locking prevents the OS from paging share memory to disk.
+- Share buffers are cleared with constant-time secure zeroization (not a loop that the compiler can optimise away) immediately after the session returns.
+- Core dumps are disabled so a crash during signing cannot persist share material.
+- Runtime garbage-collection behaviour is constrained so the language runtime cannot copy share-bearing memory into locations the code cannot reach.
+
+Residual risk after these controls: a root-level attacker on the host during the active signing window could theoretically read share memory. Surge treats this as a bounded exposure window and reduces it through memory controls, refresh policy, and infrastructure hardening.

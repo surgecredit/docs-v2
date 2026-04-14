@@ -5,9 +5,11 @@
 ## Earn Integration (Highest Priority)
 
 ### Earn SDK Integration Guide
+
 ---
+
 title: Earn SDK Integration Guide
-description: End-to-end guide for integrating Surge Earn market listing and deposit flows.
+description: End-to-end guide for integrating Surge Earn market listing and deposit flows
 ---
 
 # Earn SDK Integration Guide
@@ -155,9 +157,11 @@ function EarnView({ client, address }: { client: any; address: `0x${string}` }) 
 - Show tx hash and explorer link after write actions
 
 ### Earn SDK Overview
+
 ---
+
 title: Earn SDK Overview
-description: Integrate Surge Earn markets into wallet and web applications.
+description: Integrate Surge Earn markets into wallet and web applications
 ---
 
 # Earn SDK Overview
@@ -220,36 +224,41 @@ Use the full [Integration Guide](/earn/integration) to wire wallet flows (approv
 ## Overview
 
 ### 👋 Introducing Surge
+
 ---
+
 title: "Surge | Introduction"
 description: "Bitcoin-native Credit Market"
 ---
 
-{/*  */}
+{/**/}
 
-{/* Optional hero image */}
+{/*Optional hero image*/}
 
+{/*# 👋 Bitcoin-native Credit Market*/}
 
-{/* # 👋 Bitcoin-native Credit Market */}
 # 👋 Introducing Surge
 
-## Why can’t Bitcoin-backed lending reflect Bitcoin’s values? 
-Bitcoin is trustless by design: transparent, decentralized, and self-sovereign. 
-Yet the lending platforms that serve it are anything but. Custodial, opaque, and centralized, they rely on “trust-me" systems where users surrender their keys, visibility, and control. 
+## Why can’t Bitcoin-backed lending reflect Bitcoin’s values?
+
+Bitcoin is trustless by design: transparent, decentralized, and self-sovereign.
+Yet the lending platforms that serve it are anything but. Custodial, opaque, and centralized, they rely on “trust-me" systems where users surrender their keys, visibility, and control.
 The result? A broken market where the most principled Bitcoiners, those who care about custody, verification, and openness are forced to compromise everything Bitcoin stands for just to access liquidity.
 
 ## Surge: A Bitcoin-native Credit Market
-Surge offers Bitcoiners something different: a Bitcoin-native Credit Market that is transparent, decentralized, and trust-minimized. 
+
+Surge offers Bitcoiners something different: a Bitcoin-native Credit Market that is transparent, decentralized, and trust-minimized.
 Built from the ground up for self-custody and programmable control, Surge enables Bitcoiners to borrow stablecoins without giving up ownership or compromising on the values that brought them to Bitcoin in the first place.
 
-It’s not just about accessing liquidity, it’s about doing so without selling your Bitcoin, without intermediaries, and without hidden risk. 
+It’s not just about accessing liquidity, it’s about doing so without selling your Bitcoin, without intermediaries, and without hidden risk.
 
 With Surge, you:
+
 - Borrow against your Bitcoin directly on-chain
 - Control a programmable dVault verified by Taproot + threshold signatures
 - Interact with an open credit market powered by LPs, not black-box institutions
 
-Surge is not a rebrand of legacy lending. It’s a reimagination — a credit market for the real Bitcoiners of today.
+Surge is not a rebrand of legacy lending. It’s a reimagination - a credit market for the real Bitcoiners of today.
 
 ## What Comes Next
 
@@ -262,35 +271,39 @@ Surge is not just infrastructure. It’s a promise:
 Explore the documentation and see how Surge is building the next generation of Bitcoin-native finance.
 
 ### 🗺️ Market Landscape
+
 ---
+
 title: Market Landscape
 description: Understanding the current Bitcoin lending market and insights
 ---
 
-
 # 🗺️ Market Landscape
+
 ## Market Context
 
 It’s difficult to estimate the true size of the Bitcoin-backed lending market. Most platforms offer no public proof-of-reserves or on-chain visibility, making analysis challenging. Still, this market is substantial, with products dating back to 2014.
 
 We analyzed over 20 players and identified key patterns. The summary below outlines those findings. You’ll find the full dataset in the resources section.
 
-## Market Categorization 
+## Market Categorization
+
 Based on Custody Model 👇
 
 ### CeFi Platforms
-These platforms take full custody of your Bitcoin either directly or via a group of trusted institutions using multi-institution custody (MIC) models. 
-This category dominates the market and includes regulated entities. However, most of these platforms are still black boxes, offering little or no transparency. 
+
+These platforms take full custody of your Bitcoin either directly or via a group of trusted institutions using multi-institution custody (MIC) models.
+This category dominates the market and includes regulated entities. However, most of these platforms are still black boxes, offering little or no transparency.
 
 ### Bitcoin DeFi Models (Multisig, P2P, DLCs)
-Emerging platforms in this space leverage Bitcoin-native scripting: multisigs, Discreet Log Contracts (DLCs), and now Tapscript. These models appeal to Bitcoiners with smaller holdings (often below ten BTC). 
+
+Emerging platforms in this space leverage Bitcoin-native scripting: multisigs, Discreet Log Contracts (DLCs), and now Tapscript. These models appeal to Bitcoiners with smaller holdings (often below ten BTC).
 While adoption is growing, their programmability and UX are still limited compared to EVM-based ecosystems.
 
 ### Wrapped BTC on other chains
-This market is sizable, with WBTC being the dominant wrapped asset, followed by cbBTC, BTCb, tBTC, and others. These models use custodians like BitGo to lock BTC and mint wrapped versions for use in ecosystems like Ethereum or Base. 
+
+This market is sizable, with WBTC being the dominant wrapped asset, followed by cbBTC, BTCb, tBTC, and others. These models use custodians like BitGo to lock BTC and mint wrapped versions for use in ecosystems like Ethereum or Base.
 While the smart contracts live on these chains, the BTC itself is held by third parties, making it difficult to classify as true DeFi from a Bitcoin perspective.
-
-
 
 ## Key Insights from the Market Analysis
 
@@ -302,13 +315,14 @@ While the smart contracts live on these chains, the BTC itself is held by third 
 - **Decentralized platforms are gaining ground:** A wave of new entrants is adopting trust-minimized infrastructure and on-chain verification. While still early, this category is poised to disrupt the current centralized players.
 
 ## What’s Missing in Bitcoin Lending?
+
 We’ve created a new visual map that charts Bitcoin-backed lending platforms across two axes:
+
 - X-Axis: Market Focus from HNWIs to Grassroots Bitcoiners
 - Y-Axis: Custody Model from Full Custody to Self-Custody
 
-
-
 ## We also introduce a new category
+
 Surge doesn’t just fit into the existing categories - it reimagines the model entirely:
 
 - Non-custodied BTC in verifiable, non-rehypothecated dVaults
@@ -318,15 +332,17 @@ Surge doesn’t just fit into the existing categories - it reimagines the model 
 It’s not a CeFi platform. It’s not DeFi built elsewhere. It’s a **Bitcoin-native Credit Market**, a fundamentally new design
 
 ## Resources
+
 - [Bitcoin Lending Platforms Comparison Table](https://surgehq.notion.site/263232deac9080e3a6a3f9f040047105?v=263232deac90803bbf49000c80e4431b)  
 - [In-depth Breakdown: Bitcoin-backed Lending Market](https://onchainbitcoin.substack.com/p/bitcoin-lending-landscape)
 
 ### 💵 Stablecoin Adoption
+
 ---
+
 title: Stablecoin Adoption
 description: Understanding the massive opportunity in stablecoin adoption and Bitcoin's role
 ---
-
 
 # 💵 Stablecoin Adoption
 
@@ -339,34 +355,39 @@ Until then, stablecoins are doing the heavy lifting.
 They’re onboarding millions, replacing legacy rails, and acting as a bridge between fiat and crypto, between the world we live in, and the world Bitcoin is building.
 
 ## The Growth is Real
+
 The stablecoin market has reached $288 billion today, and is projected to hit $2 trillion by 2028, according to the U.S. Treasury.
 This isn’t just growth, it’s a macro transformation.
 
-
-
 ## What Stablecoins enable
+
 - **Low-cost global payments:** They shrink the gap between transaction and settlement.
 - **Instant finality:** Real-time, on-chain settlement without legacy delays.
 - **Programmable finance:** Logic, automation, and smart contracts, finance meets software.
 
 ## Adoption Catalysts
+
 Stablecoin momentum is only accelerating, thanks to two big tailwinds:
+
 - GENIUS Act (2025): A landmark U.S. regulatory framework. While it introduces some centralization, it unlocks massive new markets and prevents collapses like Terra Luna.
 - Institutional on-chain entry:
-	- Arc Network by Circle
-	- Tempo by Stripe
-	- Plasma by Tether
-	- USAT (U.S. Asset Token)
+  - Arc Network by Circle
+  - Tempo by Stripe
+  - Plasma by Tether
+  - USAT (U.S. Asset Token)
 
 These are not just product launches. They are infrastructure shifts, bringing real users on-chain, beyond crypto’s degen sandbox.
 
 ## What this means for Bitcoin
+
 Stablecoins don’t compete with Bitcoin, **they complement it.**
+
 - They bring utility to payments, remittances, and financial access.
 - They fuel demand for decentralized credit rails.
 - They accelerate the need for Bitcoin-native alternatives to custodial lending.
 
 As stablecoin adoption grows, so does the urgency for:
+
 - Fewer intermediaries
 - More on-chain visibility
 - Lower costs
@@ -375,67 +396,78 @@ As stablecoin adoption grows, so does the urgency for:
 This is the moment for a new category in Bitcoin lending: a transparent, programmable, Bitcoin-native credit market.
 That’s what Surge is here to build.
 
-
 ## Resources
+
 [Stablecoin adoption stats](https://stablecoins.asxn.xyz/)
 
 ## Product
 
 ### ✊ For Bitcoiners
+
 ---
+
 title: For Bitcoiners
 description: How Surge makes it easier for Bitcoiners
 ---
 
-
 # ✊ For Bitcoiners
 
-## Your Bitcoin, Your Terms.
+## Your Bitcoin, Your Terms
+
 Access a Bitcoin-native Credit Market, without giving up full-custody. It’s built for everyday Bitcoiners who value sovereignty, transparency, and verifiable custody, not centralized black boxes.
 
-Your BTC stays in a unique, programmable Taproot vault, secured by a Decentralized Custody Network using threshold Schnorr signatures. 
+Your BTC stays in a unique, programmable Taproot vault, secured by a Decentralized Custody Network using threshold Schnorr signatures.
 It’s on-chain, auditable, and non-custodial, always.
 
-
 ## 🚀 How It Works
+
 ### 1. Sign Up Securely
+
 Get started via mobile app on Android or iOS. Sign up with just an email + OTP. We create a secure, self-custodial wallet with built-in backup and 2FA for enhanced protection.
 
 ### 2. Request a Credit Line
+
 Specify your initial credit line amount with
+
 - Fixed interest rates (8–11% annually)
 - Variable interest rates coming soon (6.9% target)
 - A 12-month term with flexible repayment
 
 You choose which market (variable or fixed) to borrow from; liquidity is drawn from the market accordingly.
+
 - No need to draw full amount upfront, you control usage
 
 ### 3. Send Bitcoin
+
 - A unique Taproot address is generated per credit line
 - You deposit BTC at 50% LTV (e.g., send 0.1 BTC for $3K USDC credit)
 - After 3 confirmations, your credit line becomes active
 
 ### 4. Draw & Repay Flexibly
+
 - Withdraw stablecoins (USDC, USDT) to any address
 - Spend, send, or off-ramp to a bank account
 - Repay any time to reclaim your BTC
 - Add more BTC to reduce LTV or unlock more credit
 
 ### 5. Stay Verifiably in Control
+
 Your BTC is never moved without:
+
 - Your signature, and
 - the Distributed Custody Network signature based on programmable vault logic
 
 If the system fails or goes offline, your vault includes a time-locked refund path—returning your BTC to your wallet after term expiration.
 
 ### 6. Liquidation, but Fair
+
 Liquidation with a rules-based process that only liquidates in extreme cases when BTC collateral health declines past 90%.
+
 - Triggered only when on-chain oracles (like BTC/USD price) report sustained volatility
 - Price feeds are transparent and open—you can verify exactly what data is being used
 - Price feeds are double checked by DCN before liquidation begins
 
 This means no surprise wipeouts, no discretionary calls—just fair, on-chain enforcement with double checks.
-
 
 ## 🔍 Built for Transparency
 
@@ -445,7 +477,9 @@ This means no surprise wipeouts, no discretionary calls—just fair, on-chain en
 - **Transparent Oracles:** Anyone can view the price feeds that govern loan health and liquidation triggers.
 
 ## 💡 Why the credit market
+
 Unlike traditional loans, Surge’s credit market offers flexible credit:
+
 - Borrow only what you need, when you need it
 - Repay and reuse, no need to reapply
 - Maintain control over your BTC with on-chain proof at every step
@@ -453,9 +487,11 @@ Unlike traditional loans, Surge’s credit market offers flexible credit:
 Surge is for Bitcoiners who believe in holding their keys and want access to liquidity without selling their future.
 
 ### 🤝 For Distribution Partners
+
 ---
+
 title: Distribution Partners
-description: How distribution partners can plug into Surge's permissionless system to white-label borrow and earn products.
+description: How distribution partners can plug into Surge's permissionless system to white-label borrow and earn products
 ---
 
 # 🤝 For Distribution Partners
@@ -499,9 +535,11 @@ Use cases: savings apps, treasury products, or any distributor that wants “ear
 If you’re building a borrow or earn product and want to use Surge’s permissionless credit market under your own brand, reach out via [surge.build](https://surge.build) or the links in [Resources](/resources/quick-links).
 
 ### ✊ For Everyone
+
 ---
+
 title: Everyone
-description: It’s for everyone who cares about building open, verifiable, and trust-minimized systems on Bitcoin.
+description: It’s for everyone who cares about building open, verifiable, and trust-minimized systems on Bitcoin
 ---
 
 # ✊ For Everyone  
@@ -511,20 +549,24 @@ Surge isn’t just for Bitcoiners and LPs. It’s for everyone who cares about b
 We believe critical financial infrastructure must be transparent by default. That’s why we’re committed to making the following available for public review:
 
 ## 🧾 Distributed Custody Network Transparency
+
 - Live list of active signer nodes
 - Entity-level disclosure (who they are, why they’re trusted)
 - Slashing history and performance metrics
 
 ## 📈 Oracle Feed Integrity
+
 - Real-time oracle inputs powering LTV and liquidation
 - Historical data and update cadence
 - Circuit-breaker logic for edge cases
 
 ## 🔍 Verifiable Custody
+
 - Every Bitcoiner’s credit line is backed by a unique Taproot address
 - Anyone can verify that BTC is unrehypothecated and non-custodial
 
 ## 📑 Audits & Reports
+
 - Ongoing third-party security audits
 - Internal monitoring metrics
 - Protocol health reports and governance insights
@@ -534,24 +576,24 @@ All of this will be published at [surge.build](https://surge.build): your window
 >Because if it’s not verifiable, it’s not Bitcoin.
 
 ### 💰 For Liquidity Providers
+
 ---
+
 title: Liquidity Providers
 description: How surge benefits the Liquidity providers and Market makers holding stablecoins and looking for yield
 ---
 
-
-
 # 💰 For Liquidity Providers
 
-Surge introduces a novel multi-market architecture, managed by a Decentralised Custody Network (DCN). 
+Surge introduces a novel multi-market architecture, managed by a Decentralised Custody Network (DCN).
 These markets act as the liquidity layer between BTC and stablecoin capital, enabling Bitcoiners to access different credit markets with different terms while LPs earn risk based yield from actual credit usage.
 
 Unlike traditional DeFi platforms that rely on speculative trading activity, Surge enables LPs to earn predictable, usage-driven yield, with added incentives for participating in network operations like liquidations.
 
-
 ## 🧩 The Architecture: LP markets + DCN
 
 At the heart of Surge’s lending mechanism is a multi-chain, DCN-coordinated communication layer:
+
 - Markets exist natively in stablecoins (USDC, USDT) on Ethereum (Base).
 - When a Bitcoiner requests credit, the DCN verifies BTC collateral on-chain, signs a Bitcoin transaction, and authorizes the stablecoin disbursement.
 - The DCN jointly maintains custody policies, validate credit conditions, and enforce programmatic rules for repayment, liquidation, and timelocks.
@@ -562,25 +604,26 @@ The DCN effectively bridges Bitcoin and Ethereum/Base trust-minimized, with no w
 
 Surge’s multi-market layer can offer both **variable** (floating) and **fixed-rate** markets. As an LP you can choose how much of your supply earns variable rate vs a fixed rate.
 
-- **Variable market** — You supply to the market and earn a utilization-driven floating rate. You can withdraw whenever you want.
-- **Fixed-rate markets** — You **opt in** to specific fixed-rate markets (e.g. 6%, 8%) and set **allocation limits** (e.g. max 50% of your deposit in “Fixed 6%”). When borrowers take fixed-rate loans, your funds may be moved from the variable pool into that fixed market; you earn the fixed supply rate on that portion. Your **effective APY** is the weighted average of rates across your variable and fixed positions.
-- **Withdrawing from fixed** — To “withdraw” from a fixed market you swap your position with another lender that wants exposure to that fixed market. If no lenders are available to swap, you can enter a queue, offer to swap your position at a discount, or wait for a borrower from that market to repay.
-
+- **Variable market** - You supply to the market and earn a utilization-driven floating rate. You can withdraw whenever you want.
+- **Fixed-rate markets** - You **opt in** to specific fixed-rate markets (e.g. 6%, 8%) and set **allocation limits** (e.g. max 50% of your deposit in “Fixed 6%”). When borrowers take fixed-rate loans, your funds may be moved from the variable pool into that fixed market; you earn the fixed supply rate on that portion. Your **effective APY** is the weighted average of rates across your variable and fixed positions.
+- **Withdrawing from fixed** - To “withdraw” from a fixed market you swap your position with another lender that wants exposure to that fixed market. If no lenders are available to swap, you can enter a queue, offer to swap your position at a discount, or wait for a borrower from that market to repay.
 
 ## 📊 LP Dashboard & DCN Participation
 
 LPs interact through an intuitive web interface to:
+
 - Deposit supported stablecoins into active liquidity pools
 - Monitor pool health, active credit lines, interest accrued, and risk metrics
 - Configure preferences like pool size, chain, stablecoin, and duration
 - Join the queue to run a Distributed Custody node
 
 Running a Distributed Custody node is optional, but highly encouraged for active LPs. It enables:
+
 - Priority yield opportunities and liquidation incentives
 - Visibility into on-chain conditions and vault-level transparency
 
-
 ## 💰 Why LPs Choose Surge
+
 - Untapped Bitcoin-native demand - Yield from BTC-backed credit lines in a transparent market, previously gated behind CeFi platforms
 - Competitive, real yield - Interest paid by Bitcoiners drawing credit, not speculative APYs
 - Liquidation bonuses - 5% liquidation premium on undercollateralized positions goes to pools
@@ -593,7 +636,9 @@ Unlike ETH-centric DeFi or risky alt-L2 plays, Surge offers Bitcoin-first, credi
 Surge brings yield back to the fundamentals: real users, real assets, and verifiable on-chain logic, not token games or circular lending.
 
 ### 🔭  Our Thesis
+
 ---
+
 title: Our Thesis
 description: Surge's core philosophy and principles
 ---
@@ -601,52 +646,60 @@ description: Surge's core philosophy and principles
 # 🔭  Our Thesis
 
 ## What
-Bitcoin-backed lending today is still stuck in the past. Platforms are built around custodians, hidden rehypothecation, off-chain agreements, and predatory liquidations. 
+
+Bitcoin-backed lending today is still stuck in the past. Platforms are built around custodians, hidden rehypothecation, off-chain agreements, and predatory liquidations.
 They were designed for institutions and early whales, not for everyday Bitcoiners who hold their keys, believe in transparency, and need reliable access to liquidity.
 
 ## So What
-That means millions of Bitcoiners, especially those holding under 10 BTC are left out. They’re forced to trust black-box lenders, pay excessive fees, or sell their BTC in emergencies. 
+
+That means millions of Bitcoiners, especially those holding under 10 BTC are left out. They’re forced to trust black-box lenders, pay excessive fees, or sell their BTC in emergencies.
 Worse, the core values of Bitcoin self-custody, openness, and verifiability are lost in the very systems meant to support it.
 
 ## Now What
-Surge is building something fundamentally different: a Bitcoin-native credit market that puts users in control. 
-With dVaults (programmable Bitcoin vaults), market-driven terms, and a decentralized signer network, Bitcoiners can borrow stablecoins without giving up custody, trust, or transparency. 
+
+Surge is building something fundamentally different: a Bitcoin-native credit market that puts users in control.
+With dVaults (programmable Bitcoin vaults), market-driven terms, and a decentralized signer network, Bitcoiners can borrow stablecoins without giving up custody, trust, or transparency.
 It’s a credit system designed for Bitcoiners, not institutions. Built on-chain. Aligned with the ethos.
 
 ### 🖼️ Product Overview
----
-title: Product Overview
-description: Surge is a Bitcoin-native credit market powered by programmable dVaults, enabling Bitcoiners, stablecoin LPs, and infra providers to collaborate in a non-custodial, transparent system.
+
 ---
 
+title: Product Overview
+description: Surge is a Bitcoin-native credit market powered by programmable dVaults, enabling Bitcoiners, stablecoin LPs, and infra providers to collaborate in a non-custodial, transparent system
+---
 
 # 🖼️ Product Overview
+
 Surge is a Bitcoin-native credit market powered by taproot-based UTXOs, where every credit line is a dedicated UTXO with two signers: the Bitcoiner and a Decentralised Custody Network (DCN).
 
 ## How it Works
-Today, each Bitcoiner uses the Surge mobile app to access the Surge Credit Markets. In the app they send BTC to a unique dVault, a Taproot-based, programmable vault. 
+
+Today, each Bitcoiner uses the Surge mobile app to access the Surge Credit Markets. In the app they send BTC to a unique dVault, a Taproot-based, programmable vault.
 This vault enforces three deterministic spending paths:
 
-1. **Voluntary Repayment:** If no credit is drawn, or once the borrower repays, they can withdraw BTC directly, without signer network intervention. 
-2. **Liquidation:** 
-  - If the credit line’s health drops below a predefined threshold, the DCN will sign a liquidation transaction, only when validated by multiple external oracle attestations.
-  - If the credit line is not paid off or rolled over at the end of term, the DCN can sign a liquidation transaction. BTC will be sold to cover debt + interest and the remainder returned.
-3. **Transfer:** Bitcoiners may transfer loans to and from Surge's credit market. This requires signatures from the Bitcoiner, DCN, and a third party credit provider.
-4. **Time-Locked Recovery:** If the system becomes unresponsive or the DCN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
+1. **Voluntary Repayment:** If no credit is drawn, or once the borrower repays, they can withdraw BTC directly, without signer network intervention.
+2. **Liquidation:**
+
+- If the credit line’s health drops below a predefined threshold, the DCN will sign a liquidation transaction, only when validated by multiple external oracle attestations.
+- If the credit line is not paid off or rolled over at the end of term, the DCN can sign a liquidation transaction. BTC will be sold to cover debt + interest and the remainder returned.
+
+1. **Transfer:** Bitcoiners may transfer loans to and from Surge's credit market. This requires signatures from the Bitcoiner, DCN, and a third party credit provider.
+2. **Time-Locked Recovery:** If the system becomes unresponsive or the DCN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
 
 This ensures that funds are always:
-- Non-custodial – borrower shares control with the DCN 
+
+- Non-custodial – borrower shares control with the DCN
 - Verifiably on-chain – visible and auditable at all times
 - Decentralized – DCN is distributed with multiple parties and economically aligned
 
-Once the BTC is locked, stablecoin liquidity is released from the Ethereum-based smart contract (USDC supported, USDT coming soon), sent directly to the borrower's self custodied wallet. 
+Once the BTC is locked, stablecoin liquidity is released from the Ethereum-based smart contract (USDC supported, USDT coming soon), sent directly to the borrower's self custodied wallet.
 The smart contracts implement multiple markets where Bitcoiners can tap liquidity, and LPs earn yield, with infrastructure ensuring safety and execution. The different markets can offer both **variable** (floating) and **fixed-rate** markets.
-
-
 
 ## Interface Suite
 
 Surge has three core interfaces, each designed for a key participant:
+
 - **Bitcoiners:** Access the credit market via Surge’s mobile app (iOS, Android; PWA coming soon) or via distribution partners who white label Surge's permissionless Credit Market. No paperwork, just verifiable BTC and stablecoin access in less than 30 minutes.
 - **Liquidity Providers:** Contribute stablecoins into markets, earn yield from variable and/or fixed-rate markets, and optionally run signer nodes in our DCN to protect the rules based system.
 - **Distributed Custody Network Members:** Access technical data, audit trails, oracle feeds, system status, and open-source repos via surge.build, our transparency hub.
@@ -654,16 +707,18 @@ Surge has three core interfaces, each designed for a key participant:
 Surge is built ground-up for trust-minimized credit and no one can touch their Bitcoin without following predefined, public rules.
 
 ### Branding and Logos [Bitcoin-native Credit Market]
+
 [Link to Media Kit](https://docs.surge.build/resources/media-kit)
 
 ### Quick Links
+
 # Quick Links
 
 Website: [https://surge.build](https://surge.build)
 
 Twitter: [https://x.com/surge_credit](https://x.com/surge_credit)
 
-{/* Telegram: [https://t.me/surgebuild](https://t.me/surgebuild) */}
+{/*Telegram: [https://t.me/surgebuild](https://t.me/surgebuild)*/}
 
 LinkedIn:  [https://linkedin.com/company/surgebuild](https://www.linkedin.com/company/surgecredit)
 
@@ -671,579 +726,1256 @@ Blog: [https://surge.build/blog](https://surge.build/blog)
 
 ## Architecture & Core Tech
 
-### 👥 Distributed Custody Network
----
-title: Distributed Custody Network
-description: Distributed Schnorr signing for Taproot vault control.
----
-
-# 👥 Distributed Custody Network
-
-Surge implements **Lindell 2022 Multiparty Schnorr Signing (Lin22)** a threshold Schnorr signature protocol and with ideal zero-knowledge and commitment functionality this framework provides strong security, fault tolerance, and privacy. 
-
-It enables quorum-based gated spending of Taproot vaults (dVaults) without revealing the signer structure or compromising on-chain efficiency.
-
-
-
-## Why Threshold Schnorr Signatures Essential for dVaults
-
-- **Threshold Signing** - Every signing session is gated by pre-sign policy checks by individual signers making it reliable and accountable; only a t-of-n quorum can authorize within rules.
-- **Byzantine Resilient** - The protocol continues safely even if some signers are offline or act maliciously. Misbehavior is provable and recoverable.
-- **Taproot Compatibility** - Bitcoin's Taproot ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) requires Schnorr signatures. Threshold signatures must be indistinguishable from single-party Schnorr signatures to preserve privacy and efficiency.
-
-## Why Surge Chooses Lin22
-
-Surge prioritizes **reliability, accountability, and verifiability** over lowest latency.
-
-- **Trustless Coordinator** - Lin22 doesn't rely on a trusted coordinator. Its security holds even with partial failures or adversarial behavior.
-- **Identifiable Misbehavior** - Each signer provides Fischlin Zero-Knowledge Proofs (ZKPs). If a signer cheats or aborts, the network obtains cryptographic evidence, enabling automated slashing and signer rotation.  
-- **Privacy Preserving** - The final aggregated signature is a standard Taproot compatible Schnorr signature. Vault spends are indistinguishable from single signer spends.
-
-
-
-Unlike FROST, where a single malicious signer can halt the session, Lin22 identifies and proves who misbehaved. Even if a round fails, it records cryptographic proof, keeping vault operations auditable and recoverable.
-
-Surge's implementation uses Coinbase's audited [**cb-mpc**](https://github.com/coinbase/cb-mpc) library, embedding Lin22 within the signer coordination service.
-
-## Signing Flow in Surge (Lin22)
-
-#### 1. Distributed Key Generation (DKG)
-- Key shares are generated using **Feldman's Verifiable Secret Sharing (VSS)**.
-- Public commitments allow verification that shares are consistent.
-- Result: A single Taproot public key with private shares held by signers.
-
-#### 2. Signing Rounds
-- **Commitment** - Signers choose nonces and share hash commitments. Inclusion in this round is mandatory.
-- **Decommitment & Proof** - Nonces and **Fischlin ZKPs** revealed, invalid proofs flag misbehavior.  
-- **Signature Shares** - Honest signers compute valid shares, coordinator aggregates into a single BIP340 Schnorr signature, valid for Taproot.
-
-## Lin22 vs. FROST
-
-Two major threshold Schnorr constructions were evaluated:
-
-- **FROST (RFC 9591)** - Optimized for speed (two rounds).
-- **Lindell 2022 (Lin22)** - Optimized for robustness, with three rounds and formal UC proofs.
-
-| Property | **FROST** | **Lin22 (2022)** |
-|----------|-----------|------------------|
-| **Signing Rounds** | 2 | 3 |
-| **Security Proof** | **UC secure** (Universally Composable), but aborts if signers fail | UC secure with **full simulatability** (via Fischlin ZKPs) |
-| **Abort Handling** | Session halts if any signer malicious, relies on coordinator trust | Identifies cheaters with proof, removes signer for next set of request |
-| **DKG Setup** | ~2 rounds (Pedersen VSS) | 5+ rounds (Feldman VSS, stronger consistency) |
-| **Best Case** | Fast when all signers are honest | Robust even if some signers are faulty |
-| **Output** | BIP340 Schnorr | BIP340 Schnorr |
-
-## Example: 3 of 4 Signing
-
-- **FROST** → If a signer submits invalid data (e.g., a bad signature share), the session aborts. The honest participants cannot complete the signature. Need to trust coordinator to remove malicious signer.
-- **Lin22** → If a signer misbehaves, their ZK proof (included in the protocol) reveals them as malicious to the network. The session aborts, but with publicly verifiable evidence of who misbehaved. This will help for slashing and signature share rotation.
-
-**dVault remains operable even under Byzantine conditions,** ensuring both fault-tolerance and cryptographic accountability.
+### 📜 Smart Contracts
 
 ---
 
-Surge adopts Lin22 Threshold Schnorr Signatures because resilience and verifiability matters more than speed when securing Bitcoin collateral at scale.
+title: Smart Contracts
+description: VaultManager, position token, LiquidityPool, AuctionHouse, and the interest-rate model
+---
+
+# 📜 Smart Contracts
+
+The EVM side of Surge is a focused set of contracts that implement the debt ledger, liquidity accounting, and liquidation auctions that back Vault collateral on Bitcoin. These contracts do not custody BTC. BTC stays on Bitcoin and moves only through committed Taproot spend paths.
+
+## Debt Ledger - `VaultManager`
+
+The `VaultManager` is the canonical ledger for BTC-backed liabilities. Every active credit line corresponds to a position and a row in manager state.
+
+Key properties:
+
+- **Tick-based position tracking.** Positions are grouped by interest-rate tick rather than carried as per-position compounding values. This makes interest accrual O(1) per interaction per position and avoids per-block writes across the active set.
+- **Collateral is attested, not custodied.** The manager records satoshi collateral amounts reported by the [Relayer](/tech/relayer) after BTC deposit confirmation. Moving BTC on Bitcoin requires a Taproot spend authorized by the DCN - the manager cannot move BTC directly.
+- **Health checks are callable by relayers.** `checkHealth(positionId)` evaluates `CR` against policy thresholds and opens an auction when liquidation conditions are met.
+- **EIP-712 + EIP-3009 repayment.** `repayWithERC3009` accepts a pre-signed USDC `transferWithAuthorization` so repayments are gasless from the borrower's perspective.
+
+The manager enforces three risk parameters per position: a **Minimum Collateral Ratio** below which new borrow is blocked, a **liquidation threshold** at or below which a position becomes liquidatable, and a **liquidation penalty** applied to debt during auction settlement. The gap between `MinCR` and the liquidation threshold is the **health buffer** a borrower can spend on BTC-price decline before partial liquidation begins - a narrower buffer is more capital-efficient but raises the risk of liquidation cascades inside a single price move; a wider buffer is capital-inefficient given Bitcoin's historical intraday volatility.
+
+Risk parameters are admin-configurable on upgradeable deployments behind the time-locked multi-sig. Non-upgradeable deployments are immutable - their parameters are fixed at deploy time and any change requires a new deployment and migration.
+
+## Position Representation
+
+Each credit line is represented by an ERC-721 position token. Token ownership represents borrower-side control of that position and is used for borrower-authorized actions.
+
+## Liquidity - `LiquidityPool`
+
+The pool implements **share-based accounting** uniformly across all markets (variable and fixed-rate). Share-based accounting means LP balances are denominated in shares whose per-share value accretes with interest; a lender sees yield without per-block state changes at the position level.
+
+Market registry:
+
+- Each market has configurable rate logic, a stablecoin token (e.g. USDC), an `active` flag, and share-based accounting state.
+- The **variable market** is the primary destination for liquidity.
+- **Fixed-rate markets** hold no liquidity at rest. When a borrower takes a fixed-rate loan, liquidity is **moved** from the variable pool into the originating fixed market for the duration of the loan; on repay it is moved back. There is no duplication or rehypothecation.
+- Lenders can opt in to fixed markets and configure allocation limits (see [LP page](/product/for-liquidity-providers)).
+
+## Rate Curve - `InterestRateModel`
+
+The variable market uses a **BTC-optimized kink model** with a single slope below the kink and a steep rise above it:
+
+| Parameter | Default | Meaning |
+|---|---|---|
+| Base rate | 0% | Rate at 0% utilization |
+| Kink | 90% | Utilization threshold where the rate steepens |
+| Slope below kink | linear to the kink | Gentle, predictable borrow cost across the normal operating band |
+| Above kink | steep | Rate rises sharply to pull supply in and push marginal borrowers out |
+
+**Why a kink.** Below the kink, lenders accept a modest supply yield and borrowers enjoy predictable costs. Above the kink, the rate rises sharply - utilization should approach 90% in healthy steady state; above that, the curve actively discourages new debt. The concrete APR band shown on the website (**6.9%–9.9%**) reflects observed borrow demand in the normal operating band rather than an incentive program.
+
+## Liquidation Auctions - `AuctionHouse`
+
+Liquidation proceeds via a **Dutch auction** with fixed-price buyout semantics: the first buyer who pays the current price wins the collateral. The auction runs for a fixed duration, the clearing price drops in regular intervals, and a minimum price floor caps the worst-case loss if no buyer emerges. These parameters are admin-configurable per deployment.
+
+Auction lifecycle:
+
+1. `VaultManager.checkHealth(positionId)` detects liquidation conditions and opens an auction in `AuctionHouse`.
+2. Buyers monitor the price curve and call `AuctionHouse.buy` to clear at current price.
+3. `VaultManager.finalizeAuction` retires proportional debt on the originating market (variable or fixed), applies penalty, and records settlement.
+4. If the auction expires without a buyer at the floor, the protocol exercises the floor price itself or the collateral is re-locked depending on market policy.
+
+**Why Dutch.** Dutch auctions on a declining curve do not require active bidding to discover price; they surface the market-clearing price passively, which is what a liquidation needs under time pressure. The first buyer to see the price as favourable clears the auction.
+
+**Why a price floor.** Without a floor, a sufficiently slow auction or a sufficiently adverse market would sell collateral for near-zero proceeds, leaving the originating market with a shortfall. The floor caps the worst-case loss and forces the protocol to exercise the floor itself or re-lock the collateral if no buyer emerges.
+
+**Market-segregated proceeds.** Auction proceeds always flow back into the specific market (variable or fixed) that issued the liquidated credit line - risk is per-market, not socialized across the protocol.
 
 ## References
-- [Simple Three-Round Multiparty Schnorr Signing with Full Simulatability](https://eprint.iacr.org/2022/374.pdf)
-- [Cure53 Audit Report: Coinbase cb-mpc Library](https://github.com/coinbase/cb-mpc/blob/master/docs/cure53-audit.pdf)
 
-### 🎯 Deterministic Liquidation for Locked Bitcoin
+- [Credit Markets](/tech/credit-markets)
+- [Relayer & Workers](/tech/relayer)
+
+### 🛟 Disaster Recovery
+
 ---
+
+title: Disaster Recovery
+description: Publicly Verifiable Encryption, threshold-controlled backup decryption, and incident-response flows for key-share loss or compromise
+---
+
+# 🛟 Disaster Recovery
+
+MPC eliminates a single point of failure in the signing path. It does not, by itself, eliminate a single point of failure in **recovery**. If a signer loses its share with no backup, the threshold is permanently reduced; if `n - t + 1` signers lose their shares, the key and all BTC it secures are gone.
+
+Naive backups re-introduce the risk MPC was designed to remove: a plaintext backup is as sensitive as an aggregate private key, and a shared backup custodian is a single point of failure across the whole network.
+
+Surge's disaster-recovery design solves this with **Publicly Verifiable Encryption (PVE)** and threshold-controlled decryption.
+
+## The Core Idea - Backups Verified Without Decryption
+
+Each signer encrypts its share under a **backup public key** and produces a non-interactive zero-knowledge proof that the ciphertext correctly encrypts its true share. A verifier can mathematically check the proof **without ever holding the backup decryption key** and without decrypting the ciphertext.
+
+```
+Each party holds share s_i
+         ↓
+Encrypt(s_i, backup_pk) → ciphertext c_i
+Generate ZK proof π_i that c_i encrypts a correct share
+         ↓
+Send (c_i, π_i) to the disaster-recovery verifier
+         ↓
+Verifier checks π_i using Fiat–Shamir
+         ↓
+If all valid: the key is enabled for signing
+If any invalid: the key is rejected; re-run DKG
+```
+
+The key paradox PVE resolves: **backups must never be opened, yet must be verified as correct.** Non-interactive ZK proofs (Fiat–Shamir heuristic) make "correct" something a verifier can check without decrypting.
+
+PVE is provided by the signer-node crypto implementation and is the recommended backup mechanism for any `t-of-n` key Surge generates.
+
+## Backup Flow
+
+1. After DKG - and after every [proactive refresh](/tech/key-lifecycle) - each party encrypts its current-epoch share with the backup public key.
+2. Each party generates a ZK proof that the encrypted backup is correct.
+3. The verifier checks all proofs as a batch without decrypting anything.
+4. **The key is only enabled for signing after all backups are verified.**
+
+The **refresh → backup interlock** is non-negotiable: after any refresh, the full cycle - new share → wrap DEK → persist → create PVE backup → verify backup - must complete before signing resumes. If the PVE backup is older than the current share epoch, signing is blocked. This prevents "we refreshed but forgot to back up" from silently creating unrecoverable keys.
+
+## Backup-Key Governance
+
+The backup decryption key is the single most sensitive artifact in the system. Whoever has it can decrypt the ciphertexts produced by every signer. It must be threshold-controlled in a way that matches or exceeds the MPC threshold itself.
+
+The backup key is itself distributed as a **TDH2 threshold cryptosystem (`m-of-n`)**. Each designated recovery agent holds a decryption share. Recovery requires independent approval and partial decryptions from a quorum of agents. No single agent can decrypt or trigger recovery unilaterally. This matches the MPC design principle: no single entity ever holds a usable complete private key.
+
+## Recovery Modes
+
+A disaster-recovery event falls into one of two classes, and the response differs accordingly.
+
+### Same-Key Recovery (Default)
+
+Used when a share is lost or corrupted with no evidence of compromise.
+
+```
+Share incident detected
+         ↓
+Have valid PVE backup?   → Yes → assemble backup-key quorum
+                                     ↓
+                              Decrypt the PVE backup for the affected signer
+                                     ↓
+                              Restore the share on the affected signer
+                                     ↓
+                              Run a proactive refresh - invalidates the restored share's epoch immediately
+                                     ↓
+                              Create and verify new PVE backups for the new epoch
+                                     ↓
+                              Signing resumes - same public key, same addresses, no on-chain migration
+```
+
+This is the "fast path" and preserves every on-chain commitment. Dollar-denominated debt, positions, and Vault addresses remain unchanged.
+
+### Rotation + Migration (Confirmed or Suspected Threshold Breach)
+
+Used when there is evidence - or strong suspicion - that `t` or more shares are compromised.
+
+```
+Assume full breach
+         ↓
+Run a fresh distributed key generation to produce a new key
+         ↓
+Migrate all funds on-chain from old addresses to new addresses
+         ↓
+Create and verify fresh PVE backups for the new key
+```
+
+## Storage of Recovery Artifacts
+
+- PVE ciphertexts are stored on a separate channel from the encrypted shards and their wrapped DEKs. Breaching any one of the three (encrypted shard, wrapped DEK, PVE ciphertext) still leaves the attacker a mathematical distance away from the plaintext share.
+- The backup decryption key is never online and never stored by Surge in aggregate. It exists only as TDH2 shares distributed across independent recovery agents.
+- Recovery ceremonies are rehearsed on non-production keys before every quarter close. Unexercised recovery capability is unreliable recovery capability.
+
+### 👥 Distributed Custody Network (DCN)
+
+---
+
+title: Distributed Custody Network
+description: Threshold Schnorr signing for Taproot Vaults using Lin24, signer policy checks, and trust assumptions
+---
+
+# 👥 Distributed Custody Network (DCN)
+
+A Vault spend that requires `loanPubkey` authorization is signed by the **Distributed Custody Network (DCN)**. The DCN is a set of independent signer organizations running threshold Schnorr signing.
+
+No single signer ever holds the full signing secret; each signer only holds a share. Signatures are produced only when quorum participation and policy checks both pass.
+
+## Signing Capabilities
+
+| Capability | Scheme | Used for | Protocol |
+|---|---|---|---|
+| **Threshold Schnorr** | BIP340 | Vault spends on Bitcoin (Repayment, Liquidation) | **Lin24**  |
+| **Threshold ECDSA** | secp256k1 | EVM-side signatures where a quorum-controlled key is required (e.g. multi-admin contract operations) | Multiparty ECDSA ([Applied Cryptography Group specification](https://github.com/coinbase/cb-mpc/blob/master/docs/specification/Specification.MPC-ECDSA.pdf)), an OT-based n-party design building on Haitner et al. (2022) multiplication protocol |
+
+Both protocols share the same decentralized signer organisations, KeyProtector storage model ([Key Shard Security](/tech/key-shard-security)), refresh and reshare flows ([Key Lifecycle](/tech/key-lifecycle), [Reshare & Onboarding](/tech/reshare-onboarding)), and the same per-signer policy stack ([Signing Policy](/tech/mpc-signing)) - only the signature output differs.
+
+## Lin24 Threshold Schnorr
+
+Surge uses **Lin24** - Y. Lindell, *Simple Three-Round Multiparty Schnorr Signing with Full Simulatability* ([ePrint 2022/374](https://eprint.iacr.org/2022/374.pdf), republished as [CiC 2024](https://cic.iacr.org/p/1/1/25/pdf)). The two names refer to the same protocol.
+
+**Why threshold specifically:**
+
+1. **Taproot requires Schnorr.** [BIP340](https://en.bitcoin.it/wiki/BIP_0340) defines Schnorr for Taproot spends. Lin24 outputs a standard BIP340-compatible aggregate signature.
+2. **No complete private key exists anywhere.** After distributed key generation (DKG), each signer holds only a share. Reconstructing the key would require compromising `t` signers simultaneously. There is no wallet file, no seed phrase, and no vault where the full key lives "for disaster recovery."
+3. **Misbehaviour is identifiable, not just detectable.** Lin24 includes Fischlin non-interactive zero-knowledge proofs of knowledge at the decommitment step. A signer that submits malformed data leaves a publicly-verifiable proof of their specific misbehaviour, which drives automated exclusion and reshare.
+
+### Why Lin24 over FROST
+
+[FROST (RFC 9591)](https://datatracker.ietf.org/doc/rfc9591/) is the other widely-cited threshold Schnorr construction. It is faster - two rounds instead of three - but trades robustness for speed.
+
+| Property | FROST | Lin24 |
+|---|---|---|
+| Signing rounds | 2 | 3 |
+| Security proof | UC-secure; aborts on any signer fault | UC-secure with full simulatability via Fischlin ZKPs |
+| Abort handling | Session halts; coordinator trusted to identify cheater | Cryptographic evidence identifies the misbehaving signer, enabling rotation |
+| DKG | ~2 rounds (Pedersen VSS) | 5+ rounds (Feldman VSS with stronger consistency) |
+| Output witness | BIP340 Schnorr (64 bytes) | BIP340 Schnorr (64 bytes) |
+
+**In a threshold signing session, if one signer submits invalid data:**
+
+- FROST aborts with no attributable evidence. The coordinator must decide who cheated; if the coordinator is compromised, the wrong signer can be ejected, or the attack can persist across retries.
+- Lin24 aborts with Fischlin ZKPs that any observer can verify. The faulty signer is identifiable without trusting the coordinator, and can be excluded from the next session.
+
+For a system that routinely signs spends against live Bitcoin collateral, this extra attribution is worth one additional round-trip.
+
+## DKG & Key Lifecycle
+
+At vault-key creation, the signer set runs **distributed key generation** using Feldman's Verifiable Secret Sharing (VSS). The protocol publishes commitments that let each party verify its own share is consistent with the collective polynomial before accepting it. The output is a single BIP340-compatible x-only pubkey (the `loanPubkey` embedded in the Repayment and Liquidation leaves) and private shares held by the signers.
+
+The full key lifecycle is documented in the MPC pages: [DKG and refresh](/tech/key-lifecycle), [PVE backup and recovery](/tech/disaster-recovery), [signing policy](/tech/mpc-signing), and [reshare for onboarding and rotation](/tech/reshare-onboarding).
+
+## Signing Session - Three Rounds
+
+Each Bitcoin spend triggers one Lin24 session over the message hash (the BIP341 sighash for the Taproot spend).
+
+1. **Commitment.** Each participating signer samples a nonce and broadcasts its hash commitment. Participation in this round is mandatory; a signer that fails to commit is excluded from the session.
+2. **Decommitment & ZKPs.** Signers reveal nonces with Fischlin zero-knowledge proofs. Failed proofs identify faulty participation and the session aborts safely.
+3. **Signature shares.** Honest signers compute their signature shares and the coordinator aggregates them into a single BIP340 Schnorr signature. Non-participating or faulty signers contribute no share.
+
+The aggregate signature is submitted in the Taproot script-path witness. The signature component is standard BIP340 Schnorr.
+
+## Trust Model
+
+| Component | Trusted to | Not trusted for |
+|---|---|---|
+| Individual signer | Hold exactly one key share, enforce the signing policy locally, refuse to sign on invalid authorization | Knowing the full private key (cryptographically cannot) unilaterally moving BTC (script requires cooperation per leaf) |
+| Coordinator / leader | Sequence sessions, collect shares, publish aggregate signature | Authorizing spends; fabricating authorization; bypassing per-signer validation |
+| Signer-node crypto implementation | Correct implementation of Lin24 and supporting primitives | Policy decisions (what is signed, who can request, when to sign) |
+| Surge signer orchestration code | Signing policy, reshare orchestration, Bitcoin tx and witness construction around the Lin24 output | Cryptographic security of the underlying MPC protocol |
+
+The adversary model we design against:
+
+- **Up to `t - 1` compromised signers** - collusion remains below threshold. No signature is produced without an additional honest signer. For a 3-of-4 deployment this means any two compromised signers are recoverable without loss.
+- **Compromised coordinator** - cannot forge authorization, cannot coerce signers into producing signatures outside policy, and cannot substitute the signed message without per-signer validators detecting it.
+- **Network attacker** - mTLS between signers with pinned peer identities; manual peer certificate verification that enforces expected CN bindings, not just CA trust (see [Transport Security](/tech/mpc-signing#transport-security)).
+- **A misbehaving signer that fakes liveness** - detected via the Fischlin ZKP check and removed from active quorum by policy.
+
+## Further Reading
+
+- [Lin24 paper (CiC 2024)](https://cic.iacr.org/p/1/1/25/pdf) - the protocol Surge uses for Bitcoin signing.
+- [Lin22 preprint (IACR ePrint 2022/374)](https://eprint.iacr.org/2022/374.pdf) - same protocol, earlier publication.
+- [Published third-party review of cb-mpc (Cure53)](https://github.com/coinbase/cb-mpc/blob/master/docs/cure53-audit.pdf)
+- [BIP340 - Schnorr signatures](https://en.bitcoin.it/wiki/BIP_0340)
+- [BIP341 - Taproot](https://en.bitcoin.it/wiki/BIP_0341)
+- [BIP342 - Tapscript](https://en.bitcoin.it/wiki/BIP_0342)
+- [Key Lifecycle](/tech/key-lifecycle) · [Key Shard Security](/tech/key-shard-security) · [Disaster Recovery](/tech/disaster-recovery) · [Reshare & Onboarding](/tech/reshare-onboarding)
+
+### 🎯 Deterministic Liquidation
+
+---
+
 title: Deterministic Liquidation
-description: Bitcoin Taproot vaults that enforce deterministic liquidation and non-custodial collateral management
+description: How the Liquidation path of a Vault is authorized, constructed, and settled
 ---
 
-# 🎯 Deterministic Liquidation for Locked Bitcoin
+# 🎯 Deterministic Liquidation
 
-*dVaults* are Taproot-based Bitcoin vaults that enforce deterministic liquidation and non-custodial collateral management. Each vault encodes three spend paths:
-1. **Repay** - borrower + DCN authorization.  
-2. **Liquidate** - DCN-only authorization liquidate collateral falls below the minimum ratio or credit line is not paid off or extended at end of term.  
-3. **Transfer** - borrower + DCN + third party authorization when borrower requests loan transfer out of Surge Credit Market.  
-4. **Escape** - borrower-only fallback after a time-based lock (censorship safety).
+A Vault commits three script leaves at creation: **Repayment**, **Liquidation**, and **Exit**. The Liquidation leaf is spent by the DCN when the Coordination Layer authorizes it for one of two reasons:
 
-Each path references a **pre-committed PSBT template** defined at vault creation.
+1. **Undercollateralization** - the live collateral ratio has dropped below the liquidation threshold.
+2. **Delinquency** - the credit line has reached term without being fully repaid or extended.
 
-Liquidations are **triggered by the Execution State Machine (ESM)**, which emits deterministic events (`LiquidationTriggered`) when a vault’s collateral ratio breaches the protocol threshold.
+Both reasons spend the **same** Liquidation leaf. Delinquency is a different *trigger*, not a different script.
+
+```bitcoin-script
+ OP_CHECKSIG
+```
+
+The witness includes a BIP340 signature from a Lin24 threshold session of the DCN. The reason for spending is not encoded in this leaf itself; it is enforced by the Coordination Layer and each signer's local validation policy.
 
 ## Coordination Layer
-A deterministic coordination program (middleware) runs on EVM-compatible infrastructure.
-- Tracks vault collateral, debt, and oracle state.  
-- Emits deterministic liquidation instructions (“liquidate 0.02 BTC lot”).  
-- Cannot move BTC directly, it only attests valid liquidation conditions to the **DCN**.  
-- Every state change is verifiable and reproducible across members of the DCN.
 
-This middleware acts as an *execution oracle* that coordinates DCN actions without custodial control or discretionary intervention.
+A deterministic coordination program - implemented by the core contracts plus the [Relayer](/tech/relayer) - tracks Vault collateral, debt, and oracle state.
 
-## Distributed Custody Network Verification 
-Each DCN member independently validates before co-signing:
-- Verify that inputs correspond to the correct dVault UTXO and MAST leaf.  
-- Ensure outputs are not controlled by DCN members.  
-- Confirm input parameters align with pre-committed liquidation rules.  
-- Check that oracle data remains within deviation limits.  
-- Verify that the escape timelock has not expired.
-If any rule fails, **no signature is produced** preventing arbitrary spending.
+- It emits deterministic liquidation instructions (e.g., "liquidate 0.02 BTC lot from position #123").
+- It **cannot move BTC directly**. It only attests that a liquidation condition is satisfied to the DCN.
+- Every state change is verifiable and reproducible across DCN signers.
 
-## Liquidation Flow
-When `CR < MCR (Minimum Collateral Ratio)`:
-1. The ESM emits a `LiquidationTriggered(vaultId)` event. 
-2. The coordination middleware publishes the corresponding liquidation instruction.
-3. DCN members reconstruct the PSBT based on committed vault parameters.
-4. The DCN signs and broadcasts the transaction to Bitcoin.
-5. Liquidated BTC is routed to the **DCN** while a dutch auction is started on the EVM layer. 
-6. The dutch auction returns stablecoins which replace the principal + debt of the line of credit being liquidated.
-7. Remaining BTC is **re-locked** into a new dVault UTXO under the same script conditions with an incremented nonce.
-This process can also enable **micro-lot liquidation**, minimizing borrower losses and preventing cascading liquidations during volatility.
+## Per-Signer Validation
 
-## Delinquency Flow
-Just before the time based lock is hit, the ESM checks if the credit line is fully paid off:
-1. The ESM emits a `DelinquencyTriggered` event. 
-2. The coordination middleware publishes the corresponding liquidation instruction.
-3. DCN members reconstruct the PSBT based on committed vault parameters.
-4. The DCN signs and broadcasts the transaction to Bitcoin.
-5. Liquidated BTC is routed to the **DCN** while a dutch auction is started on the EVM layer. 
-6. The dutch auction returns stablecoins which replace the principal + debt of the line of credit being liquidated.
-7. Remaining BTC is **re-locked** into a new dVault UTXO under the same script conditions with an incremented nonce.
+Each DCN member independently validates before co-signing. If any rule fails on any signer, the signing session aborts and **no signature is produced**.
+
+- Inputs reference the correct Vault UTXO and the correct MAST leaf.
+- Outputs are not controlled by DCN members (the sweep goes to the configured liquidation destination, not to any signer-controlled address).
+- Oracle price data is fresh and within deviation limits.
+- On-chain contract state confirms the position is liquidatable (CR breach or delinquent at term).
+- The Exit leaf's CSV has not expired (if it has, the borrower's Exit path dominates and the DCN must not spend).
+
+These checks run locally on every signer. They are application-layer signing policy, not a property of Lin24 itself. See [Key Lifecycle](/tech/key-lifecycle) for how this policy interacts with DKG and refresh.
+
+## Liquidation Flow (below liquidation threshold)
+
+1. Coordination Layer detects that a position has breached the liquidation threshold and opens a liquidation record.
+2. The liquidation record specifies a lot size (often a partial liquidation to minimise borrower loss and contain cascades).
+3. DCN members reconstruct the PSBT from committed vault parameters and validate locally.
+4. A Lin24 signing session produces the Schnorr witness; the transaction is broadcast to Bitcoin.
+5. Liquidated BTC is routed to the DCN-controlled sweep address and a Dutch auction opens on the EVM side against the **market that issued the credit line**.
+6. Auction proceeds in stablecoin retire the proportional debt and penalty, any BTC surplus is **re-locked into a Vault UTXO** under the same three leaves.
+
+Partial liquidation in small lots minimizes borrower losses and dampens liquidation cascades during volatility.
+
+## Delinquency Flow (end-of-term, unpaid)
+
+Near term end, the Coordination Layer checks whether the credit line is fully repaid. If not, the delinquency flow activates:
+
+1. Coordination Layer emits a delinquency signal for the position.
+2. DCN members reconstruct the PSBT based on the committed vault parameters.
+3. DCN signs with Lin24 and broadcasts.
+4. BTC is routed to the DCN sweep address, a Dutch auction opens on the EVM side, same as the undercollateralization flow.
+5. Auction proceeds retire debt and penalty, any surplus BTC is re-locked or returned to the borrower according to the market's post-delinquency policy.
+
+The on-chain spend is identical to the undercollateralization flow - same leaf and same signature path. Only the authorization reason and auction record differ.
 
 ## Key Guarantees
-- **Non-Custodial:** BTC remains locked in Taproot vaults on Bitcoin, only user + DCN or timelock can move funds.  
-- **Deterministic:** All state transitions and PSBTs are reproducible and verifiable across signers.  
-- **Censorship-Safe:** Borrowers can always reclaim funds through the Escape path after timelock expiry.  
-- **Market Segregated Risk:** Liquidation proceeds flow into each market based on where the liquidated credit line came from, reconciling BTC collateral and stablecoin liabilities within the Execution State Machine’s deterministic ledger.
 
-### ⚙️ Execution State Machine
----
-title: Execution State Machine
-description: Deterministic contract layer coordinating BTC vault state, signer authorization, and collateral enforcement.
----
-
-# ⚙️ Execution State Machine
-The **Execution State Machine (ESM)** functions as the canonical ledger for **BTC-backed liabilities**.  
-It connects Bitcoin vaults, signer sets, and stablecoin issuance through deterministic state transitions, ensuring BTC collateral can only move when programmatic conditions are satisfied.
-
-The ESM defines *authorization logic* for Bitcoin spends, while the actual spend construction and signing occur in the **[Deterministic Liquidation](/tech/dvaults-liquidation)** module.
-
-## Canonical Ledger for BTC-Backed Liabilities
-The onchain State maintains the **single source of truth** for:
-- Collateral ratios and liquidation thresholds.  
-- Active liabilities (stablecoin denominated debt).
-- Signer sets composition and epoch rotations.
-
-It **prevents rehypothecation** by ensuring every Bitcoin UTXO is represented exactly once in system state, binding liabilities directly to on-chain BTC collateral.
-
-## Bitcoin Aware State
-The ESM is natively coupled to Bitcoin:
-- **Oracle Feeds**: Medianized BTC/USD prices from trusted providers update collateral ratios in real time.
-- **Bitcoin Attestations**: Inclusion proofs for Taproot UTXOs and spends confirmations are submitted to ESM, ensuring the on-chain record mirrors actual Bitcoin state.
-
-This guarantees that liabilities within the application always correspond to **native Bitcoin collateral**, never synthetic or wrapped assets.
-
-## State Root Commitments
-A confirmed state transition finalizes a **state root** that encodes:
-- Vault positions and collateral ratios.  
-- Active signer set and epoch key.  
-- Marketplace balances (variable pool and fixed markets) and stablecoin liabilities. 
-
-BTC spends from a dVault are only valid if the signer set signs under the **aggregate threshold Schnorr key** bound to this state root. This creates a cryptographic anchor, BTC collateral cannot move unless the Execution Program has verified and authorized it.
-
-## Oracle Integration
-The ESM depends on a Native Oracle Hub to monitor BTC/USD prices and enforce collateralization rules.  
-- Medianized prices across trusted feeds are used for CR enforcement.  
-- Liquidation events are emitted when CR < MinCR, binding signer permissions to liquidation spends.  
-All oracle attestations are verifiable and time-bounded, no single oracle can trigger a liquidation unilaterally.
-
-## Distributed Custody Network Enforcement
-Distributed Custody operations are strictly deterministic and event-driven:
-- **Distributed Custody Enforcement**: Coinbase [cb-mpc](https://github.com/coinbase/cb-mpc) distributed signing rounds for Taproot vault keys.
-- **Contract-Gated Authorization**: Distributed Custody members can only sign if the ESM has emitted a valid event.
-- **No Rogue Signing**: Distributed Custody members do not decide when BTC can move - the ledger enforces it.
-
-This guarantees **programmatic enforcement of BTC custody**, BTC moves only when the cryptographic and economic conditions encoded in Surge’s Execution State Machine are met.
-
-:::info
-See [Deterministic Liquidation](/tech/dvaults-liquidation) for details on PSBT based execution and signer coordination.
-:::
+- **Non-custodial.** BTC stays on Bitcoin; the DCN can only spend via quorum signing, and only if per-signer validators accept the authorization reason.
+- **Deterministic.** PSBT templates and validator rules are reproducible across signers; disagreement aborts signing rather than producing a bad spend.
+- **Censorship-safe.** If the DCN refuses or disappears, the Exit path lets the borrower recover after the CSV delay.
+- **Market-segregated.** Auction proceeds reconcile debt in the specific market (variable or fixed-rate) that issued the credit line, not a shared accounting surface.
 
 ### ⏳ Unilateral Exit
+
 ---
+
 title: Unilateral Exit
-description: Time-locked Taproot path allowing sovereign BTC exit if DCN or execution layer fail
+description: CSV-timelocked Taproot path guaranteeing sovereign BTC recovery if the DCN or Coordination Layer disappears
 ---
 
 # ⏳ Unilateral Exit
 
-The **Unilateral Exit** (also called the *Timelock Exit Path*) is the final Taproot branch in every dVault. It guarantees that the vault owner can always recover their BTC, even if all DCN members or the Execution State Machine (ESM) become unavailable.
+The **Unilateral Exit** is the third and final path in every Vault. It guarantees that the borrower can always recover BTC on Bitcoin alone, without the DCN, the Coordination Layer, the oracle, or any Surge infrastructure.
 
-This path enforces **sovereignty at the script level** - not by protocol promises, but by Bitcoin’s native time-lock logic.
-
-Example Unilateral Exit Hypothetical
-    - Day 1 - Collateral is deposited and stablecoin is distributed
-    - Day 300 - EVM / DCN goes offline
-    - Day 365 + 7 - Borrower can unilaterally withdraw all collateral without paying back principal + interest
+This is **sovereignty at the script level**, enforced by Bitcoin's relative timelock primitive, not by a protocol promise.
 
 ## Why It Exists
-All other dVault spend paths require multi party coordination:
 
-If those external systems fail - DCN goes offline, oracle data stops updating, or the ESM halts - the user still needs a guaranteed way to recover funds.  
-That’s what this Taproot spend path enforces: **after a fixed delay, the user can unilaterally spend the vault**.
+Two of the three Vault paths require coordinated authorization:
 
-## Script Logic
+- **Repayment** needs both the borrower and the DCN.
+- **Liquidation** needs the DCN (authorized by the Coordination Layer).
 
-The unilateral exit leaf commits a simple, auditable Bitcoin script using `OP_CHECKLOCKTIMEVERIFY (CLTV)`:
+If those external systems fail - the DCN goes offline, oracle feeds stop, the Coordination Layer halts - the borrower must still be able to reclaim BTC. That is exactly what the Exit path enforces: after a fixed relative delay, the borrower alone can spend the output.
 
-```bitcoin
-# Timelock Exit Path
-# Spendable by user only after predefined timelock expiry
-AND(
-    OP_CHECKLOCKTIMEVERIFY,
-    OP_DROP,
-    OP_CHECKSIG(user_exit_key)
-)
+## Script
+
+```bitcoin-script
+OP_CHECKSEQUENCEVERIFY   # relative timelock
+OP_DROP
+ OP_CHECKSIG
+```
+
+- `OP_CHECKSEQUENCEVERIFY` (CSV, [BIP112](https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki)) is a **relative** timelock - the delay counts from the funding input confirmation, not from an absolute block height or wall-clock date.
+- Once the CSV expires, the borrower's Schnorr signature over their `userPubkey` is the only requirement for a valid spend.
+
+## Illustrative Timeline
+
+- Day 1 - Borrower deposits BTC to the Vault; stablecoin is issued.
+- Day 300 - Coordination Layer and DCN go offline and do not come back.
+- Day ~365 - CSV expires. Borrower constructs a spend that reveals the Exit path and broadcasts it.
+- Borrower's full collateral is recovered, with no repayment required because no one can counter-spend the Repayment leaf.
+
+## Properties
+
+- **No counter-party dependency after expiry.** The DCN, the oracle, and the Coordination Layer can all be permanently dead and the Exit leaf still spends.
+- **Relative, not absolute.** Every deposit gets its own ~1-year clock from its funding tx confirmation.
+- **Script-enforced, not trust-enforced.** There is no admin key, no governance override, and no upgrade path that can weaken this leaf for an already-funded UTXO. To change the Exit behaviour for *future* vaults, the vault template itself would have to be re-deployed; existing UTXOs retain the scripts they committed to at creation.
 
 ### 💬 FAQs
+
 ---
+
 title: FAQs
-description: Common questions about Surge's Bitcoin native architecture and design choices.
+description: Common questions about Surge's Bitcoin-native architecture and design choices
 ---
 
 # 💬 FAQs
 
-
 **Why not use DLCs (Discreet Log Contracts)?**
 
-DLCs are single-use oracle contracts designed for event-based payouts. Surge vaults are persistent and programmable, supporting recurring actions like borrow, repay, and partial liquidation.
-DLCs can’t maintain live vault states or multi-party control, so Surge uses Taproot + MAST scripts for reusable native logic. 
-Read more [here](/tech/dlcs)
+DLCs are single-use oracle contracts designed for event-based payouts. Surge's Vaults are persistent and programmable, supporting recurring actions like borrow, repay, partial liquidation, and unilateral exit.
 
+DLCs cannot maintain live vault state or multi-party control flows, so Surge uses **Taproot + MAST** scripts for reusable, native logic. Read more [here](/tech/dlcs).
 
 ---
 
-**Why not use a single key path instead of MAST spend paths?**
+**Why not use a single key-path spend instead of MAST leaves?**
 
-A single key path exposes all logic under one aggregated key, reducing flexibility and privacy.  
-**MAST** allows each spend condition - repayment, liquidation, and escape to exist as a separate branch, revealing only the one used and keeping other logic hidden.
+A key-path-only Taproot output exposes all logic under one aggregated key, reducing flexibility, observability, and unilateral-exit guarantees.
 
+**MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a [BIP341 NUMS internal key](/tech/vaults), so no aggregated signature can ever bypass the script branches.
+
+---
+
+**Where does my BTC actually live?**
+
+On Bitcoin. Your collateral is locked in a Pay-to-Taproot output committing three spend scripts (Repayment / Liquidation / Exit) under a NUMS internal key - there is no key-path spend, no wrapped BTC, and no bridge. The Vault is verifiable on a Bitcoin block explorer at all times.
 
 ---
 
 **What makes Surge non-custodial?**
 
-Even if signers go offline or refuse to cooperate, users can still unilaterally recover BTC after a timelock using the Escape Hatch path. The non-custodial guarantee comes directly from Bitcoin script.
+Two guarantees, both enforced by Bitcoin script rather than by promise:
 
-
----
-
-**Who controls the BTC?**
-
-BTC stays in your dVault, which no single entity can spend. Even if signers go offline, the escape hatch lets you unilaterally recover it.
+1. **Cooperative repayment requires the borrower's signature.** The DCN alone cannot move BTC out of a Vault via the Repayment leaf - both `userPubkey` and the DCN's aggregate `loanPubkey` must sign.
+2. **Unilateral Exit is always available.** Even if the DCN, the relayer, the oracle, and every Surge service permanently disappear, the borrower can recover their BTC by spending the Exit leaf after a relative timelock (`OP_CHECKSEQUENCEVERIFY`, ≈ 1 year). See [Unilateral Exit](/tech/exit).
 
 ---
 
-**Why does Surge use Lin22 instead of FROST?**
+**Why does Surge use Lin24 threshold Schnorr instead of FROST?**
 
-**Lin22** provides stronger fault tolerance and accountability.  
-If a signer misbehaves, Lin22 generates cryptographic proof identifying who failed, allowing to exclude signer for next requests, slashing and signer rotation without relying on the coordinator
+Both are threshold Schnorr protocols, but Surge runs on **[Lin24](/tech/distributed-custody-network)** (Lindell, CiC 2024 - see [ePrint 2022/374](https://eprint.iacr.org/2022/374)) for two reasons:
 
+- **Stronger simulation-based proofs.** Lin24 provides full simulatability; FROST's analysis is in a weaker model.
+- **Identifiable abort.** If a signer misbehaves during a session, Lin24 produces cryptographic evidence identifying the offender - useful for slashing, signer rotation, and exclusion from subsequent sessions without coordinator-only testimony.
+
+The trade-off is one extra round per signing session (3 rounds vs FROST's 2). Surge accepts that for the stronger guarantees.
 
 ---
 
-**What's the difference between variable and fixed rate?**
+**What's the threshold? How many signers does it take to move BTC?**
 
-**Variable rate** comes from the floating-rate market: the borrow rate moves with utilization. **Fixed rate** comes from dedicated fixed-rate tranches (e.g. 6%, 8%): you lock in a set rate for your loan. Liquidity is *moved* between the variable pool and fixed markets when borrowers take or repay fixed-rate loans—it isn't duplicated. LPs can opt in to fixed markets and set allocation limits. See [Credit Markets](/tech/credit-markets) for the full picture, or the [Surge Multi-Market Lending Pool](https://surgehq.notion.site/Surge-Multi-Market-Lending-Pool-2fc232deac9080218404ea7605e713c6) (Notion) for a design deep-dive.
+The DCN operates as a **3-of-n** Lin24 threshold signer for the current member set. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
+
+---
+
+**Why CSV (relative timelock) for Unilateral Exit, not CLTV (absolute height)?**
+
+`OP_CHECKSEQUENCEVERIFY` is **relative** - the ~1-year delay counts from the funding transaction's confirmation, so every deposit gets its own clock. That matches the lifecycle of a credit line (which starts at deposit) better than an absolute date that would expire all positions at the same moment regardless of when they opened.
+
+---
+
+**What's the difference between variable and fixed-rate markets?**
+
+**Variable rate** comes from a floating-rate market: the borrow rate moves with utilization. **Fixed rate** comes from dedicated fixed-rate tranches (e.g. 6%, 8%) where you lock in a set rate for your loan.
+
+Liquidity is **moved** between the variable pool and fixed markets when borrowers take or repay fixed-rate loans - it is not duplicated, and there is no rehypothecation. LPs can opt in to fixed markets and set per-market allocation limits. See [Credit Markets](/tech/credit-markets) for the full picture, or the [Surge Multi-Market Lending Pool](https://surgehq.notion.site/Surge-Multi-Market-Lending-Pool-2fc232deac9080218404ea7605e713c6) deep-dive.
+
+---
+
+**What happens to my BTC if I get liquidated?**
+
+Liquidation does not seize your full collateral. The DCN spends only enough BTC from the Vault to cover the lot opened against your position; that BTC enters a [Dutch auction](/tech/dvaults-liquidation) on the EVM side, and proceeds retire the proportional debt plus the liquidation penalty in the **specific market** that issued your credit line.
+
+Any BTC surplus after debt settlement is **re-locked into a Vault UTXO under the same scripts** - your position continues with reduced collateral and reduced debt rather than terminating. Partial-liquidation lots are sized to minimise borrower loss and dampen liquidation cascades.
+
+---
+
+**Where does the LP yield come from?**
+
+From real Bitcoin-collateralised borrowing, not from token incentives or circular farming. When borrowers draw USDC against their BTC Vaults, they pay a borrow rate set by the [interest-rate model](/tech/contracts#rate-curve--interestratemodel) (variable market) or by market creation (fixed-rate markets). That borrow interest, minus a reserve factor, accrues to LP shares.
+
+The advertised APY band reflects the high-utilization region of the rate curve in the current deployment and moves with actual borrow demand. Auction proceeds during liquidation also flow back into the originating market, so risk and reward are segregated per-market rather than socialised.
+
+---
+
+**What happens if the relayer is compromised?**
+
+A compromised relayer can delay actions, over-submit them, or fail to observe state. It **cannot**:
+
+- Move BTC - every Bitcoin spend requires a DCN-signed Schnorr witness over a committed Vault leaf.
+- Forge a borrower authorisation - every gasless flow is gated by a borrower signature (EIP-2612, EIP-3009, or EIP-712).
+- Mint USDC that wasn't burned - destination mints require a Circle-issued IRIS attestation over a real source-chain burn.
+
+The relayer is convenience infrastructure; it is not a custody or signing authority.
+
+### 🔄 Key Lifecycle
+
+---
+
+title: Key Lifecycle
+description: DKG, backup, verification, signing, proactive refresh, and recovery - the end-to-end lifecycle of a DCN key
+---
+
+# 🔄 Key Lifecycle
+
+A DCN key is not a file - it is a set of shares distributed across independent signer organizations, together with a published public key embedded in Vault scripts. This page describes the full lifecycle of such a key, from generation through refresh to disaster recovery, and the properties each stage provides.
+
+## Stages
+
+```
+1. Distributed Key Generation (EC-DKG)
+2. Backup (Publicly Verifiable Encryption)
+3. Verify backup     - key only enabled if every signer's proof is valid
+4. Secure storage    - envelope-encrypted, KEK in KMS / TEE
+5. Signing           - Lin24 (Schnorr / Bitcoin) or ECDSA-MPC (EVM)
+6. Proactive refresh - new shares, same public key
+7a. Recovery         - decrypt PVE backup, restore share
+7b. Rotation         - new DKG and on-chain migration
+```
+
+## 1. Distributed Key Generation (DKG)
+
+Signers run EC-DKG for the `t-of-n` threshold setup used for Bitcoin / Lin24. Feldman's Verifiable Secret Sharing is used so each party can verify its own share is consistent with the collective polynomial before accepting it - a malicious dealer cannot silently seed a bad share.
+
+The output is:
+
+- A single BIP340-compatible x-only public key - used as the `loanPubkey` in Vault paths.
+- One private share per signer.
+- No plaintext aggregate private key at any signer.
+
+The public key is recorded in coordination contracts and embedded in every new Vault. It never changes through deployment life except via explicit rotation (stage 7b).
+
+## 2. Backup - Publicly Verifiable Encryption (PVE)
+
+After DKG (and after every refresh), each signer encrypts its share under a **backup public key** and produces a zero-knowledge proof that the ciphertext correctly encrypts its true share. See [Disaster Recovery](/tech/disaster-recovery) for the detailed threat model.
+
+Two properties that matter for lifecycle:
+
+- **Backups are verified without being decrypted.** A verifier checks each ZK proof mathematically and gates key activation on all proofs passing. No one - not even Surge - holds the backup decryption key when the verification happens.
+- **Backup is interlocked with signing.** Signing is blocked if the PVE backup is older than the current key-share epoch. Every refresh cycle must complete `encrypt share → wrap DEK → persist → create PVE backup → verify backup` before signing resumes.
+
+## 3. Verify Backup
+
+The verification system checks all signers' ZK proofs as a batch. If any proof fails, the key is **not enabled for signing**, and the cluster re-runs DKG before putting the key into production. A partially-verifiable backup is worse than no backup because it gives a false sense of recoverability.
+
+## 4. Secure Storage
+
+Each signer serializes its share and encrypts it at rest using envelope encryption (AES-256-GCM with identity metadata bound into the AAD), with the Data Encryption Key (DEK) wrapped by a Key Encryption Key (KEK) that lives in hardware each signer organization controls independently. The KEK never leaves its hardware boundary. See [Key Shard Security](/tech/key-shard-security) for storage layout and KEK options.
+
+## 5. Signing
+
+A signing session is the only moment a share is briefly decrypted into process memory. The [Signing Policy](/tech/mpc-signing) page covers the validators that gate this. Memory hygiene controls (memory locking, secure zeroization, core-dump prevention) bound the exposure to the brief active session.
+
+## 6. Proactive Key Refresh
+
+Refresh is a threshold protocol in which all signers jointly generate **new share values for the same public key**. On-chain state is unchanged - addresses, vault scripts, and the public key stay identical. What changes is every signer's share.
+
+**Why refresh matters.** Old shares retain standalone value within their epoch: an attacker who slowly accumulates `t` shares from different compromised signers within the same epoch can reconstruct the key. Refresh invalidates the entire epoch: shares from two different epochs cannot be combined in a signing session, so an attacker's progress is reset the instant a new epoch begins.
+
+## 7. Recovery vs Rotation
+
+Two distinct incident classes demand two distinct responses:
+
+- **Loss or corruption** - a share is unrecoverable but there is no evidence of compromise. The PVE backup is decrypted by a quorum of recovery agents (threshold-gated, see [Disaster Recovery](/tech/disaster-recovery)), the share is restored, and a refresh immediately invalidates the restored share's epoch. Same private key, same addresses - no on-chain migration needed.
+- **Compromise or suspected compromise at or above threshold** - a new DKG is run to generate a fresh key. Funds are migrated on-chain from old addresses to new addresses. The old key is treated as toxic regardless of whether evidence conclusively proves compromise.
+
+Below-threshold compromise of a single share is handled by refresh alone: old shares (including the compromised one) are made cryptographically useless, and the signer in question is re-provisioned or rotated out via [reshare](/tech/reshare-onboarding).
+
+### 🛡 Key Shard Security
+
+---
+
+title: Key Shard Security
+description: Envelope encryption, per-organization hardware trust anchors, and the KeyProtector abstraction
+---
+
+# 🛡 Key Shard Security
+
+The signer protocol guarantees that no amount of compromise short of threshold produces a signature. What the protocol does not prescribe is **how each signer stores its share at rest**. That boundary - between MPC protocol logic and signer persistence - is where Surge applies envelope encryption, hardware-rooted key wrapping, and a hardened memory regime during signing.
+
+## The Problem
+
+A naive signer stores the share as plaintext in a local database. Anyone with filesystem access - a stolen backup, a compromised server, a careless export - obtains the raw share. Even though compromise of a single share is below threshold and thus not catastrophic, it erodes the temporal safety of refresh and starts the clock on a larger attack.
+
+## Envelope Encryption
+
+Each signer uses two-layer encryption:
+
+1. A randomly-generated **Data Encryption Key (DEK)** - unique per key share, per version, never reused - is used to encrypt the serialized share with **AES-256-GCM**. Identity metadata (key ID, party index, epoch version, KMS key reference) is bound into the Additional Authenticated Data (AAD). Any tampering with the ciphertext or metadata fails decryption.
+2. The DEK itself is **wrapped** by a **Key Encryption Key (KEK)** that lives in hardware. The KEK never leaves the hardware boundary. Unwrap is a remote operation from the signer's perspective - the wrapped DEK is sent to the KMS / HSM, the hardware unwraps it, and only the unwrapped DEK comes back.
+
+### Flow at Each Signer
+
+```
+DKG / refresh produces share
+   ↓
+serialize → AES-256-GCM with fresh DEK (AAD = identity metadata)
+   ↓
+Send DEK to KeyProtector (Cloud KMS / HSM) to be wrapped by the KEK
+   ↓
+Persist { encrypted_share, wrapped_DEK, metadata } in the signer database
+   ↓
+Zeroize the plaintext share and the raw DEK from memory immediately
+```
+
+At signing time:
+
+```
+Load { encrypted_share, wrapped_DEK, metadata } from DB
+   ↓
+KeyProtector.UnwrapDEK(wrapped_DEK) → plaintext DEK (briefly in memory)
+   ↓
+AES-256-GCM decrypt the share with DEK + AAD-verified metadata
+   ↓
+Run Lin24 / ECDSA-MPC with the plaintext share
+   ↓
+Zeroize share + DEK from memory
+```
+
+### Why Two Layers
+
+- **Rotation without re-encrypting all data.** Rotating the KEK re-wraps small DEKs; the large encrypted shards stay put.
+- **Performance.** KMS calls are 50–200ms. AES-GCM in userspace is microseconds. One KMS call per share load is acceptable.
+- **Defence in depth.** The encrypted shard and the wrapped DEK can be stored separately. An attacker who obtains only one of the two has no path to the plaintext.
+- **Integrity binding.** AES-GCM authenticates both the ciphertext and the bound metadata; Cloud KMS providers with AAD support enforce the same matching on their side during unwrap.
+
+## What Each Stored Record Contains
+
+A signer's at-rest record for a single key share holds, conceptually:
+
+- The **encrypted share**  and its authentication tag, with a unique random IV.
+- The **wrapped DEK**, encrypted by the signer's hardware-backed KEK.
+- A **KEK reference** identifying which KMS key wrapped the DEK, so rotation can find every record affected.
+- An **encryption-version marker** so the format can evolve without ambiguity.
+- An **audit timestamp** for forensic reconstruction.
+
+The metadata fields (key identity, party index, epoch version, KEK reference) are bound into the AES-GCM Additional Authenticated Data, so any tampering with either the ciphertext or the metadata fails decryption.
+
+## Where the KEK Lives - Per-Organization Hardware Trust
+
+The encryption chain must terminate at hardware **each signer organization controls independently**. There is no shared KMS account, no shared credentials, and no shared backup custodian across the DCN. The security of the whole network depends on different organizations not having a single point of failure in common.
+
+Each signer's host has its own root of trust chosen from the options below. The **KeyProtector** interface abstracts over these so the rest of the code sees only `WrapDEK` / `UnwrapDEK`.
+
+## In-Memory Protection During Signing
+
+Envelope encryption protects the share at rest. During signing, the share must be plaintext in process memory for the brief duration of the Lin24 / ECDSA-MPC protocol. The in-memory controls bound the exposure window:
+
+| Control | Effect |
+|---|---|
+| Memory locking | Prevents the OS from swapping share memory to disk |
+| Secure zeroization | Overwrites share memory with zeros immediately after the session, using constant-time clearing the compiler cannot optimise away |
+| Core-dump prevention | Crashes during signing cannot persist share material |
+| Runtime-level discipline | The language runtime is constrained so it cannot copy share-bearing memory into locations the code cannot reach |
+| Proactive refresh | After each session, the in-memory share is rotated to a new epoch and the old share value cannot be combined with current-epoch shares in any subsequent session ([Key Lifecycle](/tech/key-lifecycle)) |
+
+## Residual Risk
+
+Even with every control above in place, two residual risks remain non-zero:
+
+- **In-memory exposure during signing.** A root-level attacker who compromises the host during an active signing window could theoretically read the plaintext share. Memory locking, secure zeroization, and per-session refresh narrow this significantly.
+- **Operator error.** Software-based controls depend on correct deployment. A misconfigured node could undermine guarantees that hardened infrastructure controls are designed to maintain. Surge mitigates this with automated validation and release-gate checks, but does not consider it eliminated.
+
+Surge operates under the explicit assumption that the controls above reduce - not eliminate - these categories, and treats them in operational response planning accordingly.
+
+### 🧾 Signing Policy
+
+---
+
+title: Signing Policy
+description: How the DCN decides whether to sign - authentication, per-signer validation, the one-honest-node policy, and transport security
+---
+
+# 🧾 Signing Policy
+
+The [Lin24 protocol](/tech/distributed-custody-network) guarantees that no signature is produced without a threshold of honest signers. It does **not** decide *what* gets signed - that is enforced by Surge's signer policy and quorum access-structure configuration. This page describes the policy each signer enforces locally, the one-honest-node policy enforced across the cluster, and the transport guarantees between signers.
+
+## Defence-in-Depth Layers
+
+A spend request has to pass nine independent checks before a Bitcoin transaction leaves the DCN:
+
+| # | Layer | Role |
+|---|---|---|
+| 1 | Distributed trust | Lin24 threshold (`t-of-n`), no single party holds the key |
+| 2 | Encryption at rest | Envelope-encrypted key shards; KEK in HSM-class hardware |
+| 3 | Temporal invalidation | Proactive key refresh invalidates prior shards |
+| 4 | Policy enforcement | One honest node policy: Surge's party must be in every quorum |
+| 5 | Transport security | mTLS-only between signers with enforced peer identity |
+| 6 | Anti-replay | Session-ID binding; replayed requests rejected |
+| 7 | Memory hygiene | `mlock`, secure zeroization, core dumps disabled during signing |
+| 8 | Disaster recovery | PVE backups verified by ZK proof; threshold-gated recovery key |
+| 9 | Hardware attestation | TEE  optional per signer via KeyProtector abstraction |
+
+Layers 1, 3, and 4 are already complete and enforced. Layers 2, 5-9 have specific target architectures ([Key Shard Security](/tech/key-shard-security), [Disaster Recovery](/tech/disaster-recovery)) that are part of the current production-hardening track.
+
+## Per-Signer Validation
+
+Each signer independently evaluates every spend request against on-chain contract state and local invariants **before** participating in the Lin24 protocol. A signer that rejects the request contributes no share; if rejections put the cluster below threshold, the session aborts with no signature.
+
+Validator categories:
+
+- **Deposit & script validators.** Confirm the input UTXO matches a known Vault with the expected MAST tree; confirm the leaf being spent matches the authorization reason (Repayment vs Liquidation).
+- **Loan-state validators.** Read position state from contracts; confirm `debtUsd`, collateral ratio, and term match the authorization.
+- **Oracle validators.** Confirm the BTC/USD price used for the authorization is current, within deviation bounds, and consistent across signers.
+- **Output validators.** Confirm output addresses are in the expected set - user withdrawal address for Repayment, configured DCN sweep address for Liquidation. Reject any output going to a signer-controlled address.
+- **Timelock validators.** Confirm the Exit CSV on this vault has not yet expired. Once it has, the borrower's Exit path dominates and the DCN must refuse to spend.
+- **Session validators.** Confirm the session ID is well-formed and unused (anti-replay via a persistent `used_sessions` table).
+
+A request that fails any validator on any signer produces no signature on that signer. Because a Lin24 signing round needs at least `t` honest participants to produce an output, even a single well-placed validator failure stops the spend.
+
+## One Honest Node Policy
+
+The Lin24 protocol treats signers symmetrically, but Surge configures the signer set with a quorum access structure that requires the Surge policy-enforcing signer in every valid signing set (`AND(HonestSigner, THRESHOLD(m-of-n))`).
+
+This requirement is enforced at the signer and quorum level, not only as an application-layer convention. Local policy validators still run on every signer before shares are produced.
+
+- A hard enforcement point for critical invariants. A request that clears threshold math still does not sign unless the policy-enforcing signer accepts it.
+- Deterministic authorization behavior across the cluster. Requests that exclude or bypass the required signer are invalid by construction under the access structure.
+- Clear operational accountability. Approval and rejection decisions follow one auditable policy path instead of ad-hoc coordinator routing.
+- A deliberate liveness dependency on the required signer. If it is unavailable beyond timeout bounds, signing pauses even when other parties are online.
+- Higher availability requirements for policy infrastructure. Monitoring, failover readiness, and response procedures must be stronger for the required signer than for optional participants.
+
+**Failover.** A bounded, rate-limited, audit-logged override path lets multi-admin approval designate a temporary alternate policy-enforcing signer. Override windows are time-limited so an administrative compromise cannot permanently displace the required signer.
+
+## Transport Security
+
+All inter-signer traffic runs over mTLS with a cluster CA. Target production posture:
+
+- **TLS-only listeners.** No plaintext HTTP endpoint in production; the HTTP listener is disabled when TLS is enabled.
+- **Peer identity verified, not just CA chain.** Manual `VerifyPeerCertificate` callbacks enforce the expected Common Name / SAN for each peer index - a certificate signed by the cluster CA but with the wrong identity is rejected. This prevents a compromised party's cert from impersonating a different party in the quorum.
+- **Certificate pinning via IP SAN.** When signers are addressed by IP, certificates include the IP in the SAN to prevent address-swapping attacks.
+- **Internal routes require mTLS.** Administrative endpoints (e.g. reshare fragment transport) require a valid peer certificate; requests without a client cert are rejected.
+
+## Anti-Replay
+
+Every signing session carries a unique session identifier. Each signer records consumed identifiers and refuses any subsequent request that re-uses one. Identifier format is strictly validated so caller-controlled inputs cannot produce collisions.
+
+## Memory Hygiene
+
+Key-share material is only in plaintext memory for the brief duration of an active signing session. During that window:
+
+- Memory locking prevents the OS from paging share memory to disk.
+- Share buffers are cleared with constant-time secure zeroization (not a loop that the compiler can optimise away) immediately after the session returns.
+- Core dumps are disabled so a crash during signing cannot persist share material.
+- Runtime garbage-collection behaviour is constrained so the language runtime cannot copy share-bearing memory into locations the code cannot reach.
+
+Residual risk after these controls: a root-level attacker on the host during the active signing window could theoretically read share memory. Surge treats this as a bounded exposure window and reduces it through memory controls, refresh policy, and infrastructure hardening.
 
 ### 🌐 Oracle System
+
 ---
-title: 🌐 Oracle System
-description: Protocol-native BTC/USD oracle integrated directly into the Execution State.
+
+title: Oracle System
+description: Surge's BTC/USD price feed - medianized inputs, per-signer validation, deterministic enforcement of collateral health
 ---
 
 # 🌐 Oracle System
-The **Oracle System** is Surge’s native BTC/USD price feed mechanism. Unlike external oracle plug-ins, Surge treats price discovery as a **core module of the state machine**, ensuring collateralization logic is deterministic, and consensus-driven.
+
+The **Oracle System** is Surge's BTC/USD price feed. Unlike external oracle plug-ins, Surge treats price discovery as a **first-class part of the protocol**: the price that drives a borrower's collateral ratio is the same price every signer in the [Distributed Custody Network](/tech/distributed-custody-network) sees and validates against before producing a signature.
 
 The Oracle System powers:
-- **Collateral Monitoring** - updating each dVault’s live Collateral Ratio (CR).
-- **Liquidation Enforcement** - triggering liquidation conditions when CR < MinCR.
-- **System Integrity** - anchoring liabilities to verifiable BTC/USD market prices without relying on off-chain actors.
 
-By embedding price feeds directly into execution state, Surge eliminates discretionary trust and guarantees **programmatic, protocol-native valuation of Bitcoin collateral**.
+- **Collateral monitoring** - updating each Vault's live Collateral Ratio (CR).
+- **Liquidation enforcement** - surfacing positions for `checkHealth(...)` when `CR < MinCR` or near liquidation threshold.
+- **Per-signer validation** - every signing request is evaluated against the most recent confirmed price; stale or out-of-band prices abort signing rather than producing a bad spend.
 
-## Importance
-1. **Protocol-Native**  
-   - Oracle updates are finalized inside the Execution State itself.  
-   - Validators replicate the same aggregation logic, guaranteeing a single source of truth.
+The intent is that no single off-chain actor can move a position into liquidation, and no signer participates in a signing session whose authorisation is grounded in an unhealthy price.
 
-2. **Deterministic Medianization**  
-   - Multiple signed submissions per block.  
-   - Aggregated into a medianized price point, finalized with the block.  
-   - Ensures liveness and robustness against outliers or malicious feeds.
+## Design Goals
+
+1. **Protocol-native.** Price aggregation logic is replicated by the protocol itself; signers run the same aggregation independently and reach the same answer. There is no "oracle owner" who can rewrite the price.
+2. **Deterministic medianization.** Multiple signed price submissions per interval are aggregated into a single medianized price. Median is robust against a small number of outliers - a single faulty or malicious feed cannot shift the consensus price.
+3. **Fresh by construction.** Each price has a confirmed timestamp; downstream consumers (the contracts' health checks, per-signer validators) reject prices outside a configured staleness window.
+4. **Cross-signer agreement.** Per-signer validators reject a signing session if the price they observe locally diverges from the consensus price beyond a configured delta.
 
 ## Failure Safety
-- **Deterministic Fallbacks**  
-  If insufficient updates are available, the system reuses the last confirmed state until new data finalizes.
 
-- **Graceful Degradation**  
-  Execution halts collateral ratio updates temporarily, but state remains coherent and auditable.
+- **Deterministic fallbacks.** If insufficient fresh updates are available for a new median, the system reuses the last confirmed price until new data finalises. No "best guess" or extrapolation.
+- **Graceful degradation.** Rather than emitting a stale price, the protocol pauses CR updates and surfaces an alert. Existing positions remain readable; new health-trigger actions wait until fresh data is available.
+- **Manipulation resistance.** Medianization across multiple sources prevents single-source manipulation. Per-signer validators independently reject prices outside sanity bands (sudden deviations beyond a configured percentage), giving the system circuit-breaker behaviour against flash-mispricing or oracle attack.
 
-- **Manipulation Resistance**  
-  Medianization from multiple sources prevents single-source manipulation.
-  Validators rejecting invalid submissions ensures Byzantine resilience.
+## Per-Signer Oracle Validation
+
+Each DCN signer validates the price grounding of every authorisation before participating in a Lin24 signing session:
+
+- **Freshness.** The price is no older than the configured staleness window.
+- **Cross-signer consistency.** The price the signer sees locally agrees with the protocol's consensus price within a configured delta.
+- **Sanity bands.** The price has not deviated from the last confirmed value by more than a configured percentage over a single interval.
+
+If any check fails on any signer, that signer refuses to participate, the quorum is not met, and **no signature is produced**. The cost of an oracle anomaly is a delayed liquidation, not a wrong one.
+
+See [Signing Policy](/tech/mpc-signing) for how this validation interlocks with the rest of the per-signer policy stack.
 
 ## Oracle Events
-The Oracle System emits canonical events:
-- `PriceUpdated { medianPrice, timestamp }`
-- `CollateralRatioUpdated { vaultId, newCR }`
-- `LiquidationTriggered { vaultId, CR }`
 
-These events bind signer permissions and provide a complete audit trail for liquidation logic.
+The Oracle System emits canonical events consumable by the [Smart Contracts](/tech/contracts), the [Relayer](/tech/relayer), and external observers:
+
+- `PriceUpdated { medianPrice, timestamp }`
+- `CollateralRatioUpdated { positionId, newCR }`
+- `LiquidationTriggered { positionId, CR }`
+
+These events form a complete, replayable audit trail for liquidation decisions: any observer can reconstruct, from public data, exactly which price drove which collateral-ratio update and which liquidation.
+
+## Roadmap
+
+The oracle path will continue to evolve toward broader source diversity, public transparency of submitter identities and signed-update history, and a published deviation budget so any party can independently verify that the protocol's medianized output remained inside policy at every interval. The destination state is a feed whose correctness can be audited end-to-end by anyone, not trusted by configuration.
 
 ### 🔧 Technical Overview
+
 ---
+
 title: Technical Overview
-description: Understanding Surge's Bitcoin custody, coordination program, and cross-chain liquidity.
+description: How Surge composes Bitcoin Taproot vaults, a distributed custody network, EVM credit contracts, and CCTP v2 into one Bitcoin-native credit market
 ---
 
 # 🔧 Technical Overview
 
-Surge is a Bitcoin-native credit market built on **programmable Taproot vaults**, called **dVaults**. 
+Surge is a Bitcoin-native credit market. Borrowers lock real BTC under programmable Taproot scripts, lenders supply stablecoins to a multi-market credit pool, rates, liquidation, and settlement are coordinated by audited code rather than custodians. The architecture is built so a borrower can always recover their BTC on Bitcoin alone, and so an LP's claim is always backed by a verifiable on-chain position.
 
-Each dVault locks BTC under predefined scripted conditions that allow repayment, liquidation, delinquency, transfer, and unilateral exit. All logic is enforced by Bitcoin script, no wrapped assets or no custodians.
+## What Surge Is Made Of
 
-A dVault is co-managed by the user and the Distributed Custody Network. 
-- **The User**, who provides BTC as collateral
-- **The Distributed Custody Network**, a decentralized set of threshold signers that validate state transitions. 
+The system is built from four cooperating components. Each owns a distinct layer of the protocol, everything else in the stack supports one of these.
 
-Both must provide Schnorr signatures to authorize any movement of BTC, ensuring coordination without compromising user custody.
+| Component | Where it lives | What it owns |
+|---|---|---|
+| **Taproot Vaults** | Bitcoin | The collateral. Programmable spend conditions (Repayment / Liquidation / Exit) committed at vault creation. |
+| **Distributed Custody Network (DCN)** | Off-chain decentralized signer organisations | Threshold Schnorr signatures on Bitcoin spends. No signer holds a complete key, no quorum can move BTC outside policy. |
+| **Smart Contracts** | EVM (Base, Ethereum) | The debt ledger, share-based liquidity pool, interest-rate model, and Dutch-auction liquidation. |
+| **Relayer & Workers** | Off-chain service | The coordinator. Watches Bitcoin, drives the contracts, proposes spends to the DCN, and finalises CCTP transfers. Holds no custody. |
 
+A **stablecoin liquidity layer**  routes USDC across chains so the pool stays canonical regardless of where supply originated. A **per-signer oracle path** feeds BTC/USD into health calculations.
 
+## How They Fit Together
 
-Surge uses an Execution State Machine (ESM) to coordinate vault logic and monitor collateral health. The ESM functions as a deterministic coordination layer operated by distributed custody nodes. It observes Bitcoin vault data, oracle price feed, and distributed custody proofs, then produces verifiable state commitments when spend conditions are satisfied.
+1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key (key-path spend disabled). The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
+2. **Relayer observes the deposit** at the configured confirmation depth and calls `VaultManager.submitLoan(...)` on the EVM side. A `PositionID` is minted and the stablecoin liability is recorded on the canonical ledger.
+3. **Borrower receives USDC** - drawn from `LiquidityPool` on Base today, with Ethereum routing supported through CCTP v2. Additional chains are planned.
+4. **Position lives.** The relayer streams oracle price updates into the position's health calculation; workers monitor the collateral ratio against `MinCR` and the liquidation threshold.
+5. **Closure** happens on one of three Bitcoin spend paths:
+   - **Repayment** (cooperative) - borrower repays USDC, the DCN co-signs a release of BTC to the borrower's withdrawal address.
+   - **Liquidation** (DCN, authorised) - collateral ratio breaches the liquidation threshold, or the credit line is past term and unpaid, the DCN signs a sweep to a Dutch auction, proceeds retire the originating market's debt.
+   - **Unilateral Exit** (borrower alone, after CSV) - if everything else fails, the borrower spends the Exit leaf after a relative timelock and walks away with their BTC.
 
-When a vault’s collateral ratio (CR) drops below its per market safety threshold, the **liquidation path** activates automatically.  BTC is spent to the DCN, which starts a dutch auction process. The proceeds from the auction return to the market from which the credit line was liquidated.  
+## Why Each Layer Exists
 
-When a vault’s term expired and the credit line is not fully repaid, the **delinquency path** activates automatically.  BTC is spent to the DCN, which starts a dutch auction process. The proceeds from the auction return to the market from which the credit line was liquidated. Any remaining BTC is returned to the borrower.  
+**Taproot vaults instead of a custodial wallet.** Collateral lives on Bitcoin under script. No bridge, no wrapped BTC, no "trust us, we hold the keys." If the entire Surge stack disappears, the Exit leaf still spends.
 
-Other paths **repayment** and **time locked recovery (Unilateral exit)** are enforced directly through Taproot conditions, ensuring execution by code, not trust. 
+**A distributed custody network instead of a multi-sig.** Multi-sig publishes the policy (you can see who signed) a threshold Schnorr aggregate looks like one signature on chain and never reveals which signers participated. That is better for privacy, fee efficiency, and access-structure evolution. Policy enforcement moves into per-signer validators that abort signing if the request does not match the on-chain authorisation.
 
-The protocol’s liquidity layer is **multi-market**: a **variable** pool and **fixed-rate** markets, with liquidity moving between them on borrow and repay.
+**EVM contracts instead of a Bitcoin-only ledger.** Bitcoin script is the right place to enforce custody and recovery. It is the wrong place to run a share-based interest-bearing liquidity pool with multiple market types and a Dutch-auction liquidation engine. The EVM contracts are small, audited, and own only what Bitcoin is bad at - everything else stays on Bitcoin.
+
+**A relayer instead of "users do everything themselves."** Borrowers don't want to monitor confirmations, submit health checks, hold gas on three chains, or chase IRIS attestations. The relayer does that and pays the gas. Crucially: it cannot move BTC, cannot forge an authorisation, and cannot mint USDC that wasn't burned - every material action requires either an on-chain authorisation or a DCN-signed witness.
+
+## The Trust Boundary
+
+Bitcoin script enforces custody. Threshold cryptography enforces "no single signer compromise loses funds." EVM contracts enforce accounting. The relayer is convenience infrastructure. **A compromised relayer can delay things, it cannot move BTC, cannot mint debt, and cannot cause LPs to lose principal.**
 
 ### 💰 Repayment Path
+
 ---
+
 title: Repayment
-description: Normal closure of a dVault enforced by Taproot script and threshold Schnorr signatures
+description: Cooperative closure of a Vault via the vaultId-bound Repayment path
 ---
 
 # 💰 Repayment Path
 
-The **Repayment Path** is the normal closure path of a dVault. It defines how BTC leaves the vault when the loan is repaid. There’s no bridge, contract, or wrapped asset - only a Bitcoin spend that becomes valid once the correct signatures are presented.
+The **Repayment path** is the cooperative closure path of a Vault. It releases the borrower's BTC once the stablecoin debt is settled. There is no bridge, wrapped asset, or custodial hand-off - only a Bitcoin spend that becomes valid when both the borrower and the DCN sign against the path bound to this specific position.
 
 ## How It Works
 
-1. **Debt Reduction**
-   - The borrower repays stablecoins (e.g., USDC) to the protocol treasury via the `Repay()` function.
-   - The Execution Layer validates the transfer and updates the `debtUsd` field of the vault ledger.
+1. **Debt reduction.** The borrower repays stablecoins (e.g. USDC) to the protocol via `VaultManager.repay(...)` (or the gasless EIP-3009 variant `repayWithERC3009`). The on-chain ledger updates `debtUsd` for the position.
+2. **Release authorization.** Once the on-chain ledger reflects the repayment and the position is healthy, the [Relayer](/tech/relayer) requests a Repayment-leaf spend for a proportional BTC amount; the DCN's per-signer validators independently confirm the on-chain state before participating.
+3. **Co-signing.** The DCN runs a Lin24 threshold Schnorr signing session to produce the `loanPubkey` signature, and the borrower's wallet produces the `userPubkey` signature. The signatures are assembled into the Repayment witness.
+4. **Full closure.** When `debtUsd == 0`, the whole UTXO can be spent. BTC is returned to the borrower's withdrawal address in a single transaction.
 
-2. **Collateral Unlock**
-   - Once the repayment is confirmed, a release signal is emitted for a proportional BTC amount.
-   - Signers verify the repayment event and co-sign a spend via the **Repayment ScriptPath** inside the Taproot tree. They cannot trigger this spend independently - the borrower’s authorization is always required.
-
-3. **Full Repayment**
-   - When total `debtUsd = 0`, the dVault can be fully unlocked.
-   - The user + signer quorum co-sign the Bitcoin spend transaction.
-   - BTC is returned to the depositor’s withdrawal address.
-
-## Script Anatomy
-Each repayment branch commits the following tapscript at vault creation:
+## Script
 
 ```bitcoin-script
-# User + signer network both must sign with their signature keys.
-# The execution layer attests repayment but cannot move funds.
-AND(
-    OP_CHECKSIG(user_pubkey),
-    OP_CHECKSIG(lin22_signer_set_key)
-)
+                 # 32-byte vault commitment
+OP_DROP
+  OP_CHECKSIG
+  OP_CHECKSIGADD
+OP_2
+OP_NUMEQUAL
 ```
 
-Repayment is the simplest — yet most important — path in Surge’s lifecycle, proving that Bitcoin can be used as dynamic collateral without leaving its native chain.
+The leading `OP_DROP` is a commitment, not a runtime check - it forces the leaf (and therefore the taptree, the Taproot address, and the script tree root) to be unique to this position, so a valid witness for one Vault cannot be replayed against another.
 
-### 🔐 Self Custody User Wallet
+The final `OP_2 OP_NUMEQUAL` requires exactly two valid signatures - both the borrower *and* the DCN aggregate key must sign. Neither side can close the Vault without the other via this path.
+
+## Properties
+
+- **User custody preserved.** The DCN cannot use Repayment to move BTC without the borrower's signature.
+- **DCN attestation preserved.** The borrower cannot close the vault without the DCN's signature, which is only produced after the Coordination Layer confirms the repayment.
+- **BIP340-compatible signature component.** The DCN authorization signature itself is standard Schnorr.
+
+### 🛰 Relayer & Workers
+
 ---
-title: Self Custody User Wallet
-description: Architecture and lifecycle of the user’s self-custodial wallet leveraging hardware-isolated execution environments for key generation, signing, attestation, and verifiable self-custody.
+
+title: Relayer & Workers
+description: The service layer that keeps Bitcoin state and contract state synchronized
 ---
 
-# 🔐 Self Custody User Wallet
+# 🛰 Relayer & Workers
 
-The Surge app today holds the borrower’s wallet and is designed with **self-custody at its core**.
-Every wallet instance ensures that private keys are created, stored, and used exclusively under the authenticated user’s control.  
+Between Vaults on Bitcoin and the debt ledger on EVM sits a service whose job is to keep both sides in sync: observe deposits and withdrawals, drive contract calls, coordinate with the DCN for spends, and complete cross-chain transfers.
 
-This architecture grants the user full authority over 
-- signing actions
-- key export
-- stablecoin distribution
-- return address for various spend paths
+The relayer **does not hold custody** of BTC. It does not hold DCN signing keys. It can propose spends and submit EVM transactions, but BTC movement still requires DCN quorum signatures and contract-side authorization.
 
-The signing environment executes as a sealed runtime within the underlying infrastructure. 
-Once instantiated, its memory and code are cryptographically measured and isolated even operators, administrators, or the host kernel cannot read, export, or modify a user’s private key.
+## Service Shape
 
+- **Network-aware processing.** Mainnet and testnet workloads are isolated.
+- **Worker model.** Independent workers own specific state transitions and reconcile through persistent state.
+- **Idempotent retries.** Replayed work converges to the same result using stable identifiers.
 
+## Workers
+
+Each worker owns a slice of state and runs independently. Workers reconcile through persistent workflow state and are idempotent on retry.
+
+### `btc-indexer`
+
+Tracks BTC deposits from the moment a user's deposit address is issued through confirmation.
+
+- Watches the Blockstream / Esplora indexers (primary + fallback) for transactions to each user's derived Taproot address.
+- Advances deposit state through discovery → mempool → N-confirmation thresholds.
+- At the confirmation threshold, triggers `submitLoan(...)` on `VaultManager` to open the credit line.
+- Handles reorgs by rolling deposit state backward and re-observing.
+
+### `loan-event-listener`
+
+Ingests on-chain events from `VaultManager`, `AuctionHouse`, and `LiquidityPool`.
+
+- Streams events via WebSocket where available; falls back to HTTP polling with bounded block ranges.
+- Persists each event, sequences them per position, and dispatches to internal handlers.
+- Handlers drive follow-up calls. For example, successful repayment triggers withdrawal authorization and liquidation events drive BTC-side sweep coordination with the DCN.
+
+### `withdrawal-confirmation-worker`
+
+When a borrower requests BTC withdrawal after partial or full repayment:
+
+- The DCN produces a spend for the user's configured withdrawal address.
+- This worker watches for the transaction on Bitcoin, verifies the sats moved and confirmations threshold, and calls `confirmWithdrawal(...)` on chain so the position accounting is finalized.
+- Tolerances are bounded: amount is checked against the pending withdrawal minus an audit-configurable dust tolerance; timestamp is checked with a grace window to tolerate block-timestamp drift.
+
+### `loan-health-monitor`
+
+Scans active positions for health-factor breaches.
+
+- Fetches current BTC/USD price from the Oracle System.
+- Computes `CR` per position using stored collateral and debt.
+- Submits `checkHealth(positionId)` so `VaultManager` can open an auction if liquidation conditions are met.
+- Supports dry-run operation for safe staging validation.
+
+## Gasless Flows
+
+Surge supports gasless borrower actions:
+
+- **USDC relay** - the relayer pays gas; the borrower signs authorization payloads.
+- **Repay and withdraw** - borrower signatures authorize the action, and the relayer submits the transaction.
+- **Cross-chain routing (CCTP)** - the relayer coordinates burn-and-mint flow without custody of user funds.
+
+In every gasless flow the **borrower's signature is what authorizes the action**. The relayer pays gas; it does not authorize.
+
+## Failure & Retry Semantics
+
+- **Idempotency.** Workers use stable keys (position id, deposit tx hash, CCTP nonce) so retried work converges on the same outcome.
+- **Persistence.** Every external action is persisted before submission. Crashes resume from persisted state, not memory.
+- **Backoff.** Destination-chain gas shortfalls, attestation delays, and RPC flakiness use bounded exponential backoff with timeouts so no worker spins indefinitely.
+
+## Liveness - What If the Relayer Stops
+
+The relayer is convenience infrastructure, not a trust anchor. When it is unavailable, the system pauses for users; it does not lose funds and it does not change what is true on chain.
+
+**What stays safe.**
+
+- BTC remains under Taproot script on Bitcoin. Nothing the relayer does or fails to do can move it.
+- EVM contract state is canonical - debt, shares, and position NFTs are unchanged by relayer downtime.
+- The **Unilateral Exit** path stays available to any borrower whose CSV timelock has elapsed. A borrower who wants out does not need the relayer, the DCN, or any Surge-operated service to recover their BTC.
+
+**What gets delayed while it is down.**
+
+- **New borrows.** A BTC deposit still lands on Bitcoin, but `submitLoan(...)` is not called until the indexer catches up, so USDC is not disbursed yet.
+- **Health checks and liquidations.** Oracle-driven health submissions pause; a position that would otherwise have been liquidated stays in its pre-event state until monitoring resumes.
+- **Withdrawal finalization.** A DCN-signed BTC withdrawal may still broadcast, but `confirmWithdrawal(...)` on EVM only fires once the confirmation worker sees the transaction.
+- **Cross-chain mints.** Pending CCTP burns wait for the attestation worker to submit `receiveMessage` on the destination chain. Funds are not lost - the burn is already recorded with Circle - the destination mint is simply delayed.
+- **Gasless actions.** Repay / withdraw / bridge calls that rely on the relayer to pay gas queue until it returns; a user can always submit the same action themselves from a funded wallet.
+
+The user-visible shape of an outage is a pause, not a loss. Positions sit where they were; new work begins flowing again once the service is back.
+
+## What the Relayer Is Not
+
+- **Not a custody service.** BTC is never at the relayer. Any BTC move requires a DCN-signed Taproot spend.
+- **Not the signing authority.** The relayer proposes spends; per-signer validators in the DCN decide whether to sign.
+- **Not the source of truth.** Canonical state is Bitcoin plus EVM contracts; relayer persistence is workflow state.
+
+A compromised relayer can delay actions, over-submit them, or miss events. It cannot move BTC, cannot forge borrower authorization, and cannot bypass Vault spend rules.
+
+## References
+
+- [Distributed Custody Network](/tech/distributed-custody-network) for DCN signing.
+- [Smart Contracts](/tech/contracts) for the EVM side.
+- [Credit Markets](/tech/credit-markets) for cross-chain liquidity unification.
+
+### 🔁 Reshare & Signer Onboarding
+
+---
+
+title: Reshare & Signer Onboarding
+description: Adding, removing, and rotating signer organizations without changing the public key or on-chain addresses
+---
+
+# 🔁 Reshare & Signer Onboarding
+
+Adding a new signer organization to the DCN, retiring an existing one, or changing the threshold are not operations a Lin24 refresh can do. Refresh produces new shares for the **same** access structure. **Reshare** produces new shares for a **different** access structure - a new party count, a new threshold, a new set of signer organizations - while keeping the same public key and therefore the same on-chain addresses, vault scripts, and active commitments.
+
+A reshare is the only way to evolve the DCN's membership safely. It is a cryptographic primitive, not a configuration change.
+
+## Why Reshare Is Its Own Protocol
+
+Three things make reshare hard:
+
+1. **The public key must not change.** On-chain, the public key is baked into every active Vault (`loanPubkey` in the Repayment and Liquidation paths) and into every open position. Changing it would orphan live collateral.
+2. **Old shares must become cryptographically useless.** If an old signer is being removed, the old access structure must not retain signing power. A naive "new signers get new shares, old signers keep their old shares" approach leaves the old quorum able to sign indefinitely.
+3. **Failures must be recoverable without partial-state danger.** If the protocol is interrupted between old shares and new shares being committed, the cluster must end up in a clearly-defined state - either fully on the old access structure or fully on the new one - not in a hybrid state where neither quorum can sign.
+
+## Four-Phase Reshare
+
+The reshare protocol, as orchestrated by the DCN, runs in four phases. The transitions between phases are designed so a failure at any point is recoverable.
+
+### Phase 1 - Fragment Generation
+
+Old parties generate cryptographic fragments from their existing shares, each fragment destined for a specific new party. Fragments are signed and encrypted in transit. No new key material is committed yet.
+
+### Phase 2 - Fragment Collection
+
+New parties collect fragments from every old party. A new party that hasn't received its full set cannot progress; a fragment whose signature or encryption fails authentication is rejected and the affected old party is flagged.
+
+### Phase 3 - Reconstruction & Public-Key Verification
+
+Each new party mathematically reconstructs its new share from the fragments it received and verifies that the new set of shares produces the **same public key** as before. This is a non-negotiable check: if the reconstructed key differs from the committed on-chain key, the protocol aborts and the new shares are discarded.
+
+Reconstructed shares are written to a **staging** table, not the live one. Signing continues to use the old shares throughout phases 1–3.
+
+### Phase 4 - Promotion
+
+The leader confirms all new parties have successfully reconstructed and verified. Promotion is a **single database transaction per party** that atomically swaps staged shares into live slots and **archives the old shares for destruction**. Signing resumes using the new access structure.
+
+If anything fails between phases 3 and 4, the old shares remain live and the reshare can be retried or aborted cleanly - no partial state where neither quorum can sign.
+
+## Transport Security for Reshare Fragments
+
+Reshare fragments in transit are the most sensitive traffic in the network - anyone who intercepts all fragments from all old parties to a specific new party can reconstruct that new party's share. Transport has three requirements:
+
+- **mTLS with enforced peer identity.** Fragment transport routes are required to present a client certificate; unauthenticated requests are rejected in staging and production.
+- **End-to-end encryption to the new party's KeyProtector.** The new party must have its [KeyProtector](/tech/key-shard-security) configured and validated - `WrapDEK` / `UnwrapDEK` working against its own hardware - **before** any fragment is sent. Fragments are encrypted to a key bound to that KeyProtector.
+- **No fragment persistence in cleartext at any hop.** The leader routes but does not store fragment plaintext; new parties decrypt and reconstruct without writing the fragments' cleartext to disk.
+
+## When Reshare Runs
+
+| Trigger | Action |
+|---|---|
+| New signer organization joining | Add party; change from `t-of-n` to `t-of-(n+1)` (or adjust threshold explicitly) |
+| Signer organization leaving | Remove party; change from `t-of-n` to `t-of-(n-1)` |
+| Threshold change (policy decision) | Same set of parties, new `t` |
+| Key-share compromise at any single signer | Remove and re-add that signer with fresh KeyProtector; old shares destroyed |
+| Periodic rotation (policy-driven) | Rotate the access structure itself to bound any single epoch's exposure, independent of refresh |
+
+Reshare is distinct from [refresh](/tech/key-lifecycle#6-proactive-key-refresh): refresh keeps the access structure and rotates shares; reshare changes the access structure.
+
+### 🔐 Self-Custody User Wallet
+
+---
+
+title: Self-Custody User Wallet
+description: Surge's borrower wallet - sealed key generation and signing inside hardware-isolated execution environments, encrypted export, and cryptographic attestation
+---
+
+# 🔐 Self-Custody User Wallet
+
+The Surge app holds the borrower's wallet and is designed with **self-custody at its core**. Every wallet instance ensures that private keys are created, stored, and used exclusively under the authenticated user's control. The user - not Surge - has authority over signing actions, key export, stablecoin distribution, and the return address used by every spend path.
+
+The signing environment runs as a sealed runtime within hardware-isolated infrastructure. Once instantiated, its memory and code are cryptographically measured and isolated so that operators, administrators, and the host kernel cannot read, export, or modify a user's private key.
 
 ## Authentication & Key Lifecycle
 
-### 1. Email Login & Session Initialization
-- The user authenticates using **email + OTP**.  
-- Upon successful verification, a short-lived **JWT session token** is issued.  
-- This token is used to authorize enclave operations during its validity period.
+### 1. Email login & session initialization
 
-### 2. Deterministic Key Generation
-- On first login, the instance queries the enclave for an existing keypair.  
-- If absent, the enclave **generates a new asymmetric keypair** internally.
-- The **public key** is returned and mapped as `{ userID, email, publicKey }`.
-- The **private key** remains sealed inside isolated memory and never exposed or serialized outside the boundary.
+- The user authenticates with **email + OTP**.
+- A short-lived **JWT session token** is issued on successful verification.
+- The token authorizes enclave operations during its validity window; expiry forces re-authentication.
 
-### 3. Transaction Signing Flow
-- The client submits a transaction payload with the active JWT.
-- The backend validates the session and relays `{ userID, txData, signatureRequestID }` to the enclave.
+### 2. Deterministic key generation
+
+- On first login the runtime queries the enclave for an existing keypair bound to the user.
+- If none exists, the enclave **generates a new asymmetric keypair internally**.
+- The **public key** is returned to the application layer and mapped as `{ userID, email, publicKey }`.
+- The **private key** stays sealed inside isolated memory and is never serialized outside the trust boundary.
+
+### 2b. Optional wallet import (mnemonic)
+
+- If mnemonic import is enabled for a deployment, users can import an existing wallet during setup.
+- The mnemonic is used only to derive key material inside the sealed runtime.
+- After import, only sealed key state is retained; the mnemonic is not kept as persistent plaintext.
+- The user confirms the derived public key before activating the imported wallet.
+
+### 3. Transaction signing flow
+
+- The client submits a transaction payload alongside the active JWT.
+- The backend validates the session and forwards `{ userID, txData, signatureRequestID }` into the enclave.
 - The enclave verifies request authenticity and authorization before signing.
-- Signing occurs inside the secure environment using the private key, only the signature is returned.
+- Signing happens entirely inside the sealed environment; only the resulting signature leaves the boundary.
 
-### 4. Controlled Key Export
-- A user may export their private key for external custody.
-- The system re-prompts for OTP and encrypts the exported key using a user defined passphrase.  
-- The encrypted key blob serves as a portable, user-controlled backup.
+### 4. Controlled key export
 
-## Self-Custody Characteristics
+- A user can export their private key for self-managed custody.
+- Export re-prompts for OTP and encrypts the key with a **user-defined passphrase**.
+- The encrypted blob is portable: the user can store it offline, in another wallet, or in third-party custody.
+
+## Self-Custody Properties
 
 | Property | Enforcement |
-|-----------|-------------|
-| **User Ownership** | All cryptographic operations originate from keys generated under the user’s control. |
-| **Key Isolation** | Keys are sealed inside protected compute environments, isolated from application and infrastructure layers. |
+|---|---|
+| **User ownership** | Cryptographic operations originate from keys generated under the user's control. |
+| **Key isolation** | Keys are sealed inside protected compute environments, isolated from application and infrastructure layers. |
 | **Portability** | Encrypted key export allows migration and independent storage. |
+| **No silent recovery** | Surge has no path to reconstruct a private key without the user's passphrase or active session. |
 
-## Hardware Backed Isolation
+## Hardware-Backed Isolation
 
-Wallet key management operates within hardware-backed **trusted execution environments (TEEs)**.  
-Each instance produces a **cryptographic attestation report** at initialization:
-- Verifies that the environment runs on **genuine, unmodified hardware**.  
-- Ensures the loaded code matches the **approved wallet binary**.  
-- Any change in code or environment alters the attestation fingerprint and automatically revokes trust.
+Wallet key management runs inside hardware-backed **Trusted Execution Environments (TEEs)**. Each instance produces a **cryptographic attestation report** at initialization that:
 
-This mechanism provides verifiable proof that the wallet enclave is authentic, unmodified, and operating in a known-good state.
+- Verifies the environment is running on **genuine, unmodified hardware**.
+- Verifies the loaded code matches the **approved wallet binary**.
+- Revokes trust automatically if either the code or the environment changes - any tamper alters the attestation fingerprint.
+
+This produces verifiable proof that the wallet enclave is authentic, unmodified, and operating in a known-good state.
 
 ## Versioning & Update Lifecycle
 
-Enclave binaries are immutable at runtime. Updates or bug fixes require a versioned redeploy process:
-1. Build a new enclave image (with updated wallet logic).
-2. Deploy and verify its new measurement hash via attestation.
+Enclave binaries are immutable at runtime. Updates and bug fixes go through a versioned redeploy:
 
-This wallet architecture unifies user sovereignty, hardware-rooted security, and key portability, providing a deterministic self custodial foundation for Surge's Bitcoin-native credit market.
+1. Build a new enclave image with the updated wallet logic.
+2. Deploy and verify its new attestation measurement.
+3. Migrate users to the new measurement only after the fingerprint is publicly recorded.
+
+This guarantees that every running wallet instance corresponds to a code version that has been measured, attested, and observable from the outside.
+
+## Roadmap
+
+The Confidential VM platform underpinning the wallet enclave continues to evolve. The current roadmap includes broader hardware coverage (additional CVM platforms beyond the current deployment), public attestation transparency for the wallet's measurement history, and tighter integration between the wallet's attestation and the [Distributed Custody Network](/tech/distributed-custody-network)'s signing-policy validators so that authorisations from this wallet can be recognised by the DCN as originating from a measured, sealed environment.
+
+The intent stays the same regardless of platform: the user holds the key, the runtime never reveals it, and any change to the runtime is publicly verifiable.
 
 ### 🔄 Transfers
+
 ---
+
 title: Transfers
-description: How loan transfers between Surge and third-party marketplaces work via borrower, DCN, and third-party signing.
+description: How cooperative position transfers between Surge and third-party marketplaces are coordinated
 ---
 
 # 🔄 Transfers
 
-The **Transfer** path allows a borrower to move a credit facility (or collateral) to or from a third-party marketplace. This path is encoded as a spend condition that requires **three-way authorization**: the borrower, the Decentralised Custody Network (DCN), and the third-party marketplace (or its designated signer).
+Transfers allow a borrower to move a credit position to or from a third-party marketplace through a coordinated process across contracts and signer policy.
 
-The exact on-chain encoding and coordination flows are not yet finalised; what follows is a generic description of the intended process.
+There is no separate on-chain "Transfer leaf" in the Taproot script tree. Transfer settlement is handled through cooperative authorization and state transitions.
 
-## Transfer flow (generic)
+## Transfer Flow
 
-1. **Borrower request** — The borrower initiates a transfer (e.g. moving the loan out of Surge’s credit market into another marketplace, or the reverse).
-2. **Coordination** — The Execution State Machine (or a coordination layer) validates the request and prepares the transfer instruction. The third-party marketplace is notified and confirms willingness to accept (or release) the position.
-3. **Multi-party signing** — The required parties participate in a signing round:
-   - **Borrower** — Authorises the move of their collateral or facility.
-   - **DCN** — Authorises the spend from the dVault (or the release of Surge’s claim) in line with the transfer terms.
-   - **Third-party marketplace** — Authorises acceptance (or release) of the position on their side.
-4. **Settlement** — Once all required signatures are collected, the Bitcoin transaction (if any) is broadcast and the execution-layer state is updated so both systems reflect the new ownership or location of the facility.
+1. **Borrower request** - borrower initiates transfer intent.
+2. **Coordination Layer validation** - policy checks validate the transfer terms and destination market conditions.
+3. **Counterparty acceptance** - third-party marketplace accepts transfer terms.
+4. **Cooperative settlement** - required approvals are collected, Bitcoin spend and contract updates are executed, and ownership/state are synchronized.
 
-Settlement details (e.g. PSBT construction, messaging between Surge and the third party) will be defined as the feature is built out.
+Settlement details are implementation-specific and evolve as integrations are finalized.
 
 ## Key points
 
-- **Three-way coordination:** A transfer is only valid when the borrower, the DCN, and the third-party marketplace have all authorised it. No single party can move the facility unilaterally.
-- **Design in progress:** Specific flows, APIs, and on-chain script details are still to be defined. This page will be updated as the transfer path is implemented.
+- **Cooperative authorization:** Transfers require borrower consent, DCN policy compliance, and external market acceptance.
+- **No dedicated Transfer script leaf:** Transfer behavior is coordinated at the application and contract layers.
 
-### 🔐 dVaults: Programmable Bitcoin Vaults
----
-title: dVaults
-description: Taproot-based, MAST-committed spend programs that secure BTC
+### 🔐 Taproot Vaults
+
 ---
 
-# 🔐 dVaults: Programmable Bitcoin Vaults
+title: Taproot Vaults
+description: Taproot-based Bitcoin Vaults with committed spend paths and threshold Schnorr authorization
+---
 
-A **dVault** is a Bitcoin Taproot UTXO ([BIP341](https://en.bitcoin.it/wiki/BIP_0341)) whose spend conditions are committed via **MAST/Tapscript** ([BIP342](https://en.bitcoin.it/wiki/BIP_0342)).  
-- **Taproot** commits multiple spend conditions into a single address.
-- **MAST (Merkelized Alternative Script Tree)** enumerates independent spending conditions, allowing funds to be spent by satisfying any single script. Each script is a leaf in a Merkle tree, and only the executed leaf is revealed during spend. Any unused branches remain hidden.
+# 🔐 Taproot Vaults
 
-Surge uses dVaults as its collateral engine and BTC always remains on Bitcoin, only moving when one of the pre-committed spend conditions is satisfied.
+A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_0341)) whose spend conditions are committed via **MAST / Tapscript** ([BIP342](https://en.bitcoin.it/wiki/BIP_0342)). Each Vault holds borrower BTC and can only move when one of three pre-committed spend paths is satisfied.
 
-## How dVaults are Programmed?
+## Design Choices
 
-Each dVault locks BTC under a single encoded public key (PT2R) with multiple predefined **spend paths**:
-- **Repayment path** activated when the borrower's repayment is attested by the Execution State Machine (ESM) and Authorized by the borrower and Decentralised Custody Network using **threshold Schnorr signatures** from Coinbase [cb-mpc](https://github.com/coinbase/cb-mpc). This is the normal closure condition that releases BTC once the loan is settled.
-- **Liquidation path** activated when collateral ratio falls below the minimum threshold and signed by the DCN. The DCN, following oracle validation, can execute liquidation to settle outstanding debt by transferring discounted BTC to the market.
-- **Timelock Exit** a long-term unilateral exit path that activates after a defined **CLTV** delay, guaranteeing non-custodial control even if all signers fail.
+- **MAST tree.** Three leaves committed at Vault creation: **Repayment**, **Liquidation**, **Exit**. Only the executed leaf is revealed at spend time; unused branches remain hidden.
+- **Vault binding.** The Repayment leaf commits a 32-byte `vaultId = keccak256(abi.encodePacked(userEvmAddress, nonce))`, binding the UTXO to the borrower's on-chain position so that a spent leaf cannot be replayed against a different position.
+- **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-n signing session.
+- **Key-path spend disabled.** The internal key is the standard BIP341 **NUMS** point (`50929b...3ac0`) - a nothing-up-my-sleeve x-only pubkey with no known discrete log. This guarantees that no aggregated key-path signature can ever spend the Vault; every spend must reveal and execute a script path.
 
-All three branches are committed at vault creation. Only the executed path is revealed during a spend.
+## Trust Model
 
+| Scenario | Who can spend | Leaf used |
+|---|---|---|
+| Cooperative closure | User **and** DCN co-sign | Repayment |
+| Collateral unhealthy or credit delinquent at term | DCN unilateral | Liquidation |
+| DCN / coordination layer disappears | User alone after ~1 year relative timelock | Exit |
 
+Delinquency (credit line not paid at term) is handled by the **Liquidation** leaf, it is a different *trigger reason*, not a different script. Transfers to/from a third-party marketplace are coordinated cooperatively through the Repayment flow. See [Transfers](/tech/transfers).
 
-## Script Structures
+## Script Anatomy
 
-### 1. Repayment Path (Ledger Validated Unlock)
+### 1. Repayment (user + DCN)
 
-```bitcoin-script
-# Requires depositor + decentralised signer set key &
-# Valid only if repayment is attested by the ESM
-OP_CHECKSIG(user_pubkey),
-OP_CHECKSIGADD(lin22_signer_set_key)
-OP_2
-```
+The path commits `vaultId`, drops it, then requires both signatures (`userPubkey` and `loanPubkey`) with `OP_CHECKSIG` + `OP_CHECKSIGADD == 2`.
 
-### 2. Liquidation
+Cooperative closure only. Neither side can close alone through this path.
 
-```bitcoin-script
-# Signers key can spend BTC if CR < MinCR
-OP_CHECKSIG(lin22_signer_set_key),
-OP_CHECKSIGADD(oracle_attestation_signature),
-```
+### 2. Liquidation (DCN only)
 
-### 3. Timelock Exit
+The path requires a valid `loanPubkey` signature.
 
-```bitcoin-script
-# Depositor regains unilateral control after CLTV expiry
-OP_CHECKLOCKTIMEVERIFY,
-OP_DROP,
-OP_CHECKSIG(user_exit_key)
-```
+This path is used when the Coordination Layer authorizes liquidation, such as a collateral-ratio breach of the liquidation threshold or unpaid end-of-term delinquency.
 
-## Vault Operation Flow
-1. **Deposit** - User locks BTC to the Taproot address.
-2. **Borrow** - Execution environment issues stablecoins against the attested deposit.
-3. **Monitoring** - BTC/USD oracle updates CR, state commits, debts, and liquidity pool (variable and fixed market) balances.
-4. **Liquidations** - If `CR < MinCR`, signers spend via the liquidation leaf. The spend MUST produce:
-   - **LP pool exchange** - discounted BTC transferred to the pool in exchange for proportional stablecoin debt cancellation.
-   - **Relock** - re-locked into the dVault under the borrower’s control.
-5. **Repayment/Full Closure** - Once repaid, signers co-sign the key-path spend, moving BTC as per user instructions.
+### 3. Exit (user only, CSV timelock)
 
-Each spend path is covered in detail in its own section:
-- [Repayment](/tech/payment)
-- [Liquidation](/tech/dvaults-liquidation)
-- [Unilateral Exit](/tech/exit)
+The path enforces `OP_CHECKSEQUENCEVERIFY`, then requires `userPubkey` signature.
+
+After the delay elapses, the borrower can recover funds without DCN participation.
+
+## Vault Lifecycle
+
+1. **Deposit.** User locks BTC to the Taproot output whose script tree is compiled from the three leaves above with the NUMS internal key.
+2. **Borrow.** The Coordination Layer issues stablecoin debt against the confirmed deposit via `VaultManager` and creates a position representing the loan.
+3. **Monitoring.** Oracle price updates drive the position's live collateral ratio; worker processes track health and term.
+4. **Closure.** One of three leaves is executed:
+   - **Repay** - proportional BTC released to the user's withdrawal address.
+   - **Liquidate** - BTC moves to the DCN-controlled sweep address, a Dutch auction runs on the EVM side against the market that issued the credit line, and any BTC surplus after debt settlement is re-locked into a Vault UTXO under the same scripts.
+   - **Exit** - user alone spends after CSV expiry.
 
 ## Security Anchors
 
-All dVaults derive from Bitcoin’s native enforcement logic. Every spend path is cryptographically pre-committed in Taproot, validated by threshold Schnorr signatures, and ultimately sovereign through the **Timelock Exit**. The Execution State Machine and signer set coordinate off-chain attestations, but **Bitcoin remains the only enforcement layer**.
+- **Bitcoin is the enforcement layer.** Off-chain authorization (Coordination Layer + per-signer validators) decides *when* a spend is legitimate; Bitcoin script decides *whether* the signatures satisfy a committed leaf.
+- **NUMS disables the "trust the aggregated internal key" escape hatch** that would exist in a default P2TR.
+- **vaultId binding** prevents replaying a Repayment witness against an unrelated position.
+- **CSV exit** is script-enforced sovereignty, not a protocol promise.
 
 ## Credit Markets
 
 ### 📊 Credit Markets
+
 ---
+
 title: Credit Markets
-description: How Surge's credit markets work and why the multi-market design is better than alternatives.
+description: How Surge's credit markets work and why the multi-market design is better than alternatives
 ---
 
 # 📊 Credit Markets
@@ -1261,7 +1993,11 @@ Borrowers choose which market fits their needs. Lenders can opt in to fixed mark
 
 ### Cross-chain liquidity
 
-Stablecoins are deposited on any CCTPv2 supported network and routed to a unified marketplace. This creates a single, deep pool of liquidity instead of fragmented, thin markets across chains. Supply stays canonical and verifiable.
+Stablecoin supply is unified across chains using Circle's [**Cross-Chain Transfer Protocol v2 (CCTP v2)**](https://developers.circle.com/stablecoins/evm-smart-contracts) - a native burn-and-mint protocol where USDC is burned on the source chain and an equivalent amount of canonical USDC is minted on the destination chain after a Circle-issued attestation. There are no wrapped tokens, no shared bridge and no liquidity pool.
+
+A small Surge wrapper contract on each chain executes the source-chain burn atomically (`permit` -> `transferFrom` -> `approve` -> `depositForBurn`) so users never need source-chain gas and the relayer never holds user USDC mid-flow. The destination-chain mint is gated by Circle's IRIS attestation and finalized by relayer workflow.
+
+The result: deposits on any supported network feed the **same** liquidity pool. Variable and fixed-rate markets see a single, deep supply rather than per-chain islands; borrowers always receive canonical USDC on their preferred chain, and LPs always receive canonical USDC back on withdrawal.
 
 ## Why This Design
 
@@ -1271,11 +2007,11 @@ Many lending protocols offer only one rate (either variable or fixed). Surge's m
 
 ### vs. CeFi lending
 
-Traditional Bitcoin - backed lending is custodial and opaque. Users give up keys, visibility, and control. Surge's credit markets are non - custodial and on-chain: collateral stays in programmable dVaults, rates and utilization are verifiable, and no single party can move funds without the rules being satisfied.
+Traditional Bitcoin-backed lending is custodial and opaque. Users give up keys, visibility, and control. Surge's credit markets are non-custodial and on-chain: collateral stays in programmable Vaults, rates and utilization are verifiable, and no single party can move funds without the rules being satisfied.
 
 ### vs. Speculative DeFi
 
-Yield in many DeFi protocols comes from token incentives, leveraged farming, or circular lending—not from real credit usage. Surge's credit markets are backed by actual Bitcoin-collateralized borrowing. LPs earn from interest paid by borrowers and (where applicable) from liquidation economics. Real assets, real demand, real yield.
+Yield in many DeFi protocols comes from token incentives, leveraged farming, or circular lending-not from real credit usage. Surge's credit markets are backed by actual Bitcoin-collateralized borrowing. LPs earn from interest paid by borrowers and (where applicable) from liquidation economics. Real assets, real demand, real yield.
 
 ### vs. Fragmented liquidity
 
@@ -1287,11 +2023,10 @@ Surge's credit markets are built for Bitcoin-native finance: transparent, progra
 
 ### Cross-links
 
-- [For Liquidity Providers](/product/for-liquidity-providers) — LP perspective on variable vs fixed  
-- [Repayment](/tech/payment) — Normal closure path  
-- [Liquidation](/tech/dvaults-liquidation) — dVault liquidation path
+- [For Liquidity Providers](/product/for-liquidity-providers) - LP perspective on variable vs fixed  
+- [Repayment](/tech/payment) - Normal closure path  
+- [Liquidation](/tech/dvaults-liquidation) - Vault liquidation path
 
 ## Miscellaneous
 
 *Content pending.*
-

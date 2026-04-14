@@ -1,38 +1,36 @@
 ---
 title: Repayment
-description: Normal closure of a dVault enforced by Taproot script and threshold Schnorr signatures
+description: Cooperative closure of a Vault via the vaultId-bound Repayment path
 ---
 
 # 💰 Repayment Path
 
-The **Repayment Path** is the normal closure path of a dVault. It defines how BTC leaves the vault when the loan is repaid. There’s no bridge, contract, or wrapped asset - only a Bitcoin spend that becomes valid once the correct signatures are presented.
+The **Repayment path** is the cooperative closure path of a Vault. It releases the borrower's BTC once the stablecoin debt is settled. There is no bridge, wrapped asset, or custodial hand-off - only a Bitcoin spend that becomes valid when both the borrower and the DCN sign against the path bound to this specific position.
 
 ## How It Works
 
-1. **Debt Reduction**
-   - The borrower repays stablecoins (e.g., USDC) to the protocol treasury via the `Repay()` function.
-   - The Execution Layer validates the transfer and updates the `debtUsd` field of the vault ledger.
+1. **Debt reduction.** The borrower repays stablecoins (e.g. USDC) to the protocol via `VaultManager.repay(...)` (or the gasless EIP-3009 variant `repayWithERC3009`). The on-chain ledger updates `debtUsd` for the position.
+2. **Release authorization.** Once the on-chain ledger reflects the repayment and the position is healthy, the [Relayer](/tech/relayer) requests a Repayment-leaf spend for a proportional BTC amount; the DCN's per-signer validators independently confirm the on-chain state before participating.
+3. **Co-signing.** The DCN runs a Lin24 threshold Schnorr signing session to produce the `loanPubkey` signature, and the borrower's wallet produces the `userPubkey` signature. The signatures are assembled into the Repayment witness.
+4. **Full closure.** When `debtUsd == 0`, the whole UTXO can be spent. BTC is returned to the borrower's withdrawal address in a single transaction.
 
-2. **Collateral Unlock**
-   - Once the repayment is confirmed, a release signal is emitted for a proportional BTC amount.
-   - Signers verify the repayment event and co-sign a spend via the **Repayment ScriptPath** inside the Taproot tree. They cannot trigger this spend independently - the borrower’s authorization is always required.
-
-3. **Full Repayment**
-   - When total `debtUsd = 0`, the dVault can be fully unlocked.
-   - The user + signer quorum co-sign the Bitcoin spend transaction.
-   - BTC is returned to the depositor’s withdrawal address.
-
-## Script Anatomy
-Each repayment branch commits the following tapscript at vault creation:
+## Script
 
 ```bitcoin-script
-# User + signer network both must sign with their signature keys.
-# The execution layer attests repayment but cannot move funds.
-AND(
-    OP_CHECKSIG(user_pubkey),
-    OP_CHECKSIG(lin22_signer_set_key)
-)
+<vaultId>                 # 32-byte vault commitment
+OP_DROP
+<userPubkey>  OP_CHECKSIG
+<loanPubkey>  OP_CHECKSIGADD
+OP_2
+OP_NUMEQUAL
 ```
 
-Repayment is the simplest — yet most important — path in Surge’s lifecycle, proving that Bitcoin can be used as dynamic collateral without leaving its native chain.
+The leading `<vaultId> OP_DROP` is a commitment, not a runtime check - it forces the leaf (and therefore the taptree, the Taproot address, and the script tree root) to be unique to this position, so a valid witness for one Vault cannot be replayed against another.
 
+The final `OP_2 OP_NUMEQUAL` requires exactly two valid signatures - both the borrower *and* the DCN aggregate key must sign. Neither side can close the Vault without the other via this path.
+
+## Properties
+
+- **User custody preserved.** The DCN cannot use Repayment to move BTC without the borrower's signature.
+- **DCN attestation preserved.** The borrower cannot close the vault without the DCN's signature, which is only produced after the Coordination Layer confirms the repayment.
+- **BIP340-compatible signature component.** The DCN authorization signature itself is standard Schnorr.

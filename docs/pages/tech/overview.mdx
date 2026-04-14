@@ -1,20 +1,27 @@
 ---
 title: Technical Overview
-description: Understanding Surge's Bitcoin custody, coordination program, and cross-chain liquidity.
+description: How Surge composes Bitcoin Taproot vaults, a distributed custody network, EVM credit contracts, and CCTP v2 into one Bitcoin-native credit market
 ---
 import ZoomImage from "../../components/ZoomImage";
 
 # 🔧 Technical Overview
 
-Surge is a Bitcoin-native credit market built on **programmable Taproot vaults**, called **dVaults**. 
+Surge is a Bitcoin-native credit market. Borrowers lock real BTC under programmable Taproot scripts, lenders supply stablecoins to a multi-market credit pool, rates, liquidation, and settlement are coordinated by audited code rather than custodians. The architecture is built so a borrower can always recover their BTC on Bitcoin alone, and so an LP's claim is always backed by a verifiable on-chain position.
 
-Each dVault locks BTC under predefined scripted conditions that allow repayment, liquidation, delinquency, transfer, and unilateral exit. All logic is enforced by Bitcoin script, no wrapped assets or no custodians.
+## What Surge Is Made Of
 
-A dVault is co-managed by the user and the Distributed Custody Network. 
-- **The User**, who provides BTC as collateral
-- **The Distributed Custody Network**, a decentralized set of threshold signers that validate state transitions. 
+The system is built from four cooperating components. Each owns a distinct layer of the protocol, everything else in the stack supports one of these.
 
-Both must provide Schnorr signatures to authorize any movement of BTC, ensuring coordination without compromising user custody.
+| Component | Where it lives | What it owns |
+|---|---|---|
+| **Taproot Vaults** | Bitcoin | The collateral. Programmable spend conditions (Repayment / Liquidation / Exit) committed at vault creation. |
+| **Distributed Custody Network (DCN)** | Off-chain decentralized signer organisations | Threshold Schnorr signatures on Bitcoin spends. No signer holds a complete key, no quorum can move BTC outside policy. |
+| **Smart Contracts** | EVM (Base, Ethereum) | The debt ledger, share-based liquidity pool, interest-rate model, and Dutch-auction liquidation. |
+| **Relayer & Workers** | Off-chain service | The coordinator. Watches Bitcoin, drives the contracts, proposes spends to the DCN, and finalises CCTP transfers. Holds no custody. |
+
+A **stablecoin liquidity layer**  routes USDC across chains so the pool stays canonical regardless of where supply originated. A **per-signer oracle path** feeds BTC/USD into health calculations.
+
+## How They Fit Together
 
 <ZoomImage
   src="/assets/arch_overview.png"
@@ -23,12 +30,27 @@ Both must provide Schnorr signatures to authorize any movement of BTC, ensuring 
   className="mx-auto"
 />
 
-Surge uses an Execution State Machine (ESM) to coordinate vault logic and monitor collateral health. The ESM functions as a deterministic coordination layer operated by distributed custody nodes. It observes Bitcoin vault data, oracle price feed, and distributed custody proofs, then produces verifiable state commitments when spend conditions are satisfied.
 
-When a vault’s collateral ratio (CR) drops below its per market safety threshold, the **liquidation path** activates automatically.  BTC is spent to the DCN, which starts a dutch auction process. The proceeds from the auction return to the market from which the credit line was liquidated.  
 
-When a vault’s term expired and the credit line is not fully repaid, the **delinquency path** activates automatically.  BTC is spent to the DCN, which starts a dutch auction process. The proceeds from the auction return to the market from which the credit line was liquidated. Any remaining BTC is returned to the borrower.  
+1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key (key-path spend disabled). The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
+2. **Relayer observes the deposit** at the configured confirmation depth and calls `VaultManager.submitLoan(...)` on the EVM side. A `PositionID` is minted and the stablecoin liability is recorded on the canonical ledger.
+3. **Borrower receives USDC** - drawn from `LiquidityPool` on Base today, with Ethereum routing supported through CCTP v2. Additional chains are planned.
+4. **Position lives.** The relayer streams oracle price updates into the position's health calculation; workers monitor the collateral ratio against `MinCR` and the liquidation threshold.
+5. **Closure** happens on one of three Bitcoin spend paths:
+   - **Repayment** (cooperative) - borrower repays USDC, the DCN co-signs a release of BTC to the borrower's withdrawal address.
+   - **Liquidation** (DCN, authorised) - collateral ratio breaches the liquidation threshold, or the credit line is past term and unpaid, the DCN signs a sweep to a Dutch auction, proceeds retire the originating market's debt.
+   - **Unilateral Exit** (borrower alone, after CSV) - if everything else fails, the borrower spends the Exit leaf after a relative timelock and walks away with their BTC.
 
-Other paths **repayment** and **time locked recovery (Unilateral exit)** are enforced directly through Taproot conditions, ensuring execution by code, not trust. 
+## Why Each Layer Exists
 
-The protocol’s liquidity layer is **multi-market**: a **variable** pool and **fixed-rate** markets, with liquidity moving between them on borrow and repay.
+**Taproot vaults instead of a custodial wallet.** Collateral lives on Bitcoin under script. No bridge, no wrapped BTC, no "trust us, we hold the keys." If the entire Surge stack disappears, the Exit leaf still spends.
+
+**A distributed custody network instead of a multi-sig.** Multi-sig publishes the policy (you can see who signed) a threshold Schnorr aggregate looks like one signature on chain and never reveals which signers participated. That is better for privacy, fee efficiency, and access-structure evolution. Policy enforcement moves into per-signer validators that abort signing if the request does not match the on-chain authorisation.
+
+**EVM contracts instead of a Bitcoin-only ledger.** Bitcoin script is the right place to enforce custody and recovery. It is the wrong place to run a share-based interest-bearing liquidity pool with multiple market types and a Dutch-auction liquidation engine. The EVM contracts are small, audited, and own only what Bitcoin is bad at - everything else stays on Bitcoin.
+
+**A relayer instead of "users do everything themselves."** Borrowers don't want to monitor confirmations, submit health checks, hold gas on three chains, or chase IRIS attestations. The relayer does that and pays the gas. Crucially: it cannot move BTC, cannot forge an authorisation, and cannot mint USDC that wasn't burned - every material action requires either an on-chain authorisation or a DCN-signed witness.
+
+## The Trust Boundary
+
+Bitcoin script enforces custody. Threshold cryptography enforces "no single signer compromise loses funds." EVM contracts enforce accounting. The relayer is convenience infrastructure. **A compromised relayer can delay things, it cannot move BTC, cannot mint debt, and cannot cause LPs to lose principal.**

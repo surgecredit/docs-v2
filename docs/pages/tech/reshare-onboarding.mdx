@@ -1,0 +1,62 @@
+---
+title: Reshare & Signer Onboarding
+description: Adding, removing, and rotating signer organizations without changing the public key or on-chain addresses
+---
+
+# 🔁 Reshare & Signer Onboarding
+
+Adding a new signer organization to the DCN, retiring an existing one, or changing the threshold are not operations a Lin24 refresh can do. Refresh produces new shares for the **same** access structure. **Reshare** produces new shares for a **different** access structure - a new party count, a new threshold, a new set of signer organizations - while keeping the same public key and therefore the same on-chain addresses, vault scripts, and active commitments.
+
+A reshare is the only way to evolve the DCN's membership safely. It is a cryptographic primitive, not a configuration change.
+
+## Why Reshare Is Its Own Protocol
+
+Three things make reshare hard:
+
+1. **The public key must not change.** On-chain, the public key is baked into every active Vault (`loanPubkey` in the Repayment and Liquidation paths) and into every open position. Changing it would orphan live collateral.
+2. **Old shares must become cryptographically useless.** If an old signer is being removed, the old access structure must not retain signing power. A naive "new signers get new shares, old signers keep their old shares" approach leaves the old quorum able to sign indefinitely.
+3. **Failures must be recoverable without partial-state danger.** If the protocol is interrupted between old shares and new shares being committed, the cluster must end up in a clearly-defined state - either fully on the old access structure or fully on the new one - not in a hybrid state where neither quorum can sign.
+
+## Four-Phase Reshare
+
+The reshare protocol, as orchestrated by the DCN, runs in four phases. The transitions between phases are designed so a failure at any point is recoverable.
+
+### Phase 1 - Fragment Generation
+
+Old parties generate cryptographic fragments from their existing shares, each fragment destined for a specific new party. Fragments are signed and encrypted in transit. No new key material is committed yet.
+
+### Phase 2 - Fragment Collection
+
+New parties collect fragments from every old party. A new party that hasn't received its full set cannot progress; a fragment whose signature or encryption fails authentication is rejected and the affected old party is flagged.
+
+### Phase 3 - Reconstruction & Public-Key Verification
+
+Each new party mathematically reconstructs its new share from the fragments it received and verifies that the new set of shares produces the **same public key** as before. This is a non-negotiable check: if the reconstructed key differs from the committed on-chain key, the protocol aborts and the new shares are discarded.
+
+Reconstructed shares are written to a **staging** table, not the live one. Signing continues to use the old shares throughout phases 1–3.
+
+### Phase 4 - Promotion
+
+The leader confirms all new parties have successfully reconstructed and verified. Promotion is a **single database transaction per party** that atomically swaps staged shares into live slots and **archives the old shares for destruction**. Signing resumes using the new access structure.
+
+If anything fails between phases 3 and 4, the old shares remain live and the reshare can be retried or aborted cleanly - no partial state where neither quorum can sign.
+
+## Transport Security for Reshare Fragments
+
+Reshare fragments in transit are the most sensitive traffic in the network - anyone who intercepts all fragments from all old parties to a specific new party can reconstruct that new party's share. Transport has three requirements:
+
+- **mTLS with enforced peer identity.** Fragment transport routes are required to present a client certificate; unauthenticated requests are rejected in staging and production.
+- **End-to-end encryption to the new party's KeyProtector.** The new party must have its [KeyProtector](/tech/key-shard-security) configured and validated - `WrapDEK` / `UnwrapDEK` working against its own hardware - **before** any fragment is sent. Fragments are encrypted to a key bound to that KeyProtector.
+- **No fragment persistence in cleartext at any hop.** The leader routes but does not store fragment plaintext; new parties decrypt and reconstruct without writing the fragments' cleartext to disk.
+
+## When Reshare Runs
+
+| Trigger | Action |
+|---|---|
+| New signer organization joining | Add party; change from `t-of-n` to `t-of-(n+1)` (or adjust threshold explicitly) |
+| Signer organization leaving | Remove party; change from `t-of-n` to `t-of-(n-1)` |
+| Threshold change (policy decision) | Same set of parties, new `t` |
+| Key-share compromise at any single signer | Remove and re-add that signer with fresh KeyProtector; old shares destroyed |
+| Periodic rotation (policy-driven) | Rotate the access structure itself to bound any single epoch's exposure, independent of refresh |
+
+Reshare is distinct from [refresh](/tech/key-lifecycle#6-proactive-key-refresh): refresh keeps the access structure and rotates shares; reshare changes the access structure.

@@ -80,7 +80,7 @@ export default defineConfig({
             link: "/tech/overview",
           },
           {
-            text: "dVaults and Taproot",
+            text: "Taproot Vaults",
             link: "/tech/vaults",
             collapsed: false,
             items: [
@@ -93,12 +93,39 @@ export default defineConfig({
                 link: "/tech/dvaults-liquidation",
               },
               {
+                text: "Unilateral Exit",
+                link: "/tech/exit",
+              },
+              {
                 text: "Transfers",
                 link: "/tech/transfers",
               },
+            ],
+          },
+          {
+            text: "Distributed Custody Network",
+            link: "/tech/distributed-custody-network",
+            collapsed: true,
+            items: [
               {
-                text: "Unilateral Exit",
-                link: "/tech/exit",
+                text: "Signing Policy",
+                link: "/tech/mpc-signing",
+              },
+              {
+                text: "Key Lifecycle",
+                link: "/tech/key-lifecycle",
+              },
+              {
+                text: "Key Shard Security",
+                link: "/tech/key-shard-security",
+              },
+              {
+                text: "Disaster Recovery",
+                link: "/tech/disaster-recovery",
+              },
+              {
+                text: "Reshare & Signer Onboarding",
+                link: "/tech/reshare-onboarding",
               },
             ],
           },
@@ -107,17 +134,16 @@ export default defineConfig({
             link: "/tech/self-custody-wallet",
           },
           {
-            text: "Distributed Custody Network",
-            link: "/tech/distributed-custody-network",
+            text: "Smart Contracts",
+            link: "/tech/contracts",
           },
-          {
-            text: "Execution State Machine",
-            link: "/tech/execution",
-          },
-
           {
             text: "Credit Markets",
             link: "/tech/credit-markets",
+          },
+          {
+            text: "Relayer & Workers",
+            link: "/tech/relayer",
           },
           {
             text: "Oracle System",

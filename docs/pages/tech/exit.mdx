@@ -1,35 +1,43 @@
 ---
 title: Unilateral Exit
-description: Time-locked Taproot path allowing sovereign BTC exit if DCN or execution layer fail
+description: CSV-timelocked Taproot path guaranteeing sovereign BTC recovery if the DCN or Coordination Layer disappears
 ---
 
 # ⏳ Unilateral Exit
 
-The **Unilateral Exit** (also called the *Timelock Exit Path*) is the final Taproot branch in every dVault. It guarantees that the vault owner can always recover their BTC, even if all DCN members or the Execution State Machine (ESM) become unavailable.
+The **Unilateral Exit** is the third and final path in every Vault. It guarantees that the borrower can always recover BTC on Bitcoin alone, without the DCN, the Coordination Layer, the oracle, or any Surge infrastructure.
 
-This path enforces **sovereignty at the script level** - not by protocol promises, but by Bitcoin’s native time-lock logic.
-
-Example Unilateral Exit Hypothetical
-    - Day 1 - Collateral is deposited and stablecoin is distributed
-    - Day 300 - EVM / DCN goes offline
-    - Day 365 + 7 - Borrower can unilaterally withdraw all collateral without paying back principal + interest
+This is **sovereignty at the script level**, enforced by Bitcoin's relative timelock primitive, not by a protocol promise.
 
 ## Why It Exists
-All other dVault spend paths require multi party coordination:
 
-If those external systems fail - DCN goes offline, oracle data stops updating, or the ESM halts - the user still needs a guaranteed way to recover funds.  
-That’s what this Taproot spend path enforces: **after a fixed delay, the user can unilaterally spend the vault**.
+Two of the three Vault paths require coordinated authorization:
 
-## Script Logic
+- **Repayment** needs both the borrower and the DCN.
+- **Liquidation** needs the DCN (authorized by the Coordination Layer).
 
-The unilateral exit leaf commits a simple, auditable Bitcoin script using `OP_CHECKLOCKTIMEVERIFY (CLTV)`:
+If those external systems fail - the DCN goes offline, oracle feeds stop, the Coordination Layer halts - the borrower must still be able to reclaim BTC. That is exactly what the Exit path enforces: after a fixed relative delay, the borrower alone can spend the output.
 
-```bitcoin
-# Timelock Exit Path
-# Spendable by user only after predefined timelock expiry
-AND(
-    OP_CHECKLOCKTIMEVERIFY,
-    OP_DROP,
-    OP_CHECKSIG(user_exit_key)
-)
+## Script
 
+```bitcoin-script
+OP_CHECKSEQUENCEVERIFY   # relative timelock
+OP_DROP
+<userPubkey> OP_CHECKSIG
+```
+
+- `OP_CHECKSEQUENCEVERIFY` (CSV, [BIP112](https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki)) is a **relative** timelock - the delay counts from the funding input confirmation, not from an absolute block height or wall-clock date.
+- Once the CSV expires, the borrower's Schnorr signature over their `userPubkey` is the only requirement for a valid spend.
+
+## Illustrative Timeline
+
+- Day 1 - Borrower deposits BTC to the Vault; stablecoin is issued.
+- Day 300 - Coordination Layer and DCN go offline and do not come back.
+- Day ~365 - CSV expires. Borrower constructs a spend that reveals the Exit path and broadcasts it.
+- Borrower's full collateral is recovered, with no repayment required because no one can counter-spend the Repayment leaf.
+
+## Properties
+
+- **No counter-party dependency after expiry.** The DCN, the oracle, and the Coordination Layer can all be permanently dead and the Exit leaf still spends.
+- **Relative, not absolute.** Every deposit gets its own ~1-year clock from its funding tx confirmation.
+- **Script-enforced, not trust-enforced.** There is no admin key, no governance override, and no upgrade path that can weaken this leaf for an already-funded UTXO. To change the Exit behaviour for *future* vaults, the vault template itself would have to be re-deployed; existing UTXOs retain the scripts they committed to at creation.

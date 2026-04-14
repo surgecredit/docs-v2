@@ -22,11 +22,11 @@ In a live system with continuous BTC price updates, the number of outcomes grows
 DLCs work by revealing a single keypath - the one matching the oracle’s outcome. Once that path is used, we can’t reuse the same address after the first event.  
 
 ## 3. Non-Persistent Lifecycle  
-When a DLC settles, the address is “burned” - funds are swept, and the contract ends. A dVault keeps the same Taproot tree until final closure. Each dVault encodes its logic from the start.
+When a DLC settles, the address is "burned" - funds are swept, and the contract ends. A Vault keeps the same Taproot tree until final closure. Each Vault encodes its logic from the start.
 
 ## Summary
 
-| Concept | DLC | dVault |
+| Concept | DLC | Vault |
 |----------|-----|--------|
 | Outcome model | Discrete, precomputed | Continuous, protocol-driven |
 | Keypath usage | One per outcome | Multiple reusable paths |

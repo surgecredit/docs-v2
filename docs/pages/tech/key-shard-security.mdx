@@ -1,0 +1,93 @@
+---
+title: Key Shard Security
+description: Envelope encryption, per-organization hardware trust anchors, and the KeyProtector abstraction
+---
+
+# 🛡 Key Shard Security
+
+The signer protocol guarantees that no amount of compromise short of threshold produces a signature. What the protocol does not prescribe is **how each signer stores its share at rest**. That boundary - between MPC protocol logic and signer persistence - is where Surge applies envelope encryption, hardware-rooted key wrapping, and a hardened memory regime during signing.
+
+## The Problem
+
+A naive signer stores the share as plaintext in a local database. Anyone with filesystem access - a stolen backup, a compromised server, a careless export - obtains the raw share. Even though compromise of a single share is below threshold and thus not catastrophic, it erodes the temporal safety of refresh and starts the clock on a larger attack.
+
+## Envelope Encryption
+
+Each signer uses two-layer encryption:
+
+1. A randomly-generated **Data Encryption Key (DEK)** - unique per key share, per version, never reused - is used to encrypt the serialized share with **AES-256-GCM**. Identity metadata (key ID, party index, epoch version, KMS key reference) is bound into the Additional Authenticated Data (AAD). Any tampering with the ciphertext or metadata fails decryption.
+2. The DEK itself is **wrapped** by a **Key Encryption Key (KEK)** that lives in hardware. The KEK never leaves the hardware boundary. Unwrap is a remote operation from the signer's perspective - the wrapped DEK is sent to the KMS / HSM, the hardware unwraps it, and only the unwrapped DEK comes back.
+
+### Flow at Each Signer
+
+```
+DKG / refresh produces share
+   ↓
+serialize → AES-256-GCM with fresh DEK (AAD = identity metadata)
+   ↓
+Send DEK to KeyProtector (Cloud KMS / HSM) to be wrapped by the KEK
+   ↓
+Persist { encrypted_share, wrapped_DEK, metadata } in the signer database
+   ↓
+Zeroize the plaintext share and the raw DEK from memory immediately
+```
+
+At signing time:
+
+```
+Load { encrypted_share, wrapped_DEK, metadata } from DB
+   ↓
+KeyProtector.UnwrapDEK(wrapped_DEK) → plaintext DEK (briefly in memory)
+   ↓
+AES-256-GCM decrypt the share with DEK + AAD-verified metadata
+   ↓
+Run Lin24 / ECDSA-MPC with the plaintext share
+   ↓
+Zeroize share + DEK from memory
+```
+
+### Why Two Layers
+
+- **Rotation without re-encrypting all data.** Rotating the KEK re-wraps small DEKs; the large encrypted shards stay put.
+- **Performance.** KMS calls are 50–200ms. AES-GCM in userspace is microseconds. One KMS call per share load is acceptable.
+- **Defence in depth.** The encrypted shard and the wrapped DEK can be stored separately. An attacker who obtains only one of the two has no path to the plaintext.
+- **Integrity binding.** AES-GCM authenticates both the ciphertext and the bound metadata; Cloud KMS providers with AAD support enforce the same matching on their side during unwrap.
+
+## What Each Stored Record Contains
+
+A signer's at-rest record for a single key share holds, conceptually:
+
+- The **encrypted share**  and its authentication tag, with a unique random IV.
+- The **wrapped DEK**, encrypted by the signer's hardware-backed KEK.
+- A **KEK reference** identifying which KMS key wrapped the DEK, so rotation can find every record affected.
+- An **encryption-version marker** so the format can evolve without ambiguity.
+- An **audit timestamp** for forensic reconstruction.
+
+The metadata fields (key identity, party index, epoch version, KEK reference) are bound into the AES-GCM Additional Authenticated Data, so any tampering with either the ciphertext or the metadata fails decryption.
+
+## Where the KEK Lives - Per-Organization Hardware Trust
+
+The encryption chain must terminate at hardware **each signer organization controls independently**. There is no shared KMS account, no shared credentials, and no shared backup custodian across the DCN. The security of the whole network depends on different organizations not having a single point of failure in common.
+
+Each signer's host has its own root of trust chosen from the options below. The **KeyProtector** interface abstracts over these so the rest of the code sees only `WrapDEK` / `UnwrapDEK`.
+
+## In-Memory Protection During Signing
+
+Envelope encryption protects the share at rest. During signing, the share must be plaintext in process memory for the brief duration of the Lin24 / ECDSA-MPC protocol. The in-memory controls bound the exposure window:
+
+| Control | Effect |
+|---|---|
+| Memory locking | Prevents the OS from swapping share memory to disk |
+| Secure zeroization | Overwrites share memory with zeros immediately after the session, using constant-time clearing the compiler cannot optimise away |
+| Core-dump prevention | Crashes during signing cannot persist share material |
+| Runtime-level discipline | The language runtime is constrained so it cannot copy share-bearing memory into locations the code cannot reach |
+| Proactive refresh | After each session, the in-memory share is rotated to a new epoch and the old share value cannot be combined with current-epoch shares in any subsequent session ([Key Lifecycle](/tech/key-lifecycle)) |
+
+## Residual Risk
+
+Even with every control above in place, two residual risks remain non-zero:
+
+- **In-memory exposure during signing.** A root-level attacker who compromises the host during an active signing window could theoretically read the plaintext share. Memory locking, secure zeroization, and per-session refresh narrow this significantly.
+- **Operator error.** Software-based controls depend on correct deployment. A misconfigured node could undermine guarantees that hardened infrastructure controls are designed to maintain. Surge mitigates this with automated validation and release-gate checks, but does not consider it eliminated.
+
+Surge operates under the explicit assumption that the controls above reduce - not eliminate - these categories, and treats them in operational response planning accordingly.

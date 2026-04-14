@@ -1,27 +1,24 @@
 ---
 title: Transfers
-description: How loan transfers between Surge and third-party marketplaces work via borrower, DCN, and third-party signing.
+description: How cooperative position transfers between Surge and third-party marketplaces are coordinated
 ---
 
 # 🔄 Transfers
 
-The **Transfer** path allows a borrower to move a credit facility (or collateral) to or from a third-party marketplace. This path is encoded as a spend condition that requires **three-way authorization**: the borrower, the Decentralised Custody Network (DCN), and the third-party marketplace (or its designated signer).
+Transfers allow a borrower to move a credit position to or from a third-party marketplace through a coordinated process across contracts and signer policy.
 
-The exact on-chain encoding and coordination flows are not yet finalised; what follows is a generic description of the intended process.
+There is no separate on-chain "Transfer leaf" in the Taproot script tree. Transfer settlement is handled through cooperative authorization and state transitions.
 
-## Transfer flow (generic)
+## Transfer Flow
 
-1. **Borrower request** — The borrower initiates a transfer (e.g. moving the loan out of Surge’s credit market into another marketplace, or the reverse).
-2. **Coordination** — The Execution State Machine (or a coordination layer) validates the request and prepares the transfer instruction. The third-party marketplace is notified and confirms willingness to accept (or release) the position.
-3. **Multi-party signing** — The required parties participate in a signing round:
-   - **Borrower** — Authorises the move of their collateral or facility.
-   - **DCN** — Authorises the spend from the dVault (or the release of Surge’s claim) in line with the transfer terms.
-   - **Third-party marketplace** — Authorises acceptance (or release) of the position on their side.
-4. **Settlement** — Once all required signatures are collected, the Bitcoin transaction (if any) is broadcast and the execution-layer state is updated so both systems reflect the new ownership or location of the facility.
+1. **Borrower request** - borrower initiates transfer intent.
+2. **Coordination Layer validation** - policy checks validate the transfer terms and destination market conditions.
+3. **Counterparty acceptance** - third-party marketplace accepts transfer terms.
+4. **Cooperative settlement** - required approvals are collected, Bitcoin spend and contract updates are executed, and ownership/state are synchronized.
 
-Settlement details (e.g. PSBT construction, messaging between Surge and the third party) will be defined as the feature is built out.
+Settlement details are implementation-specific and evolve as integrations are finalized.
 
 ## Key points
 
-- **Three-way coordination:** A transfer is only valid when the borrower, the DCN, and the third-party marketplace have all authorised it. No single party can move the facility unilaterally.
-- **Design in progress:** Specific flows, APIs, and on-chain script details are still to be defined. This page will be updated as the transfer path is implemented.
+- **Cooperative authorization:** Transfers require borrower consent, DCN policy compliance, and external market acceptance.
+- **No dedicated Transfer script leaf:** Transfer behavior is coordinated at the application and contract layers.

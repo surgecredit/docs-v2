@@ -71,7 +71,17 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://docs.surge.build/tech/contracts</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://docs.surge.build/tech/credit-markets</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://docs.surge.build/tech/disaster-recovery</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -91,17 +101,27 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/execution</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://docs.surge.build/tech/exit</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://docs.surge.build/tech/faqs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://docs.surge.build/tech/key-lifecycle</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://docs.surge.build/tech/key-shard-security</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://docs.surge.build/tech/mpc-signing</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -117,6 +137,16 @@
   </url>
   <url>
     <loc>https://docs.surge.build/tech/payment</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://docs.surge.build/tech/relayer</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://docs.surge.build/tech/reshare-onboarding</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

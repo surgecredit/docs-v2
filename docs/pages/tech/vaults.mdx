@@ -1,76 +1,70 @@
 ---
-title: dVaults
-description: Taproot-based, MAST-committed spend programs that secure BTC
+title: Taproot Vaults
+description: Taproot-based Bitcoin Vaults with committed spend paths and threshold Schnorr authorization
 ---
 import ZoomImage from "../../components/ZoomImage";
 
-# 🔐 dVaults: Programmable Bitcoin Vaults
+# 🔐 Taproot Vaults
 
-A **dVault** is a Bitcoin Taproot UTXO ([BIP341](https://en.bitcoin.it/wiki/BIP_0341)) whose spend conditions are committed via **MAST/Tapscript** ([BIP342](https://en.bitcoin.it/wiki/BIP_0342)).  
-- **Taproot** commits multiple spend conditions into a single address.
-- **MAST (Merkelized Alternative Script Tree)** enumerates independent spending conditions, allowing funds to be spent by satisfying any single script. Each script is a leaf in a Merkle tree, and only the executed leaf is revealed during spend. Any unused branches remain hidden.
+A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_0341)) whose spend conditions are committed via **MAST / Tapscript** ([BIP342](https://en.bitcoin.it/wiki/BIP_0342)). Each Vault holds borrower BTC and can only move when one of three pre-committed spend paths is satisfied.
 
-Surge uses dVaults as its collateral engine and BTC always remains on Bitcoin, only moving when one of the pre-committed spend conditions is satisfied.
+## Design Choices
 
-## How dVaults are Programmed?
+- **MAST tree.** Three leaves committed at Vault creation: **Repayment**, **Liquidation**, **Exit**. Only the executed leaf is revealed at spend time; unused branches remain hidden.
+- **Vault binding.** The Repayment leaf commits a 32-byte `vaultId = keccak256(abi.encodePacked(userEvmAddress, nonce))`, binding the UTXO to the borrower's on-chain position so that a spent leaf cannot be replayed against a different position.
+- **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-n signing session.
+- **Key-path spend disabled.** The internal key is the standard BIP341 **NUMS** point (`50929b...3ac0`) - a nothing-up-my-sleeve x-only pubkey with no known discrete log. This guarantees that no aggregated key-path signature can ever spend the Vault; every spend must reveal and execute a script path.
 
-Each dVault locks BTC under a single encoded public key (PT2R) with multiple predefined **spend paths**:
-- **Repayment path** activated when the borrower's repayment is attested by the Execution State Machine (ESM) and Authorized by the borrower and Decentralised Custody Network using **threshold Schnorr signatures** from Coinbase [cb-mpc](https://github.com/coinbase/cb-mpc). This is the normal closure condition that releases BTC once the loan is settled.
-- **Liquidation path** activated when collateral ratio falls below the minimum threshold and signed by the DCN. The DCN, following oracle validation, can execute liquidation to settle outstanding debt by transferring discounted BTC to the market.
-- **Timelock Exit** a long-term unilateral exit path that activates after a defined **CLTV** delay, guaranteeing non-custodial control even if all signers fail.
+## Trust Model
 
-All three branches are committed at vault creation. Only the executed path is revealed during a spend.
+| Scenario | Who can spend | Leaf used |
+|---|---|---|
+| Cooperative closure | User **and** DCN co-sign | Repayment |
+| Collateral unhealthy or credit delinquent at term | DCN unilateral | Liquidation |
+| DCN / coordination layer disappears | User alone after ~1 year relative timelock | Exit |
+
+Delinquency (credit line not paid at term) is handled by the **Liquidation** leaf, it is a different *trigger reason*, not a different script. Transfers to/from a third-party marketplace are coordinated cooperatively through the Repayment flow. See [Transfers](/tech/transfers).
 
 <ZoomImage
   src="/assets/dvault_taproot.png"
-  alt="dVault Taproot UTXO"
+  alt="Taproot Vault UTXO"
   width="70%"
   className="mx-auto"
 />
 
-## Script Structures
+## Script Anatomy
 
-### 1. Repayment Path (Ledger Validated Unlock)
+### 1. Repayment (user + DCN)
 
-```bitcoin-script
-# Requires depositor + decentralised signer set key &
-# Valid only if repayment is attested by the ESM
-OP_CHECKSIG(user_pubkey),
-OP_CHECKSIGADD(lin22_signer_set_key)
-OP_2
-```
+The path commits `vaultId`, drops it, then requires both signatures (`userPubkey` and `loanPubkey`) with `OP_CHECKSIG` + `OP_CHECKSIGADD == 2`.
 
-### 2. Liquidation
+Cooperative closure only. Neither side can close alone through this path.
 
-```bitcoin-script
-# Signers key can spend BTC if CR < MinCR
-OP_CHECKSIG(lin22_signer_set_key),
-OP_CHECKSIGADD(oracle_attestation_signature),
-```
+### 2. Liquidation (DCN only)
 
-### 3. Timelock Exit
+The path requires a valid `loanPubkey` signature.
 
-```bitcoin-script
-# Depositor regains unilateral control after CLTV expiry
-OP_CHECKLOCKTIMEVERIFY,
-OP_DROP,
-OP_CHECKSIG(user_exit_key)
-```
+This path is used when the Coordination Layer authorizes liquidation, such as a collateral-ratio breach of the liquidation threshold or unpaid end-of-term delinquency.
 
-## Vault Operation Flow
-1. **Deposit** - User locks BTC to the Taproot address.
-2. **Borrow** - Execution environment issues stablecoins against the attested deposit.
-3. **Monitoring** - BTC/USD oracle updates CR, state commits, debts, and liquidity pool (variable and fixed market) balances.
-4. **Liquidations** - If `CR < MinCR`, signers spend via the liquidation leaf. The spend MUST produce:
-   - **LP pool exchange** - discounted BTC transferred to the pool in exchange for proportional stablecoin debt cancellation.
-   - **Relock** - re-locked into the dVault under the borrower’s control.
-5. **Repayment/Full Closure** - Once repaid, signers co-sign the key-path spend, moving BTC as per user instructions.
+### 3. Exit (user only, CSV timelock)
 
-Each spend path is covered in detail in its own section:
-- [Repayment](/tech/payment)
-- [Liquidation](/tech/dvaults-liquidation)
-- [Unilateral Exit](/tech/exit)
+The path enforces `OP_CHECKSEQUENCEVERIFY`, then requires `userPubkey` signature.
+
+After the delay elapses, the borrower can recover funds without DCN participation.
+
+## Vault Lifecycle
+
+1. **Deposit.** User locks BTC to the Taproot output whose script tree is compiled from the three leaves above with the NUMS internal key.
+2. **Borrow.** The Coordination Layer issues stablecoin debt against the confirmed deposit via `VaultManager` and creates a position representing the loan.
+3. **Monitoring.** Oracle price updates drive the position's live collateral ratio; worker processes track health and term.
+4. **Closure.** One of three leaves is executed:
+   - **Repay** - proportional BTC released to the user's withdrawal address.
+   - **Liquidate** - BTC moves to the DCN-controlled sweep address, a Dutch auction runs on the EVM side against the market that issued the credit line, and any BTC surplus after debt settlement is re-locked into a Vault UTXO under the same scripts.
+   - **Exit** - user alone spends after CSV expiry.
 
 ## Security Anchors
 
-All dVaults derive from Bitcoin’s native enforcement logic. Every spend path is cryptographically pre-committed in Taproot, validated by threshold Schnorr signatures, and ultimately sovereign through the **Timelock Exit**. The Execution State Machine and signer set coordinate off-chain attestations, but **Bitcoin remains the only enforcement layer**.
+- **Bitcoin is the enforcement layer.** Off-chain authorization (Coordination Layer + per-signer validators) decides *when* a spend is legitimate; Bitcoin script decides *whether* the signatures satisfy a committed leaf.
+- **NUMS disables the "trust the aggregated internal key" escape hatch** that would exist in a default P2TR.
+- **vaultId binding** prevents replaying a Repayment witness against an unrelated position.
+- **CSV exit** is script-enforced sovereignty, not a protocol promise.

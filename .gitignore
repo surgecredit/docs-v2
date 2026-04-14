@@ -136,3 +136,6 @@ dist
 
 
 vocs.config.ts.timestamp-*
+
+# Local AI assistant config
+.claude/

@@ -1,14 +1,14 @@
 ---
 title: Distributed Custody Network
-description: Distributed Schnorr signing for Taproot vault control.
+description: Threshold Schnorr signing for Taproot Vaults using Lin24, signer policy checks, and trust assumptions
 ---
 import ZoomImage from "../../components/ZoomImage";
 
-# 👥 Distributed Custody Network
+# 👥 Distributed Custody Network (DCN)
 
-Surge implements **Lindell 2022 Multiparty Schnorr Signing (Lin22)** a threshold Schnorr signature protocol and with ideal zero-knowledge and commitment functionality this framework provides strong security, fault tolerance, and privacy. 
+A Vault spend that requires `loanPubkey` authorization is signed by the **Distributed Custody Network (DCN)**. The DCN is a set of independent signer organizations running threshold Schnorr signing.
 
-It enables quorum-based gated spending of Taproot vaults (dVaults) without revealing the signer structure or compromising on-chain efficiency.
+No single signer ever holds the full signing secret; each signer only holds a share. Signatures are produced only when quorum participation and policy checks both pass.
 
 <ZoomImage
   src="/assets/user-signer.png"
@@ -17,70 +17,81 @@ It enables quorum-based gated spending of Taproot vaults (dVaults) without revea
   className="mx-auto"
 />
 
-## Why Threshold Schnorr Signatures Essential for dVaults
+## Signing Capabilities
+| Capability | Scheme | Used for | Protocol |
+|---|---|---|---|
+| **Threshold Schnorr** | BIP340 | Vault spends on Bitcoin (Repayment, Liquidation) | **Lin24**  |
+| **Threshold ECDSA** | secp256k1 | EVM-side signatures where a quorum-controlled key is required (e.g. multi-admin contract operations) | Multiparty ECDSA ([Applied Cryptography Group specification](https://github.com/coinbase/cb-mpc/blob/master/docs/specification/Specification.MPC-ECDSA.pdf)), an OT-based n-party design building on Haitner et al. (2022) multiplication protocol |
 
-- **Threshold Signing** - Every signing session is gated by pre-sign policy checks by individual signers making it reliable and accountable; only a t-of-n quorum can authorize within rules.
-- **Byzantine Resilient** - The protocol continues safely even if some signers are offline or act maliciously. Misbehavior is provable and recoverable.
-- **Taproot Compatibility** - Bitcoin's Taproot ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) requires Schnorr signatures. Threshold signatures must be indistinguishable from single-party Schnorr signatures to preserve privacy and efficiency.
+Both protocols share the same decentralized signer organisations, KeyProtector storage model ([Key Shard Security](/tech/key-shard-security)), refresh and reshare flows ([Key Lifecycle](/tech/key-lifecycle), [Reshare & Onboarding](/tech/reshare-onboarding)), and the same per-signer policy stack ([Signing Policy](/tech/mpc-signing)) - only the signature output differs.
 
-## Why Surge Chooses Lin22
+## Lin24 Threshold Schnorr
 
-Surge prioritizes **reliability, accountability, and verifiability** over lowest latency.
+Surge uses **Lin24** - Y. Lindell, *Simple Three-Round Multiparty Schnorr Signing with Full Simulatability* ([ePrint 2022/374](https://eprint.iacr.org/2022/374.pdf), republished as [CiC 2024](https://cic.iacr.org/p/1/1/25/pdf)). The two names refer to the same protocol.
 
-- **Trustless Coordinator** - Lin22 doesn't rely on a trusted coordinator. Its security holds even with partial failures or adversarial behavior.
-- **Identifiable Misbehavior** - Each signer provides Fischlin Zero-Knowledge Proofs (ZKPs). If a signer cheats or aborts, the network obtains cryptographic evidence, enabling automated slashing and signer rotation.  
-- **Privacy Preserving** - The final aggregated signature is a standard Taproot compatible Schnorr signature. Vault spends are indistinguishable from single signer spends.
+**Why threshold specifically:**
 
-<ZoomImage
-  src="/assets/signers.png"
-  alt="Malicious Signer"
-  width="70%"
-  className="mx-auto"
-/>
+1. **Taproot requires Schnorr.** [BIP340](https://en.bitcoin.it/wiki/BIP_0340) defines Schnorr for Taproot spends. Lin24 outputs a standard BIP340-compatible aggregate signature.
+2. **No complete private key exists anywhere.** After distributed key generation (DKG), each signer holds only a share. Reconstructing the key would require compromising `t` signers simultaneously. There is no wallet file, no seed phrase, and no vault where the full key lives "for disaster recovery."
+3. **Misbehaviour is identifiable, not just detectable.** Lin24 includes Fischlin non-interactive zero-knowledge proofs of knowledge at the decommitment step. A signer that submits malformed data leaves a publicly-verifiable proof of their specific misbehaviour, which drives automated exclusion and reshare.
 
-Unlike FROST, where a single malicious signer can halt the session, Lin22 identifies and proves who misbehaved. Even if a round fails, it records cryptographic proof, keeping vault operations auditable and recoverable.
+### Why Lin24 over FROST
 
-Surge's implementation uses Coinbase's audited [**cb-mpc**](https://github.com/coinbase/cb-mpc) library, embedding Lin22 within the signer coordination service.
+[FROST (RFC 9591)](https://datatracker.ietf.org/doc/rfc9591/) is the other widely-cited threshold Schnorr construction. It is faster - two rounds instead of three - but trades robustness for speed.
 
-## Signing Flow in Surge (Lin22)
+| Property | FROST | Lin24 |
+|---|---|---|
+| Signing rounds | 2 | 3 |
+| Security proof | UC-secure; aborts on any signer fault | UC-secure with full simulatability via Fischlin ZKPs |
+| Abort handling | Session halts; coordinator trusted to identify cheater | Cryptographic evidence identifies the misbehaving signer, enabling rotation |
+| DKG | ~2 rounds (Pedersen VSS) | 5+ rounds (Feldman VSS with stronger consistency) |
+| Output witness | BIP340 Schnorr (64 bytes) | BIP340 Schnorr (64 bytes) |
 
-#### 1. Distributed Key Generation (DKG)
-- Key shares are generated using **Feldman's Verifiable Secret Sharing (VSS)**.
-- Public commitments allow verification that shares are consistent.
-- Result: A single Taproot public key with private shares held by signers.
+**In a threshold signing session, if one signer submits invalid data:**
 
-#### 2. Signing Rounds
-- **Commitment** - Signers choose nonces and share hash commitments. Inclusion in this round is mandatory.
-- **Decommitment & Proof** - Nonces and **Fischlin ZKPs** revealed, invalid proofs flag misbehavior.  
-- **Signature Shares** - Honest signers compute valid shares, coordinator aggregates into a single BIP340 Schnorr signature, valid for Taproot.
+- FROST aborts with no attributable evidence. The coordinator must decide who cheated; if the coordinator is compromised, the wrong signer can be ejected, or the attack can persist across retries.
+- Lin24 aborts with Fischlin ZKPs that any observer can verify. The faulty signer is identifiable without trusting the coordinator, and can be excluded from the next session.
 
-## Lin22 vs. FROST
+For a system that routinely signs spends against live Bitcoin collateral, this extra attribution is worth one additional round-trip.
 
-Two major threshold Schnorr constructions were evaluated:
+## DKG & Key Lifecycle
 
-- **FROST (RFC 9591)** - Optimized for speed (two rounds).
-- **Lindell 2022 (Lin22)** - Optimized for robustness, with three rounds and formal UC proofs.
+At vault-key creation, the signer set runs **distributed key generation** using Feldman's Verifiable Secret Sharing (VSS). The protocol publishes commitments that let each party verify its own share is consistent with the collective polynomial before accepting it. The output is a single BIP340-compatible x-only pubkey (the `loanPubkey` embedded in the Repayment and Liquidation leaves) and private shares held by the signers.
 
-| Property | **FROST** | **Lin22 (2022)** |
-|----------|-----------|------------------|
-| **Signing Rounds** | 2 | 3 |
-| **Security Proof** | **UC secure** (Universally Composable), but aborts if signers fail | UC secure with **full simulatability** (via Fischlin ZKPs) |
-| **Abort Handling** | Session halts if any signer malicious, relies on coordinator trust | Identifies cheaters with proof, removes signer for next set of request |
-| **DKG Setup** | ~2 rounds (Pedersen VSS) | 5+ rounds (Feldman VSS, stronger consistency) |
-| **Best Case** | Fast when all signers are honest | Robust even if some signers are faulty |
-| **Output** | BIP340 Schnorr | BIP340 Schnorr |
+The full key lifecycle is documented in the MPC pages: [DKG and refresh](/tech/key-lifecycle), [PVE backup and recovery](/tech/disaster-recovery), [signing policy](/tech/mpc-signing), and [reshare for onboarding and rotation](/tech/reshare-onboarding).
 
-## Example: 3 of 4 Signing
+## Signing Session - Three Rounds
 
-- **FROST** → If a signer submits invalid data (e.g., a bad signature share), the session aborts. The honest participants cannot complete the signature. Need to trust coordinator to remove malicious signer.
-- **Lin22** → If a signer misbehaves, their ZK proof (included in the protocol) reveals them as malicious to the network. The session aborts, but with publicly verifiable evidence of who misbehaved. This will help for slashing and signature share rotation.
+Each Bitcoin spend triggers one Lin24 session over the message hash (the BIP341 sighash for the Taproot spend).
 
-**dVault remains operable even under Byzantine conditions,** ensuring both fault-tolerance and cryptographic accountability.
+1. **Commitment.** Each participating signer samples a nonce and broadcasts its hash commitment. Participation in this round is mandatory; a signer that fails to commit is excluded from the session.
+2. **Decommitment & ZKPs.** Signers reveal nonces with Fischlin zero-knowledge proofs. Failed proofs identify faulty participation and the session aborts safely.
+3. **Signature shares.** Honest signers compute their signature shares and the coordinator aggregates them into a single BIP340 Schnorr signature. Non-participating or faulty signers contribute no share.
 
----
+The aggregate signature is submitted in the Taproot script-path witness. The signature component is standard BIP340 Schnorr.
 
-Surge adopts Lin22 Threshold Schnorr Signatures because resilience and verifiability matters more than speed when securing Bitcoin collateral at scale.
+## Trust Model
 
-## References
-- [Simple Three-Round Multiparty Schnorr Signing with Full Simulatability](https://eprint.iacr.org/2022/374.pdf)
-- [Cure53 Audit Report: Coinbase cb-mpc Library](https://github.com/coinbase/cb-mpc/blob/master/docs/cure53-audit.pdf)
+| Component | Trusted to | Not trusted for |
+|---|---|---|
+| Individual signer | Hold exactly one key share, enforce the signing policy locally, refuse to sign on invalid authorization | Knowing the full private key (cryptographically cannot) unilaterally moving BTC (script requires cooperation per leaf) |
+| Coordinator / leader | Sequence sessions, collect shares, publish aggregate signature | Authorizing spends; fabricating authorization; bypassing per-signer validation |
+| Signer-node crypto implementation | Correct implementation of Lin24 and supporting primitives | Policy decisions (what is signed, who can request, when to sign) |
+| Surge signer orchestration code | Signing policy, reshare orchestration, Bitcoin tx and witness construction around the Lin24 output | Cryptographic security of the underlying MPC protocol |
+
+The adversary model we design against:
+
+- **Up to `t - 1` compromised signers** - collusion remains below threshold. No signature is produced without an additional honest signer. For a 3-of-4 deployment this means any two compromised signers are recoverable without loss.
+- **Compromised coordinator** - cannot forge authorization, cannot coerce signers into producing signatures outside policy, and cannot substitute the signed message without per-signer validators detecting it.
+- **Network attacker** - mTLS between signers with pinned peer identities; manual peer certificate verification that enforces expected CN bindings, not just CA trust (see [Transport Security](/tech/mpc-signing#transport-security)).
+- **A misbehaving signer that fakes liveness** - detected via the Fischlin ZKP check and removed from active quorum by policy.
+
+## Further Reading
+
+- [Lin24 paper (CiC 2024)](https://cic.iacr.org/p/1/1/25/pdf) - the protocol Surge uses for Bitcoin signing.
+- [Lin22 preprint (IACR ePrint 2022/374)](https://eprint.iacr.org/2022/374.pdf) - same protocol, earlier publication.
+- [Published third-party review of cb-mpc (Cure53)](https://github.com/coinbase/cb-mpc/blob/master/docs/cure53-audit.pdf)
+- [BIP340 - Schnorr signatures](https://en.bitcoin.it/wiki/BIP_0340)
+- [BIP341 - Taproot](https://en.bitcoin.it/wiki/BIP_0341)
+- [BIP342 - Tapscript](https://en.bitcoin.it/wiki/BIP_0342)
+- [Key Lifecycle](/tech/key-lifecycle) · [Key Shard Security](/tech/key-shard-security) · [Disaster Recovery](/tech/disaster-recovery) · [Reshare & Onboarding](/tech/reshare-onboarding)

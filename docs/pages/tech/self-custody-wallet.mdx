@@ -1,22 +1,14 @@
 ---
-title: Self Custody User Wallet
-description: Architecture and lifecycle of the user’s self-custodial wallet leveraging hardware-isolated execution environments for key generation, signing, attestation, and verifiable self-custody.
+title: Self-Custody User Wallet
+description: Surge's borrower wallet - sealed key generation and signing inside hardware-isolated execution environments, encrypted export, and cryptographic attestation
 ---
 import ZoomImage from "../../components/ZoomImage";
 
-# 🔐 Self Custody User Wallet
+# 🔐 Self-Custody User Wallet
 
-The Surge app today holds the borrower’s wallet and is designed with **self-custody at its core**.
-Every wallet instance ensures that private keys are created, stored, and used exclusively under the authenticated user’s control.  
+The Surge app holds the borrower's wallet and is designed with **self-custody at its core**. Every wallet instance ensures that private keys are created, stored, and used exclusively under the authenticated user's control. The user - not Surge - has authority over signing actions, key export, stablecoin distribution, and the return address used by every spend path.
 
-This architecture grants the user full authority over 
-- signing actions
-- key export
-- stablecoin distribution
-- return address for various spend paths
-
-The signing environment executes as a sealed runtime within the underlying infrastructure. 
-Once instantiated, its memory and code are cryptographically measured and isolated even operators, administrators, or the host kernel cannot read, export, or modify a user’s private key.
+The signing environment runs as a sealed runtime within hardware-isolated infrastructure. Once instantiated, its memory and code are cryptographically measured and isolated so that operators, administrators, and the host kernel cannot read, export, or modify a user's private key.
 
 <ZoomImage
   src="/assets/enclave_arch.png"
@@ -27,50 +19,70 @@ Once instantiated, its memory and code are cryptographically measured and isolat
 
 ## Authentication & Key Lifecycle
 
-### 1. Email Login & Session Initialization
-- The user authenticates using **email + OTP**.  
-- Upon successful verification, a short-lived **JWT session token** is issued.  
-- This token is used to authorize enclave operations during its validity period.
+### 1. Email login & session initialization
 
-### 2. Deterministic Key Generation
-- On first login, the instance queries the enclave for an existing keypair.  
-- If absent, the enclave **generates a new asymmetric keypair** internally.
-- The **public key** is returned and mapped as `{ userID, email, publicKey }`.
-- The **private key** remains sealed inside isolated memory and never exposed or serialized outside the boundary.
+- The user authenticates with **email + OTP**.
+- A short-lived **JWT session token** is issued on successful verification.
+- The token authorizes enclave operations during its validity window; expiry forces re-authentication.
 
-### 3. Transaction Signing Flow
-- The client submits a transaction payload with the active JWT.
-- The backend validates the session and relays `{ userID, txData, signatureRequestID }` to the enclave.
+### 2. Deterministic key generation
+
+- On first login the runtime queries the enclave for an existing keypair bound to the user.
+- If none exists, the enclave **generates a new asymmetric keypair internally**.
+- The **public key** is returned to the application layer and mapped as `{ userID, email, publicKey }`.
+- The **private key** stays sealed inside isolated memory and is never serialized outside the trust boundary.
+
+### 2b. Optional wallet import (mnemonic)
+
+- If mnemonic import is enabled for a deployment, users can import an existing wallet during setup.
+- The mnemonic is used only to derive key material inside the sealed runtime.
+- After import, only sealed key state is retained; the mnemonic is not kept as persistent plaintext.
+- The user confirms the derived public key before activating the imported wallet.
+
+### 3. Transaction signing flow
+
+- The client submits a transaction payload alongside the active JWT.
+- The backend validates the session and forwards `{ userID, txData, signatureRequestID }` into the enclave.
 - The enclave verifies request authenticity and authorization before signing.
-- Signing occurs inside the secure environment using the private key, only the signature is returned.
+- Signing happens entirely inside the sealed environment; only the resulting signature leaves the boundary.
 
-### 4. Controlled Key Export
-- A user may export their private key for external custody.
-- The system re-prompts for OTP and encrypts the exported key using a user defined passphrase.  
-- The encrypted key blob serves as a portable, user-controlled backup.
+### 4. Controlled key export
 
-## Self-Custody Characteristics
+- A user can export their private key for self-managed custody.
+- Export re-prompts for OTP and encrypts the key with a **user-defined passphrase**.
+- The encrypted blob is portable: the user can store it offline, in another wallet, or in third-party custody.
+
+## Self-Custody Properties
 
 | Property | Enforcement |
-|-----------|-------------|
-| **User Ownership** | All cryptographic operations originate from keys generated under the user’s control. |
-| **Key Isolation** | Keys are sealed inside protected compute environments, isolated from application and infrastructure layers. |
+|---|---|
+| **User ownership** | Cryptographic operations originate from keys generated under the user's control. |
+| **Key isolation** | Keys are sealed inside protected compute environments, isolated from application and infrastructure layers. |
 | **Portability** | Encrypted key export allows migration and independent storage. |
+| **No silent recovery** | Surge has no path to reconstruct a private key without the user's passphrase or active session. |
 
-## Hardware Backed Isolation
+## Hardware-Backed Isolation
 
-Wallet key management operates within hardware-backed **trusted execution environments (TEEs)**.  
-Each instance produces a **cryptographic attestation report** at initialization:
-- Verifies that the environment runs on **genuine, unmodified hardware**.  
-- Ensures the loaded code matches the **approved wallet binary**.  
-- Any change in code or environment alters the attestation fingerprint and automatically revokes trust.
+Wallet key management runs inside hardware-backed **Trusted Execution Environments (TEEs)**. Each instance produces a **cryptographic attestation report** at initialization that:
 
-This mechanism provides verifiable proof that the wallet enclave is authentic, unmodified, and operating in a known-good state.
+- Verifies the environment is running on **genuine, unmodified hardware**.
+- Verifies the loaded code matches the **approved wallet binary**.
+- Revokes trust automatically if either the code or the environment changes - any tamper alters the attestation fingerprint.
+
+This produces verifiable proof that the wallet enclave is authentic, unmodified, and operating in a known-good state.
 
 ## Versioning & Update Lifecycle
 
-Enclave binaries are immutable at runtime. Updates or bug fixes require a versioned redeploy process:
-1. Build a new enclave image (with updated wallet logic).
-2. Deploy and verify its new measurement hash via attestation.
+Enclave binaries are immutable at runtime. Updates and bug fixes go through a versioned redeploy:
 
-This wallet architecture unifies user sovereignty, hardware-rooted security, and key portability, providing a deterministic self custodial foundation for Surge's Bitcoin-native credit market.
+1. Build a new enclave image with the updated wallet logic.
+2. Deploy and verify its new attestation measurement.
+3. Migrate users to the new measurement only after the fingerprint is publicly recorded.
+
+This guarantees that every running wallet instance corresponds to a code version that has been measured, attested, and observable from the outside.
+
+## Roadmap
+
+The Confidential VM platform underpinning the wallet enclave continues to evolve. The current roadmap includes broader hardware coverage (additional CVM platforms beyond the current deployment), public attestation transparency for the wallet's measurement history, and tighter integration between the wallet's attestation and the [Distributed Custody Network](/tech/distributed-custody-network)'s signing-policy validators so that authorisations from this wallet can be recognised by the DCN as originating from a measured, sealed environment.
+
+The intent stays the same regardless of platform: the user holds the key, the runtime never reveals it, and any change to the runtime is publicly verifiable.

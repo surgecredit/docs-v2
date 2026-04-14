@@ -1,0 +1,102 @@
+---
+title: Relayer & Workers
+description: The service layer that keeps Bitcoin state and contract state synchronized
+---
+
+# 🛰 Relayer & Workers
+
+Between Vaults on Bitcoin and the debt ledger on EVM sits a service whose job is to keep both sides in sync: observe deposits and withdrawals, drive contract calls, coordinate with the DCN for spends, and complete cross-chain transfers.
+
+The relayer **does not hold custody** of BTC. It does not hold DCN signing keys. It can propose spends and submit EVM transactions, but BTC movement still requires DCN quorum signatures and contract-side authorization.
+
+## Service Shape
+
+- **Network-aware processing.** Mainnet and testnet workloads are isolated.
+- **Worker model.** Independent workers own specific state transitions and reconcile through persistent state.
+- **Idempotent retries.** Replayed work converges to the same result using stable identifiers.
+
+## Workers
+
+Each worker owns a slice of state and runs independently. Workers reconcile through persistent workflow state and are idempotent on retry.
+
+### `btc-indexer`
+
+Tracks BTC deposits from the moment a user's deposit address is issued through confirmation.
+
+- Watches the Blockstream / Esplora indexers (primary + fallback) for transactions to each user's derived Taproot address.
+- Advances deposit state through discovery → mempool → N-confirmation thresholds.
+- At the confirmation threshold, triggers `submitLoan(...)` on `VaultManager` to open the credit line.
+- Handles reorgs by rolling deposit state backward and re-observing.
+
+### `loan-event-listener`
+
+Ingests on-chain events from `VaultManager`, `AuctionHouse`, and `LiquidityPool`.
+
+- Streams events via WebSocket where available; falls back to HTTP polling with bounded block ranges.
+- Persists each event, sequences them per position, and dispatches to internal handlers.
+- Handlers drive follow-up calls. For example, successful repayment triggers withdrawal authorization and liquidation events drive BTC-side sweep coordination with the DCN.
+
+### `withdrawal-confirmation-worker`
+
+When a borrower requests BTC withdrawal after partial or full repayment:
+
+- The DCN produces a spend for the user's configured withdrawal address.
+- This worker watches for the transaction on Bitcoin, verifies the sats moved and confirmations threshold, and calls `confirmWithdrawal(...)` on chain so the position accounting is finalized.
+- Tolerances are bounded: amount is checked against the pending withdrawal minus an audit-configurable dust tolerance; timestamp is checked with a grace window to tolerate block-timestamp drift.
+
+### `loan-health-monitor`
+
+Scans active positions for health-factor breaches.
+
+- Fetches current BTC/USD price from the Oracle System.
+- Computes `CR` per position using stored collateral and debt.
+- Submits `checkHealth(positionId)` so `VaultManager` can open an auction if liquidation conditions are met.
+- Supports dry-run operation for safe staging validation.
+
+## Gasless Flows
+
+Surge supports gasless borrower actions:
+
+- **USDC relay** - the relayer pays gas; the borrower signs authorization payloads.
+- **Repay and withdraw** - borrower signatures authorize the action, and the relayer submits the transaction.
+- **Cross-chain routing (CCTP)** - the relayer coordinates burn-and-mint flow without custody of user funds.
+
+In every gasless flow the **borrower's signature is what authorizes the action**. The relayer pays gas; it does not authorize.
+
+## Failure & Retry Semantics
+
+- **Idempotency.** Workers use stable keys (position id, deposit tx hash, CCTP nonce) so retried work converges on the same outcome.
+- **Persistence.** Every external action is persisted before submission. Crashes resume from persisted state, not memory.
+- **Backoff.** Destination-chain gas shortfalls, attestation delays, and RPC flakiness use bounded exponential backoff with timeouts so no worker spins indefinitely.
+
+## Liveness - What If the Relayer Stops
+
+The relayer is convenience infrastructure, not a trust anchor. When it is unavailable, the system pauses for users; it does not lose funds and it does not change what is true on chain.
+
+**What stays safe.**
+
+- BTC remains under Taproot script on Bitcoin. Nothing the relayer does or fails to do can move it.
+- EVM contract state is canonical - debt, shares, and position NFTs are unchanged by relayer downtime.
+- The **Unilateral Exit** path stays available to any borrower whose CSV timelock has elapsed. A borrower who wants out does not need the relayer, the DCN, or any Surge-operated service to recover their BTC.
+
+**What gets delayed while it is down.**
+
+- **New borrows.** A BTC deposit still lands on Bitcoin, but `submitLoan(...)` is not called until the indexer catches up, so USDC is not disbursed yet.
+- **Health checks and liquidations.** Oracle-driven health submissions pause; a position that would otherwise have been liquidated stays in its pre-event state until monitoring resumes.
+- **Withdrawal finalization.** A DCN-signed BTC withdrawal may still broadcast, but `confirmWithdrawal(...)` on EVM only fires once the confirmation worker sees the transaction.
+- **Cross-chain mints.** Pending CCTP burns wait for the attestation worker to submit `receiveMessage` on the destination chain. Funds are not lost - the burn is already recorded with Circle - the destination mint is simply delayed.
+- **Gasless actions.** Repay / withdraw / bridge calls that rely on the relayer to pay gas queue until it returns; a user can always submit the same action themselves from a funded wallet.
+
+The user-visible shape of an outage is a pause, not a loss. Positions sit where they were; new work begins flowing again once the service is back.
+
+## What the Relayer Is Not
+
+- **Not a custody service.** BTC is never at the relayer. Any BTC move requires a DCN-signed Taproot spend.
+- **Not the signing authority.** The relayer proposes spends; per-signer validators in the DCN decide whether to sign.
+- **Not the source of truth.** Canonical state is Bitcoin plus EVM contracts; relayer persistence is workflow state.
+
+## References
+
+- [Distributed Custody Network](/tech/distributed-custody-network) for DCN signing.
+- [Smart Contracts](/tech/contracts) for the EVM side.
+- [Credit Markets](/tech/credit-markets) for cross-chain liquidity unification.

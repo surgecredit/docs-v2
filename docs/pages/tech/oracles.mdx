@@ -1,43 +1,55 @@
 ---
-title: 🌐 Oracle System
-description: Protocol-native BTC/USD oracle integrated directly into the Execution State.
+title: Oracle System
+description: Surge's BTC/USD price feed - medianized inputs, per-signer validation, deterministic enforcement of collateral health
 ---
 
 # 🌐 Oracle System
-The **Oracle System** is Surge’s native BTC/USD price feed mechanism. Unlike external oracle plug-ins, Surge treats price discovery as a **core module of the state machine**, ensuring collateralization logic is deterministic, and consensus-driven.
+
+The **Oracle System** is Surge's BTC/USD price feed. Unlike external oracle plug-ins, Surge treats price discovery as a **first-class part of the protocol**: the price that drives a borrower's collateral ratio is the same price every signer in the [Distributed Custody Network](/tech/distributed-custody-network) sees and validates against before producing a signature.
 
 The Oracle System powers:
-- **Collateral Monitoring** - updating each dVault’s live Collateral Ratio (CR).
-- **Liquidation Enforcement** - triggering liquidation conditions when CR < MinCR.
-- **System Integrity** - anchoring liabilities to verifiable BTC/USD market prices without relying on off-chain actors.
 
-By embedding price feeds directly into execution state, Surge eliminates discretionary trust and guarantees **programmatic, protocol-native valuation of Bitcoin collateral**.
+- **Collateral monitoring** - updating each Vault's live Collateral Ratio (CR).
+- **Liquidation enforcement** - surfacing positions for `checkHealth(...)` when `CR < MinCR` or near liquidation threshold.
+- **Per-signer validation** - every signing request is evaluated against the most recent confirmed price; stale or out-of-band prices abort signing rather than producing a bad spend.
 
-## Importance
-1. **Protocol-Native**  
-   - Oracle updates are finalized inside the Execution State itself.  
-   - Validators replicate the same aggregation logic, guaranteeing a single source of truth.
+The intent is that no single off-chain actor can move a position into liquidation, and no signer participates in a signing session whose authorisation is grounded in an unhealthy price.
 
-2. **Deterministic Medianization**  
-   - Multiple signed submissions per block.  
-   - Aggregated into a medianized price point, finalized with the block.  
-   - Ensures liveness and robustness against outliers or malicious feeds.
+## Design Goals
+
+1. **Protocol-native.** Price aggregation logic is replicated by the protocol itself; signers run the same aggregation independently and reach the same answer. There is no "oracle owner" who can rewrite the price.
+2. **Deterministic medianization.** Multiple signed price submissions per interval are aggregated into a single medianized price. Median is robust against a small number of outliers - a single faulty or malicious feed cannot shift the consensus price.
+3. **Fresh by construction.** Each price has a confirmed timestamp; downstream consumers (the contracts' health checks, per-signer validators) reject prices outside a configured staleness window.
+4. **Cross-signer agreement.** Per-signer validators reject a signing session if the price they observe locally diverges from the consensus price beyond a configured delta.
 
 ## Failure Safety
-- **Deterministic Fallbacks**  
-  If insufficient updates are available, the system reuses the last confirmed state until new data finalizes.
 
-- **Graceful Degradation**  
-  Execution halts collateral ratio updates temporarily, but state remains coherent and auditable.
+- **Deterministic fallbacks.** If insufficient fresh updates are available for a new median, the system reuses the last confirmed price until new data finalises. No "best guess" or extrapolation.
+- **Graceful degradation.** Rather than emitting a stale price, the protocol pauses CR updates and surfaces an alert. Existing positions remain readable; new health-trigger actions wait until fresh data is available.
+- **Manipulation resistance.** Medianization across multiple sources prevents single-source manipulation. Per-signer validators independently reject prices outside sanity bands (sudden deviations beyond a configured percentage), giving the system circuit-breaker behaviour against flash-mispricing or oracle attack.
 
-- **Manipulation Resistance**  
-  Medianization from multiple sources prevents single-source manipulation.
-  Validators rejecting invalid submissions ensures Byzantine resilience.
+## Per-Signer Oracle Validation
+
+Each DCN signer validates the price grounding of every authorisation before participating in a Lin24 signing session:
+
+- **Freshness.** The price is no older than the configured staleness window.
+- **Cross-signer consistency.** The price the signer sees locally agrees with the protocol's consensus price within a configured delta.
+- **Sanity bands.** The price has not deviated from the last confirmed value by more than a configured percentage over a single interval.
+
+If any check fails on any signer, that signer refuses to participate, the quorum is not met, and **no signature is produced**. The cost of an oracle anomaly is a delayed liquidation, not a wrong one.
+
+See [Signing Policy](/tech/mpc-signing) for how this validation interlocks with the rest of the per-signer policy stack.
 
 ## Oracle Events
-The Oracle System emits canonical events:
-- `PriceUpdated { medianPrice, timestamp }`
-- `CollateralRatioUpdated { vaultId, newCR }`
-- `LiquidationTriggered { vaultId, CR }`
 
-These events bind signer permissions and provide a complete audit trail for liquidation logic.
+The Oracle System emits canonical events consumable by the [Smart Contracts](/tech/contracts), the [Relayer](/tech/relayer), and external observers:
+
+- `PriceUpdated { medianPrice, timestamp }`
+- `CollateralRatioUpdated { positionId, newCR }`
+- `LiquidationTriggered { positionId, CR }`
+
+These events form a complete, replayable audit trail for liquidation decisions: any observer can reconstruct, from public data, exactly which price drove which collateral-ratio update and which liquidation.
+
+## Roadmap
+
+The oracle path will continue to evolve toward broader source diversity, public transparency of submitter identities and signed-update history, and a published deviation budget so any party can independently verify that the protocol's medianized output remained inside policy at every interval. The destination state is a feed whose correctness can be audited end-to-end by anyone, not trusted by configuration.

@@ -1,61 +1,69 @@
 ---
 title: Deterministic Liquidation
-description: Bitcoin Taproot vaults that enforce deterministic liquidation and non-custodial collateral management
+description: How the Liquidation path of a Vault is authorized, constructed, and settled
 ---
 
-# 🎯 Deterministic Liquidation for Locked Bitcoin
+# 🎯 Deterministic Liquidation
 
-*dVaults* are Taproot-based Bitcoin vaults that enforce deterministic liquidation and non-custodial collateral management. Each vault encodes three spend paths:
-1. **Repay** - borrower + DCN authorization.  
-2. **Liquidate** - DCN-only authorization liquidate collateral falls below the minimum ratio or credit line is not paid off or extended at end of term.  
-3. **Transfer** - borrower + DCN + third party authorization when borrower requests loan transfer out of Surge Credit Market.  
-4. **Escape** - borrower-only fallback after a time-based lock (censorship safety).
+A Vault commits three script leaves at creation: **Repayment**, **Liquidation**, and **Exit**. The Liquidation leaf is spent by the DCN when the Coordination Layer authorizes it for one of two reasons:
 
-Each path references a **pre-committed PSBT template** defined at vault creation.
+1. **Undercollateralization** - the live collateral ratio has dropped below the liquidation threshold.
+2. **Delinquency** - the credit line has reached term without being fully repaid or extended.
 
-Liquidations are **triggered by the Execution State Machine (ESM)**, which emits deterministic events (`LiquidationTriggered`) when a vault’s collateral ratio breaches the protocol threshold.
+Both reasons spend the **same** Liquidation leaf. Delinquency is a different *trigger*, not a different script.
+
+```bitcoin-script
+<loanPubkey> OP_CHECKSIG
+```
+
+The witness includes a BIP340 signature from a Lin24 threshold session of the DCN. The reason for spending is not encoded in this leaf itself; it is enforced by the Coordination Layer and each signer's local validation policy.
 
 ## Coordination Layer
-A deterministic coordination program (middleware) runs on EVM-compatible infrastructure.
-- Tracks vault collateral, debt, and oracle state.  
-- Emits deterministic liquidation instructions (“liquidate 0.02 BTC lot”).  
-- Cannot move BTC directly, it only attests valid liquidation conditions to the **DCN**.  
-- Every state change is verifiable and reproducible across members of the DCN.
 
-This middleware acts as an *execution oracle* that coordinates DCN actions without custodial control or discretionary intervention.
+A deterministic coordination program - implemented by the core contracts plus the [Relayer](/tech/relayer) - tracks Vault collateral, debt, and oracle state.
 
-## Distributed Custody Network Verification 
-Each DCN member independently validates before co-signing:
-- Verify that inputs correspond to the correct dVault UTXO and MAST leaf.  
-- Ensure outputs are not controlled by DCN members.  
-- Confirm input parameters align with pre-committed liquidation rules.  
-- Check that oracle data remains within deviation limits.  
-- Verify that the escape timelock has not expired.
-If any rule fails, **no signature is produced** preventing arbitrary spending.
+- It emits deterministic liquidation instructions (e.g., "liquidate 0.02 BTC lot from position #123").
+- It **cannot move BTC directly**. It only attests that a liquidation condition is satisfied to the DCN.
+- Every state change is verifiable and reproducible across DCN signers.
 
-## Liquidation Flow
-When `CR < MCR (Minimum Collateral Ratio)`:
-1. The ESM emits a `LiquidationTriggered(vaultId)` event. 
-2. The coordination middleware publishes the corresponding liquidation instruction.
-3. DCN members reconstruct the PSBT based on committed vault parameters.
-4. The DCN signs and broadcasts the transaction to Bitcoin.
-5. Liquidated BTC is routed to the **DCN** while a dutch auction is started on the EVM layer. 
-6. The dutch auction returns stablecoins which replace the principal + debt of the line of credit being liquidated.
-7. Remaining BTC is **re-locked** into a new dVault UTXO under the same script conditions with an incremented nonce.
-This process can also enable **micro-lot liquidation**, minimizing borrower losses and preventing cascading liquidations during volatility.
+## Per-Signer Validation
 
-## Delinquency Flow
-Just before the time based lock is hit, the ESM checks if the credit line is fully paid off:
-1. The ESM emits a `DelinquencyTriggered` event. 
-2. The coordination middleware publishes the corresponding liquidation instruction.
-3. DCN members reconstruct the PSBT based on committed vault parameters.
-4. The DCN signs and broadcasts the transaction to Bitcoin.
-5. Liquidated BTC is routed to the **DCN** while a dutch auction is started on the EVM layer. 
-6. The dutch auction returns stablecoins which replace the principal + debt of the line of credit being liquidated.
-7. Remaining BTC is **re-locked** into a new dVault UTXO under the same script conditions with an incremented nonce.
+Each DCN member independently validates before co-signing. If any rule fails on any signer, the signing session aborts and **no signature is produced**.
+
+- Inputs reference the correct Vault UTXO and the correct MAST leaf.
+- Outputs are not controlled by DCN members (the sweep goes to the configured liquidation destination, not to any signer-controlled address).
+- Oracle price data is fresh and within deviation limits.
+- On-chain contract state confirms the position is liquidatable (CR breach or delinquent at term).
+- The Exit leaf's CSV has not expired (if it has, the borrower's Exit path dominates and the DCN must not spend).
+
+These checks run locally on every signer. They are application-layer signing policy, not a property of Lin24 itself. See [Key Lifecycle](/tech/key-lifecycle) for how this policy interacts with DKG and refresh.
+
+## Liquidation Flow (below liquidation threshold)
+
+1. Coordination Layer detects that a position has breached the liquidation threshold and opens a liquidation record.
+2. The liquidation record specifies a lot size (often a partial liquidation to minimise borrower loss and contain cascades).
+3. DCN members reconstruct the PSBT from committed vault parameters and validate locally.
+4. A Lin24 signing session produces the Schnorr witness; the transaction is broadcast to Bitcoin.
+5. Liquidated BTC is routed to the DCN-controlled sweep address and a Dutch auction opens on the EVM side against the **market that issued the credit line**.
+6. Auction proceeds in stablecoin retire the proportional debt and penalty, any BTC surplus is **re-locked into a Vault UTXO** under the same three leaves.
+
+Partial liquidation in small lots minimizes borrower losses and dampens liquidation cascades during volatility.
+
+## Delinquency Flow (end-of-term, unpaid)
+
+Near term end, the Coordination Layer checks whether the credit line is fully repaid. If not, the delinquency flow activates:
+
+1. Coordination Layer emits a delinquency signal for the position.
+2. DCN members reconstruct the PSBT based on the committed vault parameters.
+3. DCN signs with Lin24 and broadcasts.
+4. BTC is routed to the DCN sweep address, a Dutch auction opens on the EVM side, same as the undercollateralization flow.
+5. Auction proceeds retire debt and penalty, any surplus BTC is re-locked or returned to the borrower according to the market's post-delinquency policy.
+
+The on-chain spend is identical to the undercollateralization flow - same leaf and same signature path. Only the authorization reason and auction record differ.
 
 ## Key Guarantees
-- **Non-Custodial:** BTC remains locked in Taproot vaults on Bitcoin, only user + DCN or timelock can move funds.  
-- **Deterministic:** All state transitions and PSBTs are reproducible and verifiable across signers.  
-- **Censorship-Safe:** Borrowers can always reclaim funds through the Escape path after timelock expiry.  
-- **Market Segregated Risk:** Liquidation proceeds flow into each market based on where the liquidated credit line came from, reconciling BTC collateral and stablecoin liabilities within the Execution State Machine’s deterministic ledger.
+
+- **Non-custodial.** BTC stays on Bitcoin; the DCN can only spend via quorum signing, and only if per-signer validators accept the authorization reason.
+- **Deterministic.** PSBT templates and validator rules are reproducible across signers; disagreement aborts signing rather than producing a bad spend.
+- **Censorship-safe.** If the DCN refuses or disappears, the Exit path lets the borrower recover after the CSV delay.
+- **Market-segregated.** Auction proceeds reconcile debt in the specific market (variable or fixed-rate) that issued the credit line, not a shared accounting surface.

@@ -1,0 +1,95 @@
+---
+title: Disaster Recovery
+description: Publicly Verifiable Encryption, threshold-controlled backup decryption, and incident-response flows for key-share loss or compromise
+---
+
+# 🛟 Disaster Recovery
+
+MPC eliminates a single point of failure in the signing path. It does not, by itself, eliminate a single point of failure in **recovery**. If a signer loses its share with no backup, the threshold is permanently reduced; if `n - t + 1` signers lose their shares, the key and all BTC it secures are gone.
+
+Naive backups re-introduce the risk MPC was designed to remove: a plaintext backup is as sensitive as an aggregate private key, and a shared backup custodian is a single point of failure across the whole network.
+
+Surge's disaster-recovery design solves this with **Publicly Verifiable Encryption (PVE)** and threshold-controlled decryption.
+
+## The Core Idea - Backups Verified Without Decryption
+
+Each signer encrypts its share under a **backup public key** and produces a non-interactive zero-knowledge proof that the ciphertext correctly encrypts its true share. A verifier can mathematically check the proof **without ever holding the backup decryption key** and without decrypting the ciphertext.
+
+```
+Each party holds share s_i
+         ↓
+Encrypt(s_i, backup_pk) → ciphertext c_i
+Generate ZK proof π_i that c_i encrypts a correct share
+         ↓
+Send (c_i, π_i) to the disaster-recovery verifier
+         ↓
+Verifier checks π_i using Fiat–Shamir
+         ↓
+If all valid: the key is enabled for signing
+If any invalid: the key is rejected; re-run DKG
+```
+
+The key paradox PVE resolves: **backups must never be opened, yet must be verified as correct.** Non-interactive ZK proofs (Fiat–Shamir heuristic) make "correct" something a verifier can check without decrypting.
+
+PVE is provided by the signer-node crypto implementation and is the recommended backup mechanism for any `t-of-n` key Surge generates.
+
+## Backup Flow
+
+1. After DKG - and after every [proactive refresh](/tech/key-lifecycle) - each party encrypts its current-epoch share with the backup public key.
+2. Each party generates a ZK proof that the encrypted backup is correct.
+3. The verifier checks all proofs as a batch without decrypting anything.
+4. **The key is only enabled for signing after all backups are verified.**
+
+The **refresh → backup interlock** is non-negotiable: after any refresh, the full cycle - new share → wrap DEK → persist → create PVE backup → verify backup - must complete before signing resumes. If the PVE backup is older than the current share epoch, signing is blocked. This prevents "we refreshed but forgot to back up" from silently creating unrecoverable keys.
+
+## Backup-Key Governance
+
+The backup decryption key is the single most sensitive artifact in the system. Whoever has it can decrypt the ciphertexts produced by every signer. It must be threshold-controlled in a way that matches or exceeds the MPC threshold itself.
+
+The backup key is itself distributed as a **TDH2 threshold cryptosystem (`m-of-n`)**. Each designated recovery agent holds a decryption share. Recovery requires independent approval and partial decryptions from a quorum of agents. No single agent can decrypt or trigger recovery unilaterally. This matches the MPC design principle: no single entity ever holds a usable complete private key.
+
+## Recovery Modes
+
+A disaster-recovery event falls into one of two classes, and the response differs accordingly.
+
+### Same-Key Recovery (Default)
+
+Used when a share is lost or corrupted with no evidence of compromise.
+
+```
+Share incident detected
+         ↓
+Have valid PVE backup?   → Yes → assemble backup-key quorum
+                                     ↓
+                              Decrypt the PVE backup for the affected signer
+                                     ↓
+                              Restore the share on the affected signer
+                                     ↓
+                              Run a proactive refresh - invalidates the restored share's epoch immediately
+                                     ↓
+                              Create and verify new PVE backups for the new epoch
+                                     ↓
+                              Signing resumes - same public key, same addresses, no on-chain migration
+```
+
+This is the "fast path" and preserves every on-chain commitment. Dollar-denominated debt, positions, and Vault addresses remain unchanged.
+
+### Rotation + Migration (Confirmed or Suspected Threshold Breach)
+
+Used when there is evidence - or strong suspicion - that `t` or more shares are compromised.
+
+```
+Assume full breach
+         ↓
+Run a fresh distributed key generation to produce a new key
+         ↓
+Migrate all funds on-chain from old addresses to new addresses
+         ↓
+Create and verify fresh PVE backups for the new key
+```
+
+## Storage of Recovery Artifacts
+
+- PVE ciphertexts are stored on a separate channel from the encrypted shards and their wrapped DEKs. Breaching any one of the three (encrypted shard, wrapped DEK, PVE ciphertext) still leaves the attacker a mathematical distance away from the plaintext share.
+- The backup decryption key is never online and never stored by Surge in aggregate. It exists only as TDH2 shares distributed across independent recovery agents.
+- Recovery ceremonies are rehearsed on non-production keys before every quarter close. Unexercised recovery capability is unreliable recovery capability.
