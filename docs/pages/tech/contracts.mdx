@@ -1,34 +1,33 @@
 ---
 title: Smart Contracts
-description: VaultManager, position token, LiquidityPool, AuctionHouse, and the interest-rate model
+description: Debt Ledger, Position Token, Liquidity Pool and Liquidation Auction
 ---
 
 # 📜 Smart Contracts
 
 The EVM side of Surge is a focused set of contracts that implement the debt ledger, liquidity accounting, and liquidation auctions that back Vault collateral on Bitcoin. These contracts do not custody BTC. BTC stays on Bitcoin and moves only through committed Taproot spend paths.
 
-## Debt Ledger - `VaultManager`
+## Debt Ledger 
 
-The `VaultManager` is the canonical ledger for BTC-backed liabilities. Every active credit line corresponds to a position and a row in manager state.
+The `Debt Ledger` is the canonical ledger for BTC-backed liabilities. Every active credit line corresponds to a position and a row in manager state.
 
 Key properties:
 
 - **Tick-based position tracking.** Positions are grouped by interest-rate tick rather than carried as per-position compounding values. This makes interest accrual O(1) per interaction per position and avoids per-block writes across the active set.
 - **Collateral is attested, not custodied.** The manager records satoshi collateral amounts reported by the [Relayer](/tech/relayer) after BTC deposit confirmation. Moving BTC on Bitcoin requires a Taproot spend authorized by the DCN - the manager cannot move BTC directly.
-- **Health checks are callable by relayers.** `checkHealth(positionId)` evaluates `CR` against policy thresholds and opens an auction when liquidation conditions are met.
+- **Health checks are callable by relayers or anyone.** `checkHealth(positionId)` evaluates `CR` against policy thresholds and opens an auction when liquidation conditions are met.
 - **EIP-712 + EIP-3009 repayment.** `repayWithERC3009` accepts a pre-signed USDC `transferWithAuthorization` so repayments are gasless from the borrower's perspective.
 
 The manager enforces three risk parameters per position: a **Minimum Collateral Ratio** below which new borrow is blocked, a **liquidation threshold** at or below which a position becomes liquidatable, and a **liquidation penalty** applied to debt during auction settlement. The gap between `MinCR` and the liquidation threshold is the **health buffer** a borrower can spend on BTC-price decline before partial liquidation begins - a narrower buffer is more capital-efficient but raises the risk of liquidation cascades inside a single price move; a wider buffer is capital-inefficient given Bitcoin's historical intraday volatility.
 
-Risk parameters are admin-configurable on upgradeable deployments behind the time-locked multi-sig. Non-upgradeable deployments are immutable - their parameters are fixed at deploy time and any change requires a new deployment and migration.
 
 ## Position Representation
 
 Each credit line is represented by an ERC-721 position token. Token ownership represents borrower-side control of that position and is used for borrower-authorized actions.
 
-## Liquidity - `LiquidityPool`
+## Liquidity Pool
 
-The pool implements **share-based accounting** uniformly across all markets (variable and fixed-rate). Share-based accounting means LP balances are denominated in shares whose per-share value accretes with interest; a lender sees yield without per-block state changes at the position level.
+The pool uses a unified **share-based accounting** model across all markets, where LP positions are represented as shares whose value increases via exchange rate updates. Interest accrues at the market level without per-position state changes. Fixed-rate markets reuse this accounting model but depend on liquidity allocated from the variable market, introducing cross-market liquidity coupling.
 
 Market registry:
 
@@ -37,36 +36,19 @@ Market registry:
 - **Fixed-rate markets** hold no liquidity at rest. When a borrower takes a fixed-rate loan, liquidity is **moved** from the variable pool into the originating fixed market for the duration of the loan; on repay it is moved back. There is no duplication or rehypothecation.
 - Lenders can opt in to fixed markets and configure allocation limits (see [LP page](/product/for-liquidity-providers)).
 
-## Rate Curve - `InterestRateModel`
+## Liquidation Auctions
 
-The variable market uses a **BTC-optimized kink model** with a single slope below the kink and a steep rise above it:
-
-| Parameter | Default | Meaning |
-|---|---|---|
-| Base rate | 0% | Rate at 0% utilization |
-| Kink | 90% | Utilization threshold where the rate steepens |
-| Slope below kink | linear to the kink | Gentle, predictable borrow cost across the normal operating band |
-| Above kink | steep | Rate rises sharply to pull supply in and push marginal borrowers out |
-
-**Why a kink.** Below the kink, lenders accept a modest supply yield and borrowers enjoy predictable costs. Above the kink, the rate rises sharply - utilization should approach 90% in healthy steady state; above that, the curve actively discourages new debt. The concrete APR band shown on the website (**6.9%–9.9%**) reflects observed borrow demand in the normal operating band rather than an incentive program.
-
-## Liquidation Auctions - `AuctionHouse`
-
-Liquidation proceeds via a **Dutch auction** with fixed-price buyout semantics: the first buyer who pays the current price wins the collateral. The auction runs for a fixed duration, the clearing price drops in regular intervals, and a minimum price floor caps the worst-case loss if no buyer emerges. These parameters are admin-configurable per deployment.
+Liquidation proceeds via a **Dutch auction** with fixed-price buyout semantics: the first buyer who pays the current price wins the collateral. The auction runs for a fixed duration, the clearing price drops in regular intervals, and a minimum price floor caps the worst-case loss if no buyer emerges.
 
 Auction lifecycle:
 
-1. `VaultManager.checkHealth(positionId)` detects liquidation conditions and opens an auction in `AuctionHouse`.
-2. Buyers monitor the price curve and call `AuctionHouse.buy` to clear at current price.
-3. `VaultManager.finalizeAuction` retires proportional debt on the originating market (variable or fixed), applies penalty, and records settlement.
-4. If the auction expires without a buyer at the floor, the protocol exercises the floor price itself or the collateral is re-locked depending on market policy.
+1. `checkHealth(positionId)` call detects liquidation conditions for the positions and opens an auction if it reached below minimum collateral ratio.
+2. Buyers monitor the price curve and buys the auction at current price and retires proportional debt on the originating market (variable or fixed), applies penalty, and records settlement.
+3. If the auction expires without a buyer at the floor, the protocol exercises the floor price itself or the collateral is re-locked depending on market policy.
 
 **Why Dutch.** Dutch auctions on a declining curve do not require active bidding to discover price; they surface the market-clearing price passively, which is what a liquidation needs under time pressure. The first buyer to see the price as favourable clears the auction.
 
-**Why a price floor.** Without a floor, a sufficiently slow auction or a sufficiently adverse market would sell collateral for near-zero proceeds, leaving the originating market with a shortfall. The floor caps the worst-case loss and forces the protocol to exercise the floor itself or re-lock the collateral if no buyer emerges.
-
 **Market-segregated proceeds.** Auction proceeds always flow back into the specific market (variable or fixed) that issued the liquidated credit line - risk is per-market, not socialized across the protocol.
-
 ## References
 
 - [Credit Markets](/tech/credit-markets)
