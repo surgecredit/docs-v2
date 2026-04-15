@@ -16,14 +16,6 @@ Surge's credit markets let borrowers and lenders meet on transparent, programmab
 
 Borrowers choose which market fits their needs. Lenders can opt in to fixed markets and control how much of their capital is exposed to each. One liquidity base, multiple rate options, and clear rules for how funds flow.
 
-### Cross-chain liquidity
-
-Stablecoin supply is unified across chains using Circle's [**Cross-Chain Transfer Protocol v2 (CCTP v2)**](https://developers.circle.com/stablecoins/evm-smart-contracts) - a native burn-and-mint protocol where USDC is burned on the source chain and an equivalent amount of canonical USDC is minted on the destination chain after a Circle-issued attestation. There are no wrapped tokens, no shared bridge and no liquidity pool.
-
-A small Surge wrapper contract on each chain executes the source-chain burn atomically (`permit` -> `transferFrom` -> `approve` -> `depositForBurn`) so users never need source-chain gas and the relayer never holds user USDC mid-flow. The destination-chain mint is gated by Circle's IRIS attestation and finalized by relayer workflow.
-
-The result: deposits on any supported network feed the **same** liquidity pool. Variable and fixed-rate markets see a single, deep supply rather than per-chain islands; borrowers always receive canonical USDC on their preferred chain, and LPs always receive canonical USDC back on withdrawal.
-
 ## Why This Design
 
 ### vs. Single-pool protocols
