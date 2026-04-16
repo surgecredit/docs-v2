@@ -5,11 +5,9 @@
 ## Earn Integration (Highest Priority)
 
 ### Earn SDK Integration Guide
-
 ---
-
 title: Earn SDK Integration Guide
-description: End-to-end guide for integrating Surge Earn market listing and deposit flows
+description: End-to-end guide for integrating Surge Earn market listing and deposit flows.
 ---
 
 # Earn SDK Integration Guide
@@ -157,11 +155,9 @@ function EarnView({ client, address }: { client: any; address: `0x${string}` }) 
 - Show tx hash and explorer link after write actions
 
 ### Earn SDK Overview
-
 ---
-
 title: Earn SDK Overview
-description: Integrate Surge Earn markets into wallet and web applications
+description: Integrate Surge Earn markets into wallet and web applications.
 ---
 
 # Earn SDK Overview
@@ -224,36 +220,31 @@ Use the full [Integration Guide](/earn/integration) to wire wallet flows (approv
 ## Overview
 
 ### 👋 Introducing Surge
-
 ---
-
 title: "Surge | Introduction"
 description: "Bitcoin-native Credit Market"
 ---
 
-{/**/}
+{/*  */}
 
-{/*Optional hero image*/}
+{/* Optional hero image */}
 
-{/*# 👋 Bitcoin-native Credit Market*/}
 
+{/* # 👋 Bitcoin-native Credit Market */}
 # 👋 Introducing Surge
 
-## Why can’t Bitcoin-backed lending reflect Bitcoin’s values?
-
-Bitcoin is trustless by design: transparent, decentralized, and self-sovereign.
-Yet the lending platforms that serve it are anything but. Custodial, opaque, and centralized, they rely on “trust-me" systems where users surrender their keys, visibility, and control.
+## Why can’t Bitcoin-backed lending reflect Bitcoin’s values? 
+Bitcoin is trustless by design: transparent, decentralized, and self-sovereign. 
+Yet the lending platforms that serve it are anything but. Custodial, opaque, and centralized, they rely on “trust-me" systems where users surrender their keys, visibility, and control. 
 The result? A broken market where the most principled Bitcoiners, those who care about custody, verification, and openness are forced to compromise everything Bitcoin stands for just to access liquidity.
 
 ## Surge: A Bitcoin-native Credit Market
-
-Surge offers Bitcoiners something different: a Bitcoin-native Credit Market that is transparent, decentralized, and trust-minimized.
+Surge offers Bitcoiners something different: a Bitcoin-native Credit Market that is transparent, decentralized, and trust-minimized. 
 Built from the ground up for self-custody and programmable control, Surge enables Bitcoiners to borrow stablecoins without giving up ownership or compromising on the values that brought them to Bitcoin in the first place.
 
-It’s not just about accessing liquidity, it’s about doing so without selling your Bitcoin, without intermediaries, and without hidden risk.
+It’s not just about accessing liquidity, it’s about doing so without selling your Bitcoin, without intermediaries, and without hidden risk. 
 
 With Surge, you:
-
 - Borrow against your Bitcoin directly on-chain
 - Control a programmable dVault verified by Taproot + threshold signatures
 - Interact with an open credit market powered by LPs, not black-box institutions
@@ -271,39 +262,35 @@ Surge is not just infrastructure. It’s a promise:
 Explore the documentation and see how Surge is building the next generation of Bitcoin-native finance.
 
 ### 🗺️ Market Landscape
-
 ---
-
 title: Market Landscape
 description: Understanding the current Bitcoin lending market and insights
 ---
 
-# 🗺️ Market Landscape
 
+# 🗺️ Market Landscape
 ## Market Context
 
 It’s difficult to estimate the true size of the Bitcoin-backed lending market. Most platforms offer no public proof-of-reserves or on-chain visibility, making analysis challenging. Still, this market is substantial, with products dating back to 2014.
 
 We analyzed over 20 players and identified key patterns. The summary below outlines those findings. You’ll find the full dataset in the resources section.
 
-## Market Categorization
-
+## Market Categorization 
 Based on Custody Model 👇
 
 ### CeFi Platforms
-
-These platforms take full custody of your Bitcoin either directly or via a group of trusted institutions using multi-institution custody (MIC) models.
-This category dominates the market and includes regulated entities. However, most of these platforms are still black boxes, offering little or no transparency.
+These platforms take full custody of your Bitcoin either directly or via a group of trusted institutions using multi-institution custody (MIC) models. 
+This category dominates the market and includes regulated entities. However, most of these platforms are still black boxes, offering little or no transparency. 
 
 ### Bitcoin DeFi Models (Multisig, P2P, DLCs)
-
-Emerging platforms in this space leverage Bitcoin-native scripting: multisigs, Discreet Log Contracts (DLCs), and now Tapscript. These models appeal to Bitcoiners with smaller holdings (often below ten BTC).
+Emerging platforms in this space leverage Bitcoin-native scripting: multisigs, Discreet Log Contracts (DLCs), and now Tapscript. These models appeal to Bitcoiners with smaller holdings (often below ten BTC). 
 While adoption is growing, their programmability and UX are still limited compared to EVM-based ecosystems.
 
 ### Wrapped BTC on other chains
-
-This market is sizable, with WBTC being the dominant wrapped asset, followed by cbBTC, BTCb, tBTC, and others. These models use custodians like BitGo to lock BTC and mint wrapped versions for use in ecosystems like Ethereum or Base.
+This market is sizable, with WBTC being the dominant wrapped asset, followed by cbBTC, BTCb, tBTC, and others. These models use custodians like BitGo to lock BTC and mint wrapped versions for use in ecosystems like Ethereum or Base. 
 While the smart contracts live on these chains, the BTC itself is held by third parties, making it difficult to classify as true DeFi from a Bitcoin perspective.
+
+
 
 ## Key Insights from the Market Analysis
 
@@ -315,14 +302,13 @@ While the smart contracts live on these chains, the BTC itself is held by third 
 - **Decentralized platforms are gaining ground:** A wave of new entrants is adopting trust-minimized infrastructure and on-chain verification. While still early, this category is poised to disrupt the current centralized players.
 
 ## What’s Missing in Bitcoin Lending?
-
 We’ve created a new visual map that charts Bitcoin-backed lending platforms across two axes:
-
 - X-Axis: Market Focus from HNWIs to Grassroots Bitcoiners
 - Y-Axis: Custody Model from Full Custody to Self-Custody
 
-## We also introduce a new category
 
+
+## We also introduce a new category
 Surge doesn’t just fit into the existing categories - it reimagines the model entirely:
 
 - Non-custodied BTC in verifiable, non-rehypothecated dVaults
@@ -332,17 +318,15 @@ Surge doesn’t just fit into the existing categories - it reimagines the model 
 It’s not a CeFi platform. It’s not DeFi built elsewhere. It’s a **Bitcoin-native Credit Market**, a fundamentally new design
 
 ## Resources
-
 - [Bitcoin Lending Platforms Comparison Table](https://surgehq.notion.site/263232deac9080e3a6a3f9f040047105?v=263232deac90803bbf49000c80e4431b)  
 - [In-depth Breakdown: Bitcoin-backed Lending Market](https://onchainbitcoin.substack.com/p/bitcoin-lending-landscape)
 
 ### 💵 Stablecoin Adoption
-
 ---
-
 title: Stablecoin Adoption
 description: Understanding the massive opportunity in stablecoin adoption and Bitcoin's role
 ---
+
 
 # 💵 Stablecoin Adoption
 
@@ -355,39 +339,34 @@ Until then, stablecoins are doing the heavy lifting.
 They’re onboarding millions, replacing legacy rails, and acting as a bridge between fiat and crypto, between the world we live in, and the world Bitcoin is building.
 
 ## The Growth is Real
-
 The stablecoin market has reached $288 billion today, and is projected to hit $2 trillion by 2028, according to the U.S. Treasury.
 This isn’t just growth, it’s a macro transformation.
 
-## What Stablecoins enable
 
+
+## What Stablecoins enable
 - **Low-cost global payments:** They shrink the gap between transaction and settlement.
 - **Instant finality:** Real-time, on-chain settlement without legacy delays.
 - **Programmable finance:** Logic, automation, and smart contracts, finance meets software.
 
 ## Adoption Catalysts
-
 Stablecoin momentum is only accelerating, thanks to two big tailwinds:
-
 - GENIUS Act (2025): A landmark U.S. regulatory framework. While it introduces some centralization, it unlocks massive new markets and prevents collapses like Terra Luna.
 - Institutional on-chain entry:
-  - Arc Network by Circle
-  - Tempo by Stripe
-  - Plasma by Tether
-  - USAT (U.S. Asset Token)
+	- Arc Network by Circle
+	- Tempo by Stripe
+	- Plasma by Tether
+	- USAT (U.S. Asset Token)
 
 These are not just product launches. They are infrastructure shifts, bringing real users on-chain, beyond crypto’s degen sandbox.
 
 ## What this means for Bitcoin
-
 Stablecoins don’t compete with Bitcoin, **they complement it.**
-
 - They bring utility to payments, remittances, and financial access.
 - They fuel demand for decentralized credit rails.
 - They accelerate the need for Bitcoin-native alternatives to custodial lending.
 
 As stablecoin adoption grows, so does the urgency for:
-
 - Fewer intermediaries
 - More on-chain visibility
 - Lower costs
@@ -396,78 +375,67 @@ As stablecoin adoption grows, so does the urgency for:
 This is the moment for a new category in Bitcoin lending: a transparent, programmable, Bitcoin-native credit market.
 That’s what Surge is here to build.
 
-## Resources
 
+## Resources
 [Stablecoin adoption stats](https://stablecoins.asxn.xyz/)
 
 ## Product
 
 ### ✊ For Bitcoiners
-
 ---
-
 title: For Bitcoiners
 description: How Surge makes it easier for Bitcoiners
 ---
 
+
 # ✊ For Bitcoiners
 
-## Your Bitcoin, Your Terms
-
+## Your Bitcoin, Your Terms.
 Access a Bitcoin-native Credit Market, without giving up full-custody. It’s built for everyday Bitcoiners who value sovereignty, transparency, and verifiable custody, not centralized black boxes.
 
-Your BTC stays in a unique, programmable Taproot vault, secured by a Decentralized Custody Network using threshold Schnorr signatures.
+Your BTC stays in a unique, programmable Taproot vault, secured by a Decentralized Custody Network using threshold Schnorr signatures. 
 It’s on-chain, auditable, and non-custodial, always.
 
+
 ## 🚀 How It Works
-
 ### 1. Sign Up Securely
-
 Get started via mobile app on Android or iOS. Sign up with just an email + OTP. We create a secure, self-custodial wallet with built-in backup and 2FA for enhanced protection.
 
 ### 2. Request a Credit Line
-
 Specify your initial credit line amount with
-
 - Fixed interest rates (8–11% annually)
 - Variable interest rates coming soon (6.9% target)
 - A 12-month term with flexible repayment
 
 You choose which market (variable or fixed) to borrow from; liquidity is drawn from the market accordingly.
-
 - No need to draw full amount upfront, you control usage
 
 ### 3. Send Bitcoin
-
 - A unique Taproot address is generated per credit line
 - You deposit BTC at 50% LTV (e.g., send 0.1 BTC for $3K USDC credit)
 - After 3 confirmations, your credit line becomes active
 
 ### 4. Draw & Repay Flexibly
-
 - Withdraw stablecoins (USDC, USDT) to any address
 - Spend, send, or off-ramp to a bank account
 - Repay any time to reclaim your BTC
 - Add more BTC to reduce LTV or unlock more credit
 
 ### 5. Stay Verifiably in Control
-
 Your BTC is never moved without:
-
 - Your signature, and
 - the Distributed Custody Network signature based on programmable vault logic
 
 If the system fails or goes offline, your vault includes a time-locked refund path—returning your BTC to your wallet after term expiration.
 
 ### 6. Liquidation, but Fair
-
 Liquidation with a rules-based process that only liquidates in extreme cases when BTC collateral health declines past 90%.
-
 - Triggered only when on-chain oracles (like BTC/USD price) report sustained volatility
 - Price feeds are transparent and open—you can verify exactly what data is being used
 - Price feeds are double checked by DCN before liquidation begins
 
 This means no surprise wipeouts, no discretionary calls—just fair, on-chain enforcement with double checks.
+
 
 ## 🔍 Built for Transparency
 
@@ -477,9 +445,7 @@ This means no surprise wipeouts, no discretionary calls—just fair, on-chain en
 - **Transparent Oracles:** Anyone can view the price feeds that govern loan health and liquidation triggers.
 
 ## 💡 Why the credit market
-
 Unlike traditional loans, Surge’s credit market offers flexible credit:
-
 - Borrow only what you need, when you need it
 - Repay and reuse, no need to reapply
 - Maintain control over your BTC with on-chain proof at every step
@@ -487,11 +453,9 @@ Unlike traditional loans, Surge’s credit market offers flexible credit:
 Surge is for Bitcoiners who believe in holding their keys and want access to liquidity without selling their future.
 
 ### 🤝 For Distribution Partners
-
 ---
-
 title: Distribution Partners
-description: How distribution partners can plug into Surge's permissionless system to white-label borrow and earn products
+description: How distribution partners can plug into Surge's permissionless system to white-label borrow and earn products.
 ---
 
 # 🤝 For Distribution Partners
@@ -535,11 +499,9 @@ Use cases: savings apps, treasury products, or any distributor that wants “ear
 If you’re building a borrow or earn product and want to use Surge’s permissionless credit market under your own brand, reach out via [surge.build](https://surge.build) or the links in [Resources](/resources/quick-links).
 
 ### ✊ For Everyone
-
 ---
-
 title: Everyone
-description: It’s for everyone who cares about building open, verifiable, and trust-minimized systems on Bitcoin
+description: It’s for everyone who cares about building open, verifiable, and trust-minimized systems on Bitcoin.
 ---
 
 # ✊ For Everyone  
@@ -549,24 +511,20 @@ Surge isn’t just for Bitcoiners and LPs. It’s for everyone who cares about b
 We believe critical financial infrastructure must be transparent by default. That’s why we’re committed to making the following available for public review:
 
 ## 🧾 Distributed Custody Network Transparency
-
 - Live list of active signer nodes
 - Entity-level disclosure (who they are, why they’re trusted)
 - Slashing history and performance metrics
 
 ## 📈 Oracle Feed Integrity
-
 - Real-time oracle inputs powering LTV and liquidation
 - Historical data and update cadence
 - Circuit-breaker logic for edge cases
 
 ## 🔍 Verifiable Custody
-
 - Every Bitcoiner’s credit line is backed by a unique Taproot address
 - Anyone can verify that BTC is unrehypothecated and non-custodial
 
 ## 📑 Audits & Reports
-
 - Ongoing third-party security audits
 - Internal monitoring metrics
 - Protocol health reports and governance insights
@@ -576,24 +534,24 @@ All of this will be published at [surge.build](https://surge.build): your window
 >Because if it’s not verifiable, it’s not Bitcoin.
 
 ### 💰 For Liquidity Providers
-
 ---
-
 title: Liquidity Providers
 description: How surge benefits the Liquidity providers and Market makers holding stablecoins and looking for yield
 ---
 
+
+
 # 💰 For Liquidity Providers
 
-Surge introduces a novel multi-market architecture, managed by a Decentralised Custody Network (DCN).
+Surge introduces a novel multi-market architecture, managed by a Decentralised Custody Network (DCN). 
 These markets act as the liquidity layer between BTC and stablecoin capital, enabling Bitcoiners to access different credit markets with different terms while LPs earn risk based yield from actual credit usage.
 
 Unlike traditional DeFi platforms that rely on speculative trading activity, Surge enables LPs to earn predictable, usage-driven yield, with added incentives for participating in network operations like liquidations.
 
+
 ## 🧩 The Architecture: LP markets + DCN
 
 At the heart of Surge’s lending mechanism is a multi-chain, DCN-coordinated communication layer:
-
 - Markets exist natively in stablecoins (USDC, USDT) on Ethereum (Base).
 - When a Bitcoiner requests credit, the DCN verifies BTC collateral on-chain, signs a Bitcoin transaction, and authorizes the stablecoin disbursement.
 - The DCN jointly maintains custody policies, validate credit conditions, and enforce programmatic rules for repayment, liquidation, and timelocks.
@@ -608,22 +566,21 @@ Surge’s multi-market layer can offer both **variable** (floating) and **fixed-
 - **Fixed-rate markets** - You **opt in** to specific fixed-rate markets (e.g. 6%, 8%) and set **allocation limits** (e.g. max 50% of your deposit in “Fixed 6%”). When borrowers take fixed-rate loans, your funds may be moved from the variable pool into that fixed market; you earn the fixed supply rate on that portion. Your **effective APY** is the weighted average of rates across your variable and fixed positions.
 - **Withdrawing from fixed** - To “withdraw” from a fixed market you swap your position with another lender that wants exposure to that fixed market. If no lenders are available to swap, you can enter a queue, offer to swap your position at a discount, or wait for a borrower from that market to repay.
 
+
 ## 📊 LP Dashboard & DCN Participation
 
 LPs interact through an intuitive web interface to:
-
 - Deposit supported stablecoins into active liquidity pools
 - Monitor pool health, active credit lines, interest accrued, and risk metrics
 - Configure preferences like pool size, chain, stablecoin, and duration
 - Join the queue to run a Distributed Custody node
 
 Running a Distributed Custody node is optional, but highly encouraged for active LPs. It enables:
-
 - Priority yield opportunities and liquidation incentives
 - Visibility into on-chain conditions and vault-level transparency
 
-## 💰 Why LPs Choose Surge
 
+## 💰 Why LPs Choose Surge
 - Untapped Bitcoin-native demand - Yield from BTC-backed credit lines in a transparent market, previously gated behind CeFi platforms
 - Competitive, real yield - Interest paid by Bitcoiners drawing credit, not speculative APYs
 - Liquidation bonuses - 5% liquidation premium on undercollateralized positions goes to pools
@@ -636,9 +593,7 @@ Unlike ETH-centric DeFi or risky alt-L2 plays, Surge offers Bitcoin-first, credi
 Surge brings yield back to the fundamentals: real users, real assets, and verifiable on-chain logic, not token games or circular lending.
 
 ### 🔭  Our Thesis
-
 ---
-
 title: Our Thesis
 description: Surge's core philosophy and principles
 ---
@@ -646,60 +601,52 @@ description: Surge's core philosophy and principles
 # 🔭  Our Thesis
 
 ## What
-
-Bitcoin-backed lending today is still stuck in the past. Platforms are built around custodians, hidden rehypothecation, off-chain agreements, and predatory liquidations.
+Bitcoin-backed lending today is still stuck in the past. Platforms are built around custodians, hidden rehypothecation, off-chain agreements, and predatory liquidations. 
 They were designed for institutions and early whales, not for everyday Bitcoiners who hold their keys, believe in transparency, and need reliable access to liquidity.
 
 ## So What
-
-That means millions of Bitcoiners, especially those holding under 10 BTC are left out. They’re forced to trust black-box lenders, pay excessive fees, or sell their BTC in emergencies.
+That means millions of Bitcoiners, especially those holding under 10 BTC are left out. They’re forced to trust black-box lenders, pay excessive fees, or sell their BTC in emergencies. 
 Worse, the core values of Bitcoin self-custody, openness, and verifiability are lost in the very systems meant to support it.
 
 ## Now What
-
-Surge is building something fundamentally different: a Bitcoin-native credit market that puts users in control.
-With dVaults (programmable Bitcoin vaults), market-driven terms, and a decentralized signer network, Bitcoiners can borrow stablecoins without giving up custody, trust, or transparency.
+Surge is building something fundamentally different: a Bitcoin-native credit market that puts users in control. 
+With dVaults (programmable Bitcoin vaults), market-driven terms, and a decentralized signer network, Bitcoiners can borrow stablecoins without giving up custody, trust, or transparency. 
 It’s a credit system designed for Bitcoiners, not institutions. Built on-chain. Aligned with the ethos.
 
 ### 🖼️ Product Overview
-
 ---
-
 title: Product Overview
-description: Surge is a Bitcoin-native credit market powered by programmable dVaults, enabling Bitcoiners, stablecoin LPs, and infra providers to collaborate in a non-custodial, transparent system
+description: Surge is a Bitcoin-native credit market powered by programmable dVaults, enabling Bitcoiners, stablecoin LPs, and infra providers to collaborate in a non-custodial, transparent system.
 ---
+
 
 # 🖼️ Product Overview
-
 Surge is a Bitcoin-native credit market powered by taproot-based UTXOs, where every credit line is a dedicated UTXO with two signers: the Bitcoiner and a Decentralised Custody Network (DCN).
 
 ## How it Works
-
-Today, each Bitcoiner uses the Surge mobile app to access the Surge Credit Markets. In the app they send BTC to a unique dVault, a Taproot-based, programmable vault.
+Today, each Bitcoiner uses the Surge mobile app to access the Surge Credit Markets. In the app they send BTC to a unique dVault, a Taproot-based, programmable vault. 
 This vault enforces three deterministic spending paths:
 
-1. **Voluntary Repayment:** If no credit is drawn, or once the borrower repays, they can withdraw BTC directly, without signer network intervention.
-2. **Liquidation:**
-
-- If the credit line’s health drops below a predefined threshold, the DCN will sign a liquidation transaction, only when validated by multiple external oracle attestations.
-- If the credit line is not paid off or rolled over at the end of term, the DCN can sign a liquidation transaction. BTC will be sold to cover debt + interest and the remainder returned.
-
-1. **Transfer:** Bitcoiners may transfer loans to and from Surge's credit market. This requires signatures from the Bitcoiner, DCN, and a third party credit provider.
-2. **Time-Locked Recovery:** If the system becomes unresponsive or the DCN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
+1. **Voluntary Repayment:** If no credit is drawn, or once the borrower repays, they can withdraw BTC directly, without signer network intervention. 
+2. **Liquidation:** 
+  - If the credit line’s health drops below a predefined threshold, the DCN will sign a liquidation transaction, only when validated by multiple external oracle attestations.
+  - If the credit line is not paid off or rolled over at the end of term, the DCN can sign a liquidation transaction. BTC will be sold to cover debt + interest and the remainder returned.
+3. **Transfer:** Bitcoiners may transfer loans to and from Surge's credit market. This requires signatures from the Bitcoiner, DCN, and a third party credit provider.
+4. **Time-Locked Recovery:** If the system becomes unresponsive or the DCN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
 
 This ensures that funds are always:
-
-- Non-custodial – borrower shares control with the DCN
+- Non-custodial – borrower shares control with the DCN 
 - Verifiably on-chain – visible and auditable at all times
 - Decentralized – DCN is distributed with multiple parties and economically aligned
 
-Once the BTC is locked, stablecoin liquidity is released from the Ethereum-based smart contract (USDC supported, USDT coming soon), sent directly to the borrower's self custodied wallet.
+Once the BTC is locked, stablecoin liquidity is released from the Ethereum-based smart contract (USDC supported, USDT coming soon), sent directly to the borrower's self custodied wallet. 
 The smart contracts implement multiple markets where Bitcoiners can tap liquidity, and LPs earn yield, with infrastructure ensuring safety and execution. The different markets can offer both **variable** (floating) and **fixed-rate** markets.
+
+
 
 ## Interface Suite
 
 Surge has three core interfaces, each designed for a key participant:
-
 - **Bitcoiners:** Access the credit market via Surge’s mobile app (iOS, Android; PWA coming soon) or via distribution partners who white label Surge's permissionless Credit Market. No paperwork, just verifiable BTC and stablecoin access in less than 30 minutes.
 - **Liquidity Providers:** Contribute stablecoins into markets, earn yield from variable and/or fixed-rate markets, and optionally run signer nodes in our DCN to protect the rules based system.
 - **Distributed Custody Network Members:** Access technical data, audit trails, oracle feeds, system status, and open-source repos via surge.build, our transparency hub.
@@ -707,18 +654,16 @@ Surge has three core interfaces, each designed for a key participant:
 Surge is built ground-up for trust-minimized credit and no one can touch their Bitcoin without following predefined, public rules.
 
 ### Branding and Logos [Bitcoin-native Credit Market]
-
 [Link to Media Kit](https://docs.surge.build/resources/media-kit)
 
 ### Quick Links
-
 # Quick Links
 
 Website: [https://surge.build](https://surge.build)
 
 Twitter: [https://x.com/surge_credit](https://x.com/surge_credit)
 
-{/*Telegram: [https://t.me/surgebuild](https://t.me/surgebuild)*/}
+{/* Telegram: [https://t.me/surgebuild](https://t.me/surgebuild) */}
 
 LinkedIn:  [https://linkedin.com/company/surgebuild](https://www.linkedin.com/company/surgecredit)
 
@@ -727,11 +672,9 @@ Blog: [https://surge.build/blog](https://surge.build/blog)
 ## Architecture & Core Tech
 
 ### 📜 Smart Contracts
-
 ---
-
 title: Smart Contracts
-description: Debt Ledger, Position Token, Liquidity Pool and Auction
+description: Debt Ledger, Position Token, Liquidity Pool and Liquidation Auction
 ---
 
 # 📜 Smart Contracts
@@ -780,16 +723,13 @@ Auction lifecycle:
 **Why Dutch.** Dutch auctions on a declining curve do not require active bidding to discover price; they surface the market-clearing price passively, which is what a liquidation needs under time pressure. The first buyer to see the price as favourable clears the auction.
 
 **Market-segregated proceeds.** Auction proceeds always flow back into the specific market (variable or fixed) that issued the liquidated credit line - risk is per-market, not socialized across the protocol.
-
 ## References
 
 - [Credit Markets](/tech/credit-markets)
 - [Relayer & Workers](/tech/relayer)
 
 ### 🛟 Disaster Recovery
-
 ---
-
 title: Disaster Recovery
 description: Publicly Verifiable Encryption, threshold-controlled backup decryption, and incident-response flows for key-share loss or compromise
 ---
@@ -886,9 +826,7 @@ Create and verify fresh PVE backups for the new key
 - Recovery ceremonies are rehearsed on non-production keys before every quarter close. Unexercised recovery capability is unreliable recovery capability.
 
 ### 👥 Distributed Custody Network (DCN)
-
 ---
-
 title: Distributed Custody Network
 description: Threshold Schnorr signing for Taproot Vaults using Lin24, signer policy checks, and trust assumptions
 ---
@@ -899,8 +837,9 @@ A Vault spend that requires `loanPubkey` authorization is signed by the **Distri
 
 No single signer ever holds the full signing secret; each signer only holds a share. Signatures are produced only when quorum participation and policy checks both pass.
 
-## Signing Capabilities
 
+
+## Signing Capabilities
 | Capability | Scheme | Used for | Protocol |
 |---|---|---|---|
 | **Threshold Schnorr** | BIP340 | Vault spends on Bitcoin (Repayment, Liquidation) | **Lin24**  |
@@ -980,9 +919,7 @@ The adversary model we design against:
 - [Key Lifecycle](/tech/key-lifecycle) · [Key Shard Security](/tech/key-shard-security) · [Disaster Recovery](/tech/disaster-recovery) · [Reshare & Onboarding](/tech/reshare-onboarding)
 
 ### 🎯 Deterministic Liquidation
-
 ---
-
 title: Deterministic Liquidation
 description: How the Liquidation path of a Vault is authorized, constructed, and settled
 ---
@@ -1053,9 +990,7 @@ The on-chain spend is identical to the undercollateralization flow - same leaf a
 - **Market-segregated.** Auction proceeds reconcile debt in the specific market (variable or fixed-rate) that issued the credit line, not a shared accounting surface.
 
 ### ⏳ Unilateral Exit
-
 ---
-
 title: Unilateral Exit
 description: CSV-timelocked Taproot path guaranteeing sovereign BTC recovery if the DCN or Coordination Layer disappears
 ---
@@ -1100,20 +1035,20 @@ OP_DROP
 - **Script-enforced, not trust-enforced.** There is no admin key, no governance override, and no upgrade path that can weaken this leaf for an already-funded UTXO. To change the Exit behaviour for *future* vaults, the vault template itself would have to be re-deployed; existing UTXOs retain the scripts they committed to at creation.
 
 ### 💬 FAQs
-
 ---
-
 title: FAQs
 description: Common questions about Surge's Bitcoin-native architecture and design choices
 ---
 
 # 💬 FAQs
 
+
 **Why not use DLCs (Discreet Log Contracts)?**
 
 DLCs are single-use oracle contracts designed for event-based payouts. Surge's Vaults are persistent and programmable, supporting recurring actions like borrow, repay, partial liquidation, and unilateral exit.
 
 DLCs cannot maintain live vault state or multi-party control flows, so Surge uses **Taproot + MAST** scripts for reusable, native logic. Read more [here](/tech/dlcs).
+
 
 ---
 
@@ -1123,11 +1058,13 @@ A key-path-only Taproot output exposes all logic under one aggregated key, reduc
 
 **MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a [BIP341 NUMS internal key](/tech/vaults), so no aggregated signature can ever bypass the script branches.
 
+
 ---
 
 **Where does my BTC actually live?**
 
 On Bitcoin. Your collateral is locked in a Pay-to-Taproot output committing three spend scripts (Repayment / Liquidation / Exit) under a NUMS internal key - there is no key-path spend, no wrapped BTC, and no bridge. The Vault is verifiable on a Bitcoin block explorer at all times.
+
 
 ---
 
@@ -1137,6 +1074,7 @@ Two guarantees, both enforced by Bitcoin script rather than by promise:
 
 1. **Cooperative repayment requires the borrower's signature.** The DCN alone cannot move BTC out of a Vault via the Repayment leaf - both `userPubkey` and the DCN's aggregate `loanPubkey` must sign.
 2. **Unilateral Exit is always available.** Even if the DCN, the relayer, the oracle, and every Surge service permanently disappear, the borrower can recover their BTC by spending the Exit leaf after a relative timelock (`OP_CHECKSEQUENCEVERIFY`, ≈ 1 year). See [Unilateral Exit](/tech/exit).
+
 
 ---
 
@@ -1149,17 +1087,20 @@ Both are threshold Schnorr protocols, but Surge runs on **[Lin24](/tech/distribu
 
 The trade-off is one extra round per signing session (3 rounds vs FROST's 2). Surge accepts that for the stronger guarantees.
 
+
 ---
 
 **What's the threshold? How many signers does it take to move BTC?**
 
 The DCN operates as a **3-of-n** Lin24 threshold signer for the current member set. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
 
+
 ---
 
 **Why CSV (relative timelock) for Unilateral Exit, not CLTV (absolute height)?**
 
 `OP_CHECKSEQUENCEVERIFY` is **relative** - the ~1-year delay counts from the funding transaction's confirmation, so every deposit gets its own clock. That matches the lifecycle of a credit line (which starts at deposit) better than an absolute date that would expire all positions at the same moment regardless of when they opened.
+
 
 ---
 
@@ -1169,6 +1110,7 @@ The DCN operates as a **3-of-n** Lin24 threshold signer for the current member s
 
 Liquidity is **moved** between the variable pool and fixed markets when borrowers take or repay fixed-rate loans - it is not duplicated, and there is no rehypothecation. LPs can opt in to fixed markets and set per-market allocation limits. See [Credit Markets](/tech/credit-markets) for the full picture, or the [Surge Multi-Market Lending Pool](https://surgehq.notion.site/Surge-Multi-Market-Lending-Pool-2fc232deac9080218404ea7605e713c6) deep-dive.
 
+
 ---
 
 **What happens to my BTC if I get liquidated?**
@@ -1177,6 +1119,7 @@ Liquidation does not seize your full collateral. The DCN spends only enough BTC 
 
 Any BTC surplus after debt settlement is **re-locked into a Vault UTXO under the same scripts** - your position continues with reduced collateral and reduced debt rather than terminating. Partial-liquidation lots are sized to minimise borrower loss and dampen liquidation cascades.
 
+
 ---
 
 **Where does the LP yield come from?**
@@ -1184,6 +1127,7 @@ Any BTC surplus after debt settlement is **re-locked into a Vault UTXO under the
 From real Bitcoin-collateralised borrowing, not from token incentives or circular farming. When borrowers draw USDC against their BTC Vaults, they pay a borrow rate set by the [interest-rate model](/tech/contracts#rate-curve--interestratemodel) (variable market) or by market creation (fixed-rate markets). That borrow interest, minus a reserve factor, accrues to LP shares.
 
 The advertised APY band reflects the high-utilization region of the rate curve in the current deployment and moves with actual borrow demand. Auction proceeds during liquidation also flow back into the originating market, so risk and reward are segregated per-market rather than socialised.
+
 
 ---
 
@@ -1198,9 +1142,7 @@ A compromised relayer can delay actions, over-submit them, or fail to observe st
 The relayer is convenience infrastructure; it is not a custody or signing authority.
 
 ### 🔄 Key Lifecycle
-
 ---
-
 title: Key Lifecycle
 description: DKG, backup, verification, signing, proactive refresh, and recovery - the end-to-end lifecycle of a DCN key
 ---
@@ -1271,9 +1213,7 @@ Two distinct incident classes demand two distinct responses:
 Below-threshold compromise of a single share is handled by refresh alone: old shares (including the compromised one) are made cryptographically useless, and the signer in question is re-provisioned or rotated out via [reshare](/tech/reshare-onboarding).
 
 ### 🛡 Key Shard Security
-
 ---
-
 title: Key Shard Security
 description: Envelope encryption, per-organization hardware trust anchors, and the KeyProtector abstraction
 ---
@@ -1368,9 +1308,7 @@ Even with every control above in place, two residual risks remain non-zero:
 Surge operates under the explicit assumption that the controls above reduce - not eliminate - these categories, and treats them in operational response planning accordingly.
 
 ### 🧾 Signing Policy
-
 ---
-
 title: Signing Policy
 description: How the DCN decides whether to sign - authentication, per-signer validation, the one-honest-node policy, and transport security
 ---
@@ -1394,6 +1332,7 @@ A spend request has to pass nine independent checks before a Bitcoin transaction
 | 7 | Memory hygiene | `mlock`, secure zeroization, core dumps disabled during signing |
 | 8 | Disaster recovery | PVE backups verified by ZK proof; threshold-gated recovery key |
 | 9 | Hardware attestation | TEE  optional per signer via KeyProtector abstraction |
+
 
 ## Per-Signer Validation
 
@@ -1449,9 +1388,7 @@ Key-share material is only in plaintext memory for the brief duration of an acti
 Residual risk after these controls: a root-level attacker on the host during the active signing window could theoretically read share memory. Surge treats this as a bounded exposure window and reduces it through memory controls, refresh policy, and infrastructure hardening.
 
 ### 🌐 Oracle System
-
 ---
-
 title: Oracle System
 description: Surge's BTC/USD price feed - medianized inputs, per-signer validation, deterministic enforcement of collateral health
 ---
@@ -1506,9 +1443,7 @@ These events form a complete, replayable audit trail for liquidation decisions: 
 The oracle path will continue to evolve toward broader source diversity, public transparency of submitter identities and signed-update history, and a published deviation budget so any party can independently verify that the protocol's medianized output remained inside policy at every interval. The destination state is a feed whose correctness can be audited end-to-end by anyone, not trusted by configuration.
 
 ### 🔧 Technical Overview
-
 ---
-
 title: Technical Overview
 description: How Surge composes Bitcoin Taproot vaults, a distributed custody network, EVM credit contracts, and CCTP v2 into one Bitcoin-native credit market
 ---
@@ -1531,6 +1466,10 @@ The system is built from four cooperating components. Each owns a distinct layer
 A **stablecoin liquidity layer**  routes USDC across chains so the pool stays canonical regardless of where supply originated. A **per-signer oracle path** feeds BTC/USD into health calculations.
 
 ## How They Fit Together
+
+
+
+
 
 1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key (key-path spend disabled). The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
 2. **Relayer observes the deposit** at the configured confirmation depth and calls `VaultManager.submitLoan(...)` on the EVM side. A `PositionID` is minted and the stablecoin liability is recorded on the canonical ledger.
@@ -1556,9 +1495,7 @@ A **stablecoin liquidity layer**  routes USDC across chains so the pool stays ca
 Bitcoin script enforces custody. Threshold cryptography enforces "no single signer compromise loses funds." EVM contracts enforce accounting. The relayer is convenience infrastructure. **A compromised relayer can delay things, it cannot move BTC, cannot mint debt, and cannot cause LPs to lose principal.**
 
 ### 💰 Repayment Path
-
 ---
-
 title: Repayment
 description: Cooperative closure of a Vault via the vaultId-bound Repayment path
 ---
@@ -1585,7 +1522,7 @@ OP_2
 OP_NUMEQUAL
 ```
 
-The leading `OP_DROP` is a commitment, not a runtime check - it forces the leaf (and therefore the taptree, the Taproot address, and the script tree root) to be unique to this position, so a valid witness for one Vault cannot be replayed against another.
+The leading ` OP_DROP` is a commitment, not a runtime check - it forces the leaf (and therefore the taptree, the Taproot address, and the script tree root) to be unique to this position, so a valid witness for one Vault cannot be replayed against another.
 
 The final `OP_2 OP_NUMEQUAL` requires exactly two valid signatures - both the borrower *and* the DCN aggregate key must sign. Neither side can close the Vault without the other via this path.
 
@@ -1596,9 +1533,7 @@ The final `OP_2 OP_NUMEQUAL` requires exactly two valid signatures - both the bo
 - **BIP340-compatible signature component.** The DCN authorization signature itself is standard Schnorr.
 
 ### 🛰 Relayer & Workers
-
 ---
-
 title: Relayer & Workers
 description: The service layer that keeps Bitcoin state and contract state synchronized
 ---
@@ -1695,8 +1630,6 @@ The user-visible shape of an outage is a pause, not a loss. Positions sit where 
 - **Not the signing authority.** The relayer proposes spends; per-signer validators in the DCN decide whether to sign.
 - **Not the source of truth.** Canonical state is Bitcoin plus EVM contracts; relayer persistence is workflow state.
 
-A compromised relayer can delay actions, over-submit them, or miss events. It cannot move BTC, cannot forge borrower authorization, and cannot bypass Vault spend rules.
-
 ## References
 
 - [Distributed Custody Network](/tech/distributed-custody-network) for DCN signing.
@@ -1704,9 +1637,7 @@ A compromised relayer can delay actions, over-submit them, or miss events. It ca
 - [Credit Markets](/tech/credit-markets) for markets on liquidity pool.
 
 ### 🔁 Reshare & Signer Onboarding
-
 ---
-
 title: Reshare & Signer Onboarding
 description: Adding, removing, and rotating signer organizations without changing the public key or on-chain addresses
 ---
@@ -1770,9 +1701,7 @@ Reshare fragments in transit are the most sensitive traffic in the network - any
 Reshare is distinct from [refresh](/tech/key-lifecycle#6-proactive-key-refresh): refresh keeps the access structure and rotates shares; reshare changes the access structure.
 
 ### 🔐 Self-Custody User Wallet
-
 ---
-
 title: Self-Custody User Wallet
 description: Surge's borrower wallet - sealed key generation and signing inside hardware-isolated execution environments, encrypted export, and cryptographic attestation
 ---
@@ -1782,6 +1711,8 @@ description: Surge's borrower wallet - sealed key generation and signing inside 
 The Surge app holds the borrower's wallet and is designed with **self-custody at its core**. Every wallet instance ensures that private keys are created, stored, and used exclusively under the authenticated user's control. The user - not Surge - has authority over signing actions, key export, stablecoin distribution, and the return address used by every spend path.
 
 The signing environment runs as a sealed runtime within hardware-isolated infrastructure. Once instantiated, its memory and code are cryptographically measured and isolated so that operators, administrators, and the host kernel cannot read, export, or modify a user's private key.
+
+
 
 ## Authentication & Key Lifecycle
 
@@ -1854,9 +1785,7 @@ The Confidential VM platform underpinning the wallet enclave continues to evolve
 The intent stays the same regardless of platform: the user holds the key, the runtime never reveals it, and any change to the runtime is publicly verifiable.
 
 ### 🔄 Transfers
-
 ---
-
 title: Transfers
 description: How cooperative position transfers between Surge and third-party marketplaces are coordinated
 ---
@@ -1882,9 +1811,7 @@ Settlement details are implementation-specific and evolve as integrations are fi
 - **No dedicated Transfer script leaf:** Transfer behavior is coordinated at the application and contract layers.
 
 ### 🔐 Taproot Vaults
-
 ---
-
 title: Taproot Vaults
 description: Taproot-based Bitcoin Vaults with committed spend paths and threshold Schnorr authorization
 ---
@@ -1909,6 +1836,8 @@ A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_
 | DCN / coordination layer disappears | User alone after ~1 year relative timelock | Exit |
 
 Delinquency (credit line not paid at term) is handled by the **Liquidation** leaf, it is a different *trigger reason*, not a different script. Transfers to/from a third-party marketplace are coordinated cooperatively through the Repayment flow. See [Transfers](/tech/transfers).
+
+
 
 ## Script Anatomy
 
@@ -1950,11 +1879,9 @@ After the delay elapses, the borrower can recover funds without DCN participatio
 ## Credit Markets
 
 ### 📊 Credit Markets
-
 ---
-
 title: Credit Markets
-description: How Surge's credit markets work and why the multi-market design is better than alternatives
+description: How Surge's credit markets work and why the multi-market design is better than alternatives.
 ---
 
 # 📊 Credit Markets
@@ -2001,3 +1928,4 @@ Surge's credit markets are built for Bitcoin-native finance: transparent, progra
 ## Miscellaneous
 
 *Content pending.*
+

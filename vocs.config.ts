@@ -130,24 +130,27 @@ export default defineConfig({
             ],
           },
           {
+            text: "Smart Contracts",
+            link: "/tech/contracts",
+            collapsed: true,
+            items: [
+              {
+                text: "Credit Markets",
+                link: "/tech/credit-markets",
+              },
+              {
+                text: "Oracle System",
+                link: "/tech/oracles",
+              },
+            ],
+          },
+          {
             text: "Self Custody User Wallet",
             link: "/tech/self-custody-wallet",
           },
           {
-            text: "Smart Contracts",
-            link: "/tech/contracts",
-          },
-          {
-            text: "Credit Markets",
-            link: "/tech/credit-markets",
-          },
-          {
             text: "Relayer & Workers",
             link: "/tech/relayer",
-          },
-          {
-            text: "Oracle System",
-            link: "/tech/oracles",
           },
           {
             text: "FAQs",

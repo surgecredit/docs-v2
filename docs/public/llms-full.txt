@@ -1135,7 +1135,6 @@ Auction lifecycle:
 **Why Dutch.** Dutch auctions on a declining curve do not require active bidding to discover price; they surface the market-clearing price passively, which is what a liquidation needs under time pressure. The first buyer to see the price as favourable clears the auction.
 
 **Market-segregated proceeds.** Auction proceeds always flow back into the specific market (variable or fixed) that issued the liquidated credit line - risk is per-market, not socialized across the protocol.
-
 ## References
 
 - [Credit Markets](/tech/credit-markets)
@@ -2196,8 +2195,6 @@ The user-visible shape of an outage is a pause, not a loss. Positions sit where 
 - **Not a custody service.** BTC is never at the relayer. Any BTC move requires a DCN-signed Taproot spend.
 - **Not the signing authority.** The relayer proposes spends; per-signer validators in the DCN decide whether to sign.
 - **Not the source of truth.** Canonical state is Bitcoin plus EVM contracts; relayer persistence is workflow state.
-
-A compromised relayer can delay actions, over-submit them, or miss events. It cannot move BTC, cannot forge borrower authorization, and cannot bypass Vault spend rules.
 
 ## References
 
