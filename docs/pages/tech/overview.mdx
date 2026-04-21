@@ -32,7 +32,7 @@ A **stablecoin liquidity layer**  routes USDC across chains so the pool stays ca
 
 
 
-1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key (key-path spend disabled). The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
+1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key derived from `SHA256("SURGE-NUMS")` (output: `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`), with key-path spend disabled. The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
 2. **Relayer observes the deposit** at the configured confirmation depth and calls `VaultManager.submitLoan(...)` on the EVM side. A `PositionID` is minted and the stablecoin liability is recorded on the canonical ledger.
 3. **Borrower receives USDC** - drawn from `LiquidityPool` on Base today, with Ethereum routing supported through CCTP v2. Additional chains are planned.
 4. **Position lives.** The relayer streams oracle price updates into the position's health calculation; workers monitor the collateral ratio against `MinCR` and the liquidation threshold.
@@ -43,13 +43,10 @@ A **stablecoin liquidity layer**  routes USDC across chains so the pool stays ca
 
 ## Why Each Layer Exists
 
-**Taproot vaults instead of a custodial wallet.** Collateral lives on Bitcoin under script. No bridge, no wrapped BTC, no "trust us, we hold the keys." If the entire Surge stack disappears, the Exit leaf still spends.
-
-**A distributed custody network instead of a multi-sig.** Multi-sig publishes the policy (you can see who signed) a threshold Schnorr aggregate looks like one signature on chain and never reveals which signers participated. That is better for privacy, fee efficiency, and access-structure evolution. Policy enforcement moves into per-signer validators that abort signing if the request does not match the on-chain authorisation.
-
-**EVM contracts instead of a Bitcoin-only ledger.** Bitcoin script is the right place to enforce custody and recovery. It is the wrong place to run a share-based interest-bearing liquidity pool with multiple market types and a Dutch-auction liquidation engine. The EVM contracts are small, audited, and own only what Bitcoin is bad at - everything else stays on Bitcoin.
-
-**A relayer instead of "users do everything themselves."** Borrowers don't want to monitor confirmations, submit health checks, hold gas on three chains, or chase IRIS attestations. The relayer does that and pays the gas. Crucially: it cannot move BTC, cannot forge an authorisation, and cannot mint USDC that wasn't burned - every material action requires either an on-chain authorisation or a DCN-signed witness.
+- **Taproot Vaults keep custody on Bitcoin.** Collateral stays under script control; no bridge, wrapped BTC, or platform custody assumptions.
+- **The DCN provides threshold signing without multisig footprint.** On-chain spends look like standard Schnorr signatures while signer policy is enforced off-chain by independent validators.
+- **EVM contracts run the credit engine.** Debt accounting, market logic, rates, and liquidation are handled where stateful finance is efficient, while BTC custody remains on Bitcoin.
+- **The relayer handles operations, not authority.** It automates monitoring, submissions, and cross-chain settlement, but cannot move BTC or mint unbacked USDC.
 
 ## The Trust Boundary
 

@@ -19,7 +19,7 @@ DLCs cannot maintain live vault state or multi-party control flows, so Surge use
 
 A key-path-only Taproot output exposes all logic under one aggregated key, reducing flexibility, observability, and unilateral-exit guarantees.
 
-**MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a [BIP341 NUMS internal key](/tech/vaults), so no aggregated signature can ever bypass the script branches.
+**MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a NUMS internal key derived from `SHA256("SURGE-NUMS")` (`6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`) (see [Taproot Vaults](/tech/vaults)), so no aggregated signature can ever bypass the script branches.
 
 </details>
 ---

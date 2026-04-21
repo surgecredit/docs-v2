@@ -13,7 +13,7 @@ A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_
 - **MAST tree.** Three leaves committed at Vault creation: **Repayment**, **Liquidation**, **Exit**. Only the executed leaf is revealed at spend time; unused branches remain hidden.
 - **Vault binding.** The Repayment leaf commits a 32-byte `vaultId = keccak256(abi.encodePacked(userEvmAddress, nonce))`, binding the UTXO to the borrower's on-chain position so that a spent leaf cannot be replayed against a different position.
 - **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-n signing session.
-- **Key-path spend disabled.** The internal key is the standard BIP341 **NUMS** point (`50929b...3ac0`) - a nothing-up-my-sleeve x-only pubkey with no known discrete log. This guarantees that no aggregated key-path signature can ever spend the Vault; every spend must reveal and execute a script path.
+- **Key-path spend disabled.** The internal key is a deterministic **NUMS** key derived from `SHA256("SURGE-NUMS")`, whose output used by Surge is `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`, and is set as the Taproot x-only internal pubkey. This guarantees there is no usable private key for key-path signing, so every spend must reveal and execute a script path.
 
 ## Trust Model
 
@@ -62,9 +62,9 @@ After the delay elapses, the borrower can recover funds without DCN participatio
    - **Liquidate** - BTC moves to the DCN-controlled sweep address, a Dutch auction runs on the EVM side against the market that issued the credit line, and any BTC surplus after debt settlement is re-locked into a Vault UTXO under the same scripts.
    - **Exit** - user alone spends after CSV expiry.
 
-## Security Anchors
+## Why This Is Safe
 
-- **Bitcoin is the enforcement layer.** Off-chain authorization (Coordination Layer + per-signer validators) decides *when* a spend is legitimate; Bitcoin script decides *whether* the signatures satisfy a committed leaf.
-- **NUMS disables the "trust the aggregated internal key" escape hatch** that would exist in a default P2TR.
-- **vaultId binding** prevents replaying a Repayment witness against an unrelated position.
-- **CSV exit** is script-enforced sovereignty, not a protocol promise.
+- **Bitcoin script is final authority.** Off-chain services can request actions, but BTC only moves when a valid committed Taproot leaf is satisfied on-chain.
+- **No hidden key-path backdoor.** The Vault uses a NUMS internal key derived from `SHA256("SURGE-NUMS")`, so key-path signing is not available.
+- **Repayment is bound to the correct position.** `vaultId` in the Repayment leaf prevents replaying a valid witness against a different Vault.
+- **Borrower recovery is guaranteed by script.** After CSV expiry, the Exit path can be spent by the borrower without depending on the DCN or platform availability.

@@ -18,21 +18,10 @@ Borrowers choose which market fits their needs. Lenders can opt in to fixed mark
 
 ## Why This Design
 
-### vs. Single-pool protocols
-
-Many lending protocols offer only one rate (either variable or fixed). Surge's multi-market design gives both: borrowers who want predictability can lock in a fixed rate; those who prefer flexibility use the variable market. Lenders earn from both, with explicit control over exposure.
-
-### vs. CeFi lending
-
-Traditional Bitcoin-backed lending is custodial and opaque. Users give up keys, visibility, and control. Surge's credit markets are non-custodial and on-chain: collateral stays in programmable Vaults, rates and utilization are verifiable, and no single party can move funds without the rules being satisfied.
-
-### vs. Speculative DeFi
-
-Yield in many DeFi protocols comes from token incentives, leveraged farming, or circular lending-not from real credit usage. Surge's credit markets are backed by actual Bitcoin-collateralized borrowing. LPs earn from interest paid by borrowers and (where applicable) from liquidation economics. Real assets, real demand, real yield.
-
-### vs. Fragmented liquidity
-
-Splitting liquidity across many isolated pools or chains reduces depth and increases slippage. Surge aggregates liquidity into a central credit market, with routing that keeps supply canonical and settlement deterministic. Deeper markets, better execution, and transparent accounting.
+- **Two rate choices from one liquidity base.** Borrowers can choose fixed or variable pricing without splitting into isolated products, and LPs can control exposure per market.
+- **Non-custodial and verifiable.** BTC collateral remains in Vault scripts on Bitcoin; utilization, rates, and accounting are on-chain and auditable.
+- **Yield from real borrowing demand.** Returns come from BTC-collateralized credit activity (and liquidation flow where applicable), not token subsidies or circular leverage.
+- **Capital stays deep instead of fragmented.** Liquidity is pooled canonically and routed deterministically, improving depth and execution quality.
 
 ---
 

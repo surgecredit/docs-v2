@@ -31,13 +31,13 @@ OP_DROP
 
 ## Illustrative Timeline
 
-- Day 1 - Borrower deposits BTC to the Vault; stablecoin is issued.
-- Day 300 - Coordination Layer and DCN go offline and do not come back.
-- Day ~365 - CSV expires. Borrower constructs a spend that reveals the Exit path and broadcasts it.
-- Borrower's full collateral is recovered, with no repayment required because no one can counter-spend the Repayment leaf.
+- A borrower deposits BTC into a Vault and receives stablecoin.
+- Later, external systems become unavailable (for example, the DCN and Coordination Layer stop operating).
+- Once the relative CSV delay has fully elapsed, the borrower creates a spend that reveals the Exit path and broadcasts it.
+- The borrower recovers BTC directly from Bitcoin script enforcement, without requiring any counter-party coordination.
 
 ## Properties
 
 - **No counter-party dependency after expiry.** The DCN, the oracle, and the Coordination Layer can all be permanently dead and the Exit leaf still spends.
-- **Relative, not absolute.** Every deposit gets its own ~1-year clock from its funding tx confirmation.
+- **Relative, not absolute.** Every deposit gets its own CSV clock from its funding tx confirmation.
 - **Script-enforced, not trust-enforced.** There is no admin key, no governance override, and no upgrade path that can weaken this leaf for an already-funded UTXO. To change the Exit behaviour for *future* vaults, the vault template itself would have to be re-deployed; existing UTXOs retain the scripts they committed to at creation.
