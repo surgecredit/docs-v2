@@ -8,8 +8,8 @@ export default defineConfig({
   aiCta: true,
   description: "Bitcoin Native Credit Market. Secure Bitcoin collateral system with Taproot UTXOs, Decentralized Signers, and credit market infrastructure.",
   logoUrl: {
-    light: "/logo/surge-icon-rec-light.svg",
-    dark: "/logo/surge-icon-rec-dark.svg",
+    light: "/logo/logo-light.png",
+    dark: "/logo/logo-dark.png",
   },
   ogImageUrl: "/assets/meta_new.png",
   font: {
@@ -185,7 +185,7 @@ export default defineConfig({
   socials: [
     {
       icon: "github",
-      link: "https://github.com/surgebuild/",
+      link: "https://github.com/surgecredit/",
     },
     {
       icon: "x",

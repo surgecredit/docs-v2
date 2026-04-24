@@ -426,15 +426,15 @@ Your BTC is never moved without:
 - Your signature, and
 - the Distributed Custody Network signature based on programmable vault logic
 
-If the system fails or goes offline, your vault includes a time-locked refund path—returning your BTC to your wallet after term expiration.
+If the system fails or goes offline, your vault includes a time-locked refund path - returning your BTC to your wallet after term expiration.
 
 ### 6. Liquidation, but Fair
 Liquidation with a rules-based process that only liquidates in extreme cases when BTC collateral health declines past 90%.
 - Triggered only when on-chain oracles (like BTC/USD price) report sustained volatility
-- Price feeds are transparent and open—you can verify exactly what data is being used
+- Price feeds are transparent and open - you can verify exactly what data is being used
 - Price feeds are double checked by DCN before liquidation begins
 
-This means no surprise wipeouts, no discretionary calls—just fair, on-chain enforcement with double checks.
+This means no surprise wipeouts, no discretionary calls - just fair, on-chain enforcement with double checks.
 
 
 ## 🔍 Built for Transparency
@@ -460,7 +460,7 @@ description: How distribution partners can plug into Surge's permissionless syst
 
 # 🤝 For Distribution Partners
 
-Surge’s credit market is **permissionless**: any distribution partner can integrate and offer borrow or earn products under their own brand. You get the same on-chain infrastructure—dVaults, the Decentralised Custody Network (DCN), and the liquidity layer—without building custody or lending from scratch.
+Surge’s credit market is **permissionless**: any distribution partner can integrate and offer borrow or earn products under their own brand. You get the same on-chain infrastructure - dVaults, the Decentralised Custody Network (DCN), and the liquidity layer - without building custody or lending from scratch.
 
 ## 🔌 Permissionless by design
 
@@ -1023,15 +1023,15 @@ OP_DROP
 
 ## Illustrative Timeline
 
-- Day 1 - Borrower deposits BTC to the Vault; stablecoin is issued.
-- Day 300 - Coordination Layer and DCN go offline and do not come back.
-- Day ~365 - CSV expires. Borrower constructs a spend that reveals the Exit path and broadcasts it.
-- Borrower's full collateral is recovered, with no repayment required because no one can counter-spend the Repayment leaf.
+- A borrower deposits BTC into a Vault and receives stablecoin.
+- Later, external systems become unavailable (for example, the DCN and Coordination Layer stop operating).
+- Once the relative CSV delay has fully elapsed, the borrower creates a spend that reveals the Exit path and broadcasts it.
+- The borrower recovers BTC directly from Bitcoin script enforcement, without requiring any counter-party coordination.
 
 ## Properties
 
 - **No counter-party dependency after expiry.** The DCN, the oracle, and the Coordination Layer can all be permanently dead and the Exit leaf still spends.
-- **Relative, not absolute.** Every deposit gets its own ~1-year clock from its funding tx confirmation.
+- **Relative, not absolute.** Every deposit gets its own CSV clock from its funding tx confirmation.
 - **Script-enforced, not trust-enforced.** There is no admin key, no governance override, and no upgrade path that can weaken this leaf for an already-funded UTXO. To change the Exit behaviour for *future* vaults, the vault template itself would have to be re-deployed; existing UTXOs retain the scripts they committed to at creation.
 
 ### 💬 FAQs
@@ -1056,7 +1056,7 @@ DLCs cannot maintain live vault state or multi-party control flows, so Surge use
 
 A key-path-only Taproot output exposes all logic under one aggregated key, reducing flexibility, observability, and unilateral-exit guarantees.
 
-**MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a [BIP341 NUMS internal key](/tech/vaults), so no aggregated signature can ever bypass the script branches.
+**MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a NUMS internal key derived from `SHA256("SURGE-NUMS")` (`6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`) (see [Taproot Vaults](/tech/vaults)), so no aggregated signature can ever bypass the script branches.
 
 
 ---
@@ -1471,7 +1471,7 @@ A **stablecoin liquidity layer**  routes USDC across chains so the pool stays ca
 
 
 
-1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key (key-path spend disabled). The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
+1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key derived from `SHA256("SURGE-NUMS")` (output: `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`), with key-path spend disabled. The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
 2. **Relayer observes the deposit** at the configured confirmation depth and calls `VaultManager.submitLoan(...)` on the EVM side. A `PositionID` is minted and the stablecoin liability is recorded on the canonical ledger.
 3. **Borrower receives USDC** - drawn from `LiquidityPool` on Base today, with Ethereum routing supported through CCTP v2. Additional chains are planned.
 4. **Position lives.** The relayer streams oracle price updates into the position's health calculation; workers monitor the collateral ratio against `MinCR` and the liquidation threshold.
@@ -1482,13 +1482,10 @@ A **stablecoin liquidity layer**  routes USDC across chains so the pool stays ca
 
 ## Why Each Layer Exists
 
-**Taproot vaults instead of a custodial wallet.** Collateral lives on Bitcoin under script. No bridge, no wrapped BTC, no "trust us, we hold the keys." If the entire Surge stack disappears, the Exit leaf still spends.
-
-**A distributed custody network instead of a multi-sig.** Multi-sig publishes the policy (you can see who signed) a threshold Schnorr aggregate looks like one signature on chain and never reveals which signers participated. That is better for privacy, fee efficiency, and access-structure evolution. Policy enforcement moves into per-signer validators that abort signing if the request does not match the on-chain authorisation.
-
-**EVM contracts instead of a Bitcoin-only ledger.** Bitcoin script is the right place to enforce custody and recovery. It is the wrong place to run a share-based interest-bearing liquidity pool with multiple market types and a Dutch-auction liquidation engine. The EVM contracts are small, audited, and own only what Bitcoin is bad at - everything else stays on Bitcoin.
-
-**A relayer instead of "users do everything themselves."** Borrowers don't want to monitor confirmations, submit health checks, hold gas on three chains, or chase IRIS attestations. The relayer does that and pays the gas. Crucially: it cannot move BTC, cannot forge an authorisation, and cannot mint USDC that wasn't burned - every material action requires either an on-chain authorisation or a DCN-signed witness.
+- **Taproot Vaults keep custody on Bitcoin.** Collateral stays under script control; no bridge, wrapped BTC, or platform custody assumptions.
+- **The DCN provides threshold signing without multisig footprint.** On-chain spends look like standard Schnorr signatures while signer policy is enforced off-chain by independent validators.
+- **EVM contracts run the credit engine.** Debt accounting, market logic, rates, and liquidation are handled where stateful finance is efficient, while BTC custody remains on Bitcoin.
+- **The relayer handles operations, not authority.** It automates monitoring, submissions, and cross-chain settlement, but cannot move BTC or mint unbacked USDC.
 
 ## The Trust Boundary
 
@@ -1825,7 +1822,7 @@ A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_
 - **MAST tree.** Three leaves committed at Vault creation: **Repayment**, **Liquidation**, **Exit**. Only the executed leaf is revealed at spend time; unused branches remain hidden.
 - **Vault binding.** The Repayment leaf commits a 32-byte `vaultId = keccak256(abi.encodePacked(userEvmAddress, nonce))`, binding the UTXO to the borrower's on-chain position so that a spent leaf cannot be replayed against a different position.
 - **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-n signing session.
-- **Key-path spend disabled.** The internal key is the standard BIP341 **NUMS** point (`50929b...3ac0`) - a nothing-up-my-sleeve x-only pubkey with no known discrete log. This guarantees that no aggregated key-path signature can ever spend the Vault; every spend must reveal and execute a script path.
+- **Key-path spend disabled.** The internal key is a deterministic **NUMS** key derived from `SHA256("SURGE-NUMS")`, whose output used by Surge is `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`, and is set as the Taproot x-only internal pubkey. This guarantees there is no usable private key for key-path signing, so every spend must reveal and execute a script path.
 
 ## Trust Model
 
@@ -1869,12 +1866,12 @@ After the delay elapses, the borrower can recover funds without DCN participatio
    - **Liquidate** - BTC moves to the DCN-controlled sweep address, a Dutch auction runs on the EVM side against the market that issued the credit line, and any BTC surplus after debt settlement is re-locked into a Vault UTXO under the same scripts.
    - **Exit** - user alone spends after CSV expiry.
 
-## Security Anchors
+## Why This Is Safe
 
-- **Bitcoin is the enforcement layer.** Off-chain authorization (Coordination Layer + per-signer validators) decides *when* a spend is legitimate; Bitcoin script decides *whether* the signatures satisfy a committed leaf.
-- **NUMS disables the "trust the aggregated internal key" escape hatch** that would exist in a default P2TR.
-- **vaultId binding** prevents replaying a Repayment witness against an unrelated position.
-- **CSV exit** is script-enforced sovereignty, not a protocol promise.
+- **Bitcoin script is final authority.** Off-chain services can request actions, but BTC only moves when a valid committed Taproot leaf is satisfied on-chain.
+- **No hidden key-path backdoor.** The Vault uses a NUMS internal key derived from `SHA256("SURGE-NUMS")`, so key-path signing is not available.
+- **Repayment is bound to the correct position.** `vaultId` in the Repayment leaf prevents replaying a valid witness against a different Vault.
+- **Borrower recovery is guaranteed by script.** After CSV expiry, the Exit path can be spent by the borrower without depending on the DCN or platform availability.
 
 ## Credit Markets
 
@@ -1899,21 +1896,10 @@ Borrowers choose which market fits their needs. Lenders can opt in to fixed mark
 
 ## Why This Design
 
-### vs. Single-pool protocols
-
-Many lending protocols offer only one rate (either variable or fixed). Surge's multi-market design gives both: borrowers who want predictability can lock in a fixed rate; those who prefer flexibility use the variable market. Lenders earn from both, with explicit control over exposure.
-
-### vs. CeFi lending
-
-Traditional Bitcoin-backed lending is custodial and opaque. Users give up keys, visibility, and control. Surge's credit markets are non-custodial and on-chain: collateral stays in programmable Vaults, rates and utilization are verifiable, and no single party can move funds without the rules being satisfied.
-
-### vs. Speculative DeFi
-
-Yield in many DeFi protocols comes from token incentives, leveraged farming, or circular lending-not from real credit usage. Surge's credit markets are backed by actual Bitcoin-collateralized borrowing. LPs earn from interest paid by borrowers and (where applicable) from liquidation economics. Real assets, real demand, real yield.
-
-### vs. Fragmented liquidity
-
-Splitting liquidity across many isolated pools or chains reduces depth and increases slippage. Surge aggregates liquidity into a central credit market, with routing that keeps supply canonical and settlement deterministic. Deeper markets, better execution, and transparent accounting.
+- **Two rate choices from one liquidity base.** Borrowers can choose fixed or variable pricing without splitting into isolated products, and LPs can control exposure per market.
+- **Non-custodial and verifiable.** BTC collateral remains in Vault scripts on Bitcoin; utilization, rates, and accounting are on-chain and auditable.
+- **Yield from real borrowing demand.** Returns come from BTC-collateralized credit activity (and liquidation flow where applicable), not token subsidies or circular leverage.
+- **Capital stays deep instead of fragmented.** Liquidity is pooled canonically and routed deterministically, improving depth and execution quality.
 
 ---
 
