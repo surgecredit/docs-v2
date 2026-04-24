@@ -171,15 +171,15 @@ export default defineConfig({
       //     },
       //   ],
       // },
-      {
-        text: "RESOURCES",
-        items: [
-          {
-            text: "Media Kit",
-            link: "/resources/media-kit",
-          },
-        ],
-      },
+      // {
+      //   text: "RESOURCES",
+      //   items: [
+      //     {
+      //       text: "Media Kit",
+      //       link: "/resources/media-kit",
+      //     },
+      //   ],
+      // },
     ],
   },
   socials: [
