@@ -1,0 +1,71 @@
+---
+title: "Bitcoin-native Credit Infra"
+description: "How Surge is structured across application and infrastructure layers"
+---
+
+# 🏗️ Bitcoin-native Credit Infra
+
+Surge is best understood as two layers:
+
+**An application layer** - the apps Bitcoiners actually use to borrow against BTC, supply stablecoins, and earn yield.
+
+**An infrastructure layer** - the underlying protocol that holds the collateral, runs the markets, signs the spends, and enforces the rules. The same protocol any other team can build on.
+
+The applications you see are one expression of Surge. The infrastructure underneath is open, and others can build their own.
+
+## The application layer
+
+These are Surge's own apps - the front doors most users will walk through.
+
+- **Surge Borrow App (iOS, Android).** Where Bitcoiners open credit lines against their BTC. Sign in with email + OTP, deposit BTC into a programmable Taproot vault, draw stablecoins, repay flexibly. PWA support coming.
+- **Surge Earn Dashboard.** Where liquidity providers supply stablecoins to the credit market and earn yield from real Bitcoin-collateralized borrowing. LPs configure exposure across variable and fixed-rate markets, monitor pool health, and (optionally) join the Distributed Custody Network.
+
+These apps are designed, built, and operated by the team behind Surge. They are not the only way to access the protocol.
+
+## The infrastructure layer
+
+Underneath the apps sits the actual credit market - the part that makes Surge *Bitcoin-native* rather than just another lending UI.
+
+The infrastructure has four cooperating components, each owning a distinct layer of the system:
+
+- **Taproot Vaults.** BTC collateral lives in Pay-to-Taproot outputs on Bitcoin, with three pre-committed spend paths: cooperative repayment, authorized liquidation, and unilateral exit after a relative timelock. No bridge, no wrapped BTC, no platform custody.
+- **Distributed Custody Network (DCN).** A set of independent signer organizations running threshold Schnorr signing. No single signer holds a complete key; signatures are produced only when quorum participation and policy checks both pass.
+- **Smart Contracts (EVM).** The debt ledger, share-based liquidity pool, interest-rate model, and Dutch-auction liquidation. BTC custody stays on Bitcoin; stateful credit accounting runs where it is efficient.
+- **Relayer & Workers.** Off-chain coordinator that watches Bitcoin, drives the contracts, proposes spends to the DCN, and finalizes cross-chain transfers. Holds no custody, holds no signing keys.
+
+For a deeper walk through the architecture, see **[Tech Overview](/tech/overview)**.
+
+## Others can build on it
+
+The infrastructure is permissionless. Any team can integrate the same dVaults, DCN, and liquidity layer that power Surge's own apps - and ship borrow or earn products under their own brand.
+
+- **White-label borrow.** Wallets, exchanges, and neobanks can offer "borrow against your Bitcoin" to their users without operating custody or running a lending book. Surge handles collateral verification, disbursement, and repayments; the partner owns the user experience.
+- **White-label earn.** Savings apps and treasury products can offer yield on stablecoins, backed by real Bitcoin-collateralized credit, without operating the lending or custody infrastructure.
+- **Same rails, your brand.** Partners plug into the same programmable dVaults, oracle-driven liquidation, and multi-market liquidity that Surge's own apps use. Each credit line is still a verifiable Taproot UTXO; partners can surface proof of non-custodial, unrehypothecated collateral to their users and regulators.
+
+There are no gatekeepers, no exclusive partnerships, and no approval gates. The protocol is integrated through public interfaces.
+
+## Stewardship - the Surge Foundation
+
+A protocol that holds Bitcoin under script, distributes signing across independent organizations, and runs an open credit market needs a steward - but it cannot be owned by a single company. Ownership and operation must be separable, or the "open infrastructure" promise breaks the moment commercial interests diverge from protocol integrity.
+
+Surge separates the two explicitly.
+
+**The Surge Foundation stewards the protocol.** It maintains the open-source codebase, publishes specifications, coordinates upgrades, and acts as the long-term custodian of protocol integrity. The Foundation does not operate apps, does not capture fees commercially, and does not gatekeep access. Its job is to keep the infrastructure open, public, and trustworthy.
+
+**A separate company builds the apps.** The team behind the Surge Borrow App and Earn Dashboard operates as a normal product company - shipping software, running infrastructure for its own products, and competing on user experience. It is one builder on Surge among many possible builders.
+
+This separation is structural, not cosmetic.
+
+- **The protocol outlives any single operator.** If the app company stopped tomorrow, the dVaults, DCN, smart contracts, and Foundation-stewarded specs would continue to exist and continue to be usable by other builders.
+- **No commercial conflict at the protocol layer.** Decisions about specs, parameters, and signer membership are made by the Foundation under public, open-source governance - not by whichever company has the largest book.
+- **Builders compete on equal footing.** The same APIs, the same liquidity, the same custody guarantees are available to Surge's own app and to a third-party wallet on day one.
+
+What the Foundation publishes - repos, specs, audits, signer-set composition, oracle history, governance decisions - is the surface that distinguishes a credit market that *is* open infrastructure from one that merely *claims* to be.
+
+## How to read the rest of these docs
+
+- **Curious how the Bitcoin side works?** Start with [Taproot Vaults](/tech/vaults).
+- **Curious how signatures are produced without a private key?** Start with the [Distributed Custody Network](/tech/distributed-custody-network).
+- **Curious how rates, debt, and liquidations are accounted for?** Start with [Smart Contracts](/tech/contracts) and [Credit Markets](/tech/credit-markets).
+- **Want the whole architecture in one page?** Start with [Tech Overview](/tech/overview).

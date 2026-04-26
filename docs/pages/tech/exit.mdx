@@ -1,13 +1,13 @@
 ---
 title: Unilateral Exit
-description: CSV-timelocked Taproot path guaranteeing sovereign BTC recovery if the DCN or Coordination Layer disappears
+description: CSV-timelocked Taproot path that guarantees BTC recovery if the DCN or Coordination Layer disappears
 ---
 
 # ⏳ Unilateral Exit
 
 The **Unilateral Exit** is the third and final path in every Vault. It guarantees that the borrower can always recover BTC on Bitcoin alone, without the DCN, the Coordination Layer, the oracle, or any Surge infrastructure.
 
-This is **sovereignty at the script level**, enforced by Bitcoin's relative timelock primitive, not by a protocol promise.
+This guarantee is enforced by Bitcoin's relative timelock primitive, not by a protocol promise.
 
 ## Why It Exists
 
@@ -35,6 +35,17 @@ OP_DROP
 - Later, external systems become unavailable (for example, the DCN and Coordination Layer stop operating).
 - Once the relative CSV delay has fully elapsed, the borrower creates a spend that reveals the Exit path and broadcasts it.
 - The borrower recovers BTC directly from Bitcoin script enforcement, without requiring any counter-party coordination.
+
+## Unilateral Exit Tool
+
+If you want to execute this path in practice, Surge hosts a public recovery app at **[exit.surge.credit](https://exit.surge.credit/)**.
+
+The tool can also be self-hosted from the **[surge-vault-exit-tool](https://github.com/surgecredit/surge-vault-exit-tool)** repository.
+
+- **Derives your vault deterministically** from wallet key + credit address.
+- **Shows exit readiness per UTXO** based on confirmations and CSV timelock progress.
+- **Builds an Exit PSBT** for wallet signing and on-chain broadcast.
+- **Keeps recovery non-custodial** since keys remain in your wallet.
 
 ## Properties
 

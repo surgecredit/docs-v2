@@ -159,6 +159,83 @@ function EarnView({ client, address }: { client: any; address: `0x${string}` }) 
 
 
 ========================================
+File: /credit-infra (🏗️ Bitcoin-native Credit Infra)
+========================================
+
+---
+title: "Bitcoin-native Credit Infra"
+description: "How Surge is structured across application and infrastructure layers"
+---
+
+# 🏗️ Bitcoin-native Credit Infra
+
+Surge is best understood as two layers:
+
+**An application layer** - the apps Bitcoiners actually use to borrow against BTC, supply stablecoins, and earn yield.
+
+**An infrastructure layer** - the underlying protocol that holds the collateral, runs the markets, signs the spends, and enforces the rules. The same protocol any other team can build on.
+
+The applications you see are one expression of Surge. The infrastructure underneath is open, and others can build their own.
+
+## The application layer
+
+These are Surge's own apps - the front doors most users will walk through.
+
+- **Surge Borrow App (iOS, Android).** Where Bitcoiners open credit lines against their BTC. Sign in with email + OTP, deposit BTC into a programmable Taproot vault, draw stablecoins, repay flexibly. PWA support coming.
+- **Surge Earn Dashboard.** Where liquidity providers supply stablecoins to the credit market and earn yield from real Bitcoin-collateralized borrowing. LPs configure exposure across variable and fixed-rate markets, monitor pool health, and (optionally) join the Distributed Custody Network.
+
+These apps are designed, built, and operated by the team behind Surge. They are not the only way to access the protocol.
+
+## The infrastructure layer
+
+Underneath the apps sits the actual credit market - the part that makes Surge *Bitcoin-native* rather than just another lending UI.
+
+The infrastructure has four cooperating components, each owning a distinct layer of the system:
+
+- **Taproot Vaults.** BTC collateral lives in Pay-to-Taproot outputs on Bitcoin, with three pre-committed spend paths: cooperative repayment, authorized liquidation, and unilateral exit after a relative timelock. No bridge, no wrapped BTC, no platform custody.
+- **Distributed Custody Network (DCN).** A set of independent signer organizations running threshold Schnorr signing. No single signer holds a complete key; signatures are produced only when quorum participation and policy checks both pass.
+- **Smart Contracts (EVM).** The debt ledger, share-based liquidity pool, interest-rate model, and Dutch-auction liquidation. BTC custody stays on Bitcoin; stateful credit accounting runs where it is efficient.
+- **Relayer & Workers.** Off-chain coordinator that watches Bitcoin, drives the contracts, proposes spends to the DCN, and finalizes cross-chain transfers. Holds no custody, holds no signing keys.
+
+For a deeper walk through the architecture, see **[Tech Overview](/tech/overview)**.
+
+## Others can build on it
+
+The infrastructure is permissionless. Any team can integrate the same dVaults, DCN, and liquidity layer that power Surge's own apps - and ship borrow or earn products under their own brand.
+
+- **White-label borrow.** Wallets, exchanges, and neobanks can offer "borrow against your Bitcoin" to their users without operating custody or running a lending book. Surge handles collateral verification, disbursement, and repayments; the partner owns the user experience.
+- **White-label earn.** Savings apps and treasury products can offer yield on stablecoins, backed by real Bitcoin-collateralized credit, without operating the lending or custody infrastructure.
+- **Same rails, your brand.** Partners plug into the same programmable dVaults, oracle-driven liquidation, and multi-market liquidity that Surge's own apps use. Each credit line is still a verifiable Taproot UTXO; partners can surface proof of non-custodial, unrehypothecated collateral to their users and regulators.
+
+There are no gatekeepers, no exclusive partnerships, and no approval gates. The protocol is integrated through public interfaces.
+
+## Stewardship - the Surge Foundation
+
+A protocol that holds Bitcoin under script, distributes signing across independent organizations, and runs an open credit market needs a steward - but it cannot be owned by a single company. Ownership and operation must be separable, or the "open infrastructure" promise breaks the moment commercial interests diverge from protocol integrity.
+
+Surge separates the two explicitly.
+
+**The Surge Foundation stewards the protocol.** It maintains the open-source codebase, publishes specifications, coordinates upgrades, and acts as the long-term custodian of protocol integrity. The Foundation does not operate apps, does not capture fees commercially, and does not gatekeep access. Its job is to keep the infrastructure open, public, and trustworthy.
+
+**A separate company builds the apps.** The team behind the Surge Borrow App and Earn Dashboard operates as a normal product company - shipping software, running infrastructure for its own products, and competing on user experience. It is one builder on Surge among many possible builders.
+
+This separation is structural, not cosmetic.
+
+- **The protocol outlives any single operator.** If the app company stopped tomorrow, the dVaults, DCN, smart contracts, and Foundation-stewarded specs would continue to exist and continue to be usable by other builders.
+- **No commercial conflict at the protocol layer.** Decisions about specs, parameters, and signer membership are made by the Foundation under public, open-source governance - not by whichever company has the largest book.
+- **Builders compete on equal footing.** The same APIs, the same liquidity, the same custody guarantees are available to Surge's own app and to a third-party wallet on day one.
+
+What the Foundation publishes - repos, specs, audits, signer-set composition, oracle history, governance decisions - is the surface that distinguishes a credit market that *is* open infrastructure from one that merely *claims* to be.
+
+## How to read the rest of these docs
+
+- **Curious how the Bitcoin side works?** Start with [Taproot Vaults](/tech/vaults).
+- **Curious how signatures are produced without a private key?** Start with the [Distributed Custody Network](/tech/distributed-custody-network).
+- **Curious how rates, debt, and liquidations are accounted for?** Start with [Smart Contracts](/tech/contracts) and [Credit Markets](/tech/credit-markets).
+- **Want the whole architecture in one page?** Start with [Tech Overview](/tech/overview).
+
+
+========================================
 File: /earn/integration (Earn SDK Integration Guide)
 ========================================
 
@@ -382,49 +459,50 @@ Use the full [Integration Guide](/earn/integration) to wire wallet flows (approv
 
 
 ========================================
-File: / (👋 Introducing Surge)
+File: / (👋 Introduction)
 ========================================
 
 ---
-title: "Surge | Introduction"
-description: "Bitcoin-native Credit Market"
+title: "Introduction"
+description: "Why Surge exists and what it enables"
 ---
 
-{/* <img src="/assets/intro.png" alt="Surge Intro" /> */}
+# 👋 Introduction
 
-{/* Optional hero image */}
-<img src="/assets/intro.png" alt="Surge Intro" className="mx-auto my-8" />
+Bitcoin is trustless by design - transparent, decentralized, self-sovereign. The lending platforms built around it are not. They are custodial, opaque, and centralized; they ask Bitcoiners to surrender their keys, their visibility, and their control in exchange for liquidity.
 
-{/* # 👋 Bitcoin-native Credit Market */}
-# 👋 Introducing Surge
+The most principled Bitcoiners - the ones who care most about custody, verification, and openness - end up compromising everything Bitcoin stands for, just to access credit against the asset they hold.
 
-## Why can’t Bitcoin-backed lending reflect Bitcoin’s values? 
-Bitcoin is trustless by design: transparent, decentralized, and self-sovereign. 
-Yet the lending platforms that serve it are anything but. Custodial, opaque, and centralized, they rely on “trust-me" systems where users surrender their keys, visibility, and control. 
-The result? A broken market where the most principled Bitcoiners, those who care about custody, verification, and openness are forced to compromise everything Bitcoin stands for just to access liquidity.
+## Surge is a Bitcoin-native credit market.
 
-## Surge: A Bitcoin-native Credit Market
-Surge offers Bitcoiners something different: a Bitcoin-native Credit Market that is transparent, decentralized, and trust-minimized. 
-Built from the ground up for self-custody and programmable control, Surge enables Bitcoiners to borrow stablecoins without giving up ownership or compromising on the values that brought them to Bitcoin in the first place.
+Built ground-up around self-custody and programmable control, Surge lets Bitcoiners borrow stablecoins without giving up ownership of their BTC, without trusting a custodian, and without compromising the values that brought them to Bitcoin in the first place.
 
-It’s not just about accessing liquidity, it’s about doing so without selling your Bitcoin, without intermediaries, and without hidden risk. 
+It is not a rebrand of legacy lending. It is a reimagination - a credit market for the real Bitcoiners of today.
 
 With Surge, you:
-- Borrow against your Bitcoin directly on-chain
-- Control a programmable dVault verified by Taproot + threshold signatures
-- Interact with an open credit market powered by LPs, not black-box institutions
 
-Surge is not a rebrand of legacy lending. It’s a reimagination - a credit market for the real Bitcoiners of today.
+- Borrow against your Bitcoin directly on-chain.
+- Hold a programmable Taproot vault verified by threshold Schnorr signatures.
+- Interact with an open credit market powered by independent liquidity providers, not a black-box institution.
 
-## What Comes Next
+## What Surge enables
 
-These technical docs walk through how Surge works - step by step. From how Bitcoin stays under non-custodial control, to how market-driven liquidity pools (including variable and fixed-rate markets) enable competitive borrowing terms, to how the system remains open, verifiable, and rehypothecation-free.
+A credit system designed for Bitcoiners, built on Bitcoin, aligned with its ethos.
 
-Surge is not just infrastructure. It’s a promise:
+- **Liquidity without sale.** Access stablecoin credit while your BTC stays locked under script, on Bitcoin, never wrapped or rehypothecated.
+- **Verifiable custody.** Every credit line is a unique Taproot UTXO. Anyone can inspect it on a block explorer at any time.
+- **Programmable terms.** Borrow at fixed or floating rates from open markets where rates are discovered, not dictated.
+- **Guaranteed exit.** A script-enforced unilateral path returns your BTC after a relative timelock, with no dependency on Surge or anyone else continuing to operate.
+- **Open infrastructure.** The same rails that power Surge's own apps are available to any builder - wallet, exchange, neobank, treasury product - to offer borrow or earn under their own brand.
 
->**Never compromise your Bitcoin, ever.**
+## The promise
 
-Explore the documentation and see how Surge is building the next generation of Bitcoin-native finance.
+> **Never compromise your Bitcoin, ever.**
+
+The rest of these docs walk through how that promise is kept - from the Bitcoin script that guards collateral, to the threshold cryptography that produces signatures without ever assembling a private key, to the markets where credit and yield are discovered.
+
+A good place to start is **[Bitcoin-native Credit Infra](/credit-infra)** - the two-layer model that separates Surge's apps from the protocol underneath, and explains who stewards the whole thing.
+
 
 ========================================
 File: /overview/bitcoin-lending-landscape (🗺️ Market Landscape)
@@ -1508,14 +1586,14 @@ File: /tech/exit (⏳ Unilateral Exit)
 
 ---
 title: Unilateral Exit
-description: CSV-timelocked Taproot path guaranteeing sovereign BTC recovery if the DCN or Coordination Layer disappears
+description: CSV-timelocked Taproot path that guarantees BTC recovery if the DCN or Coordination Layer disappears
 ---
 
 # ⏳ Unilateral Exit
 
 The **Unilateral Exit** is the third and final path in every Vault. It guarantees that the borrower can always recover BTC on Bitcoin alone, without the DCN, the Coordination Layer, the oracle, or any Surge infrastructure.
 
-This is **sovereignty at the script level**, enforced by Bitcoin's relative timelock primitive, not by a protocol promise.
+This guarantee is enforced by Bitcoin's relative timelock primitive, not by a protocol promise.
 
 ## Why It Exists
 
@@ -1543,6 +1621,17 @@ OP_DROP
 - Later, external systems become unavailable (for example, the DCN and Coordination Layer stop operating).
 - Once the relative CSV delay has fully elapsed, the borrower creates a spend that reveals the Exit path and broadcasts it.
 - The borrower recovers BTC directly from Bitcoin script enforcement, without requiring any counter-party coordination.
+
+## Unilateral Exit Tool
+
+If you want to execute this path in practice, Surge hosts a public recovery app at **[exit.surge.credit](https://exit.surge.credit/)**.
+
+The tool can also be self-hosted from the **[surge-vault-exit-tool](https://github.com/surgecredit/surge-vault-exit-tool)** repository.
+
+- **Derives your vault deterministically** from wallet key + credit address.
+- **Shows exit readiness per UTXO** based on confirmations and CSV timelock progress.
+- **Builds an Exit PSBT** for wallet signing and on-chain broadcast.
+- **Keeps recovery non-custodial** since keys remain in your wallet.
 
 ## Properties
 

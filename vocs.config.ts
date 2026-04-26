@@ -1,8 +1,13 @@
 import { defineConfig } from "vocs";
 import dotenv from "dotenv";
+import { fileURLToPath } from "node:url";
 
 // Load environment variables
 dotenv.config();
+
+const websiteIconPath = fileURLToPath(
+  new URL("./docs/components/WebsiteIconWarpcast.tsx", import.meta.url),
+);
 
 export default defineConfig({
   aiCta: true,
@@ -21,62 +26,31 @@ export default defineConfig({
     // colorScheme: "dark",
   },
   title: "Surge - Bitcoin-native Credit Market",
+  vite: {
+    resolve: {
+      alias: [
+        {
+          find: /^\.\/icons\/Warpcast\.js$/,
+          replacement: websiteIconPath,
+        },
+      ],
+    },
+  },
   sidebar: {
     "/": [
       {
-        text: "OVERVIEW",
+        text: "KNOW THE TECH",
         items: [
           {
             text: "Introduction",
             link: "/",
           },
           {
-            text: "Market Landscape",
-            link: "/overview/bitcoin-lending-landscape",
+            text: "Bitcoin-native Credit Infra",
+            link: "/credit-infra",
           },
           {
-            text: "Stablecoin Adoption",
-            link: "/overview/stablecoins",
-          },
-        ],
-      },
-      {
-        text: "KNOW THE PRODUCT",
-        items: [
-          {
-            text: "Our Thesis",
-            link: "/product/our-thesis",
-          },
-          {
-            text: "Product Overview",
-            link: "/product/overview",
-            collapsed: false,
-            items: [
-              {
-                text: "For Bitcoiners",
-                link: "/product/for-bitcoiners",
-              },
-              {
-                text: "For Liquidity Providers",
-                link: "/product/for-liquidity-providers",
-              },
-              {
-                text: "For Distribution Partners",
-                link: "/product/for-distribution-partners",
-              },
-              {
-                text: "For Everyone",
-                link: "/product/for-everyone",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        text: "KNOW THE TECH",
-        items: [
-          {
-            text: "Overview",
+            text: "Tech Overview",
             link: "/tech/overview",
           },
           {
@@ -145,7 +119,7 @@ export default defineConfig({
             ],
           },
           {
-            text: "Self Custody User Wallet",
+            text: "Self-Custody User Wallet",
             link: "/tech/self-custody-wallet",
           },
           {
@@ -190,6 +164,11 @@ export default defineConfig({
     {
       icon: "x",
       link: "https://x.com/surge_credit",
+    },
+    {
+      icon: "warpcast",
+      label: "Website",
+      link: "https://surge.credit",
     },
   ],
 });

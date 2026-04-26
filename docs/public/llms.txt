@@ -10,7 +10,7 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 - [Earn SDK Overview](/earn/overview)
 
 ### Overview
-- [👋 Introducing Surge](/)
+- [👋 Introduction](/)
 - [🗺️ Market Landscape](/overview/bitcoin-lending-landscape)
 - [💵 Stablecoin Adoption](/overview/stablecoins)
 
@@ -45,6 +45,9 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 
 ### Credit Markets
 - [📊 Credit Markets](/tech/credit-markets)
+
+### Other
+- [🏗️ Bitcoin-native Credit Infra](/credit-infra)
 
 Plain-text companion files:
 - /llms-full.txt

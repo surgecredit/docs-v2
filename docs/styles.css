@@ -274,6 +274,17 @@ img {
   font-size: 1rem;
 }
 
+.vocs_Footer_navigationItem {
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .vocs_Footer_navigationTextInner {
+    font-size: 0.8125rem;
+    width: 12ch;
+  }
+}
+
 .dark .vocs_Paragraph {
   color: #cfcfcf;
 }
