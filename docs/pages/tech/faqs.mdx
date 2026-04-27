@@ -55,7 +55,7 @@ The trade-off is one extra round per signing session (3 rounds vs FROST's 2). Su
 <details>
 <summary>**What's the threshold? How many signers does it take to move BTC?**</summary>
 
-The DCN operates as a **3-of-n** Lin24 threshold signer for the current member set. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
+The DCN operates as a **3-of-4** Lin24 threshold signer. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
 
 </details>
 ---

@@ -8,6 +8,8 @@ import ZoomImage from "../../components/ZoomImage";
 
 A Vault spend that requires `loanPubkey` authorization is signed by the **Distributed Custody Network (DCN)**. The DCN is a set of independent signer organizations running threshold Schnorr signing.
 
+The current deployment uses a **3-of-4** signing threshold for Bitcoin spends.
+
 No single signer ever holds the full signing secret; each signer only holds a share. Signatures are produced only when quorum participation and policy checks both pass.
 
 <ZoomImage

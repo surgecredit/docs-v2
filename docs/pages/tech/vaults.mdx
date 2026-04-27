@@ -12,7 +12,7 @@ A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_
 
 - **MAST tree.** Three leaves committed at Vault creation: **Repayment**, **Liquidation**, **Exit**. Only the executed leaf is revealed at spend time; unused branches remain hidden.
 - **Vault binding.** The Repayment leaf commits a 32-byte `vaultId = keccak256(abi.encodePacked(userEvmAddress, nonce))`, binding the UTXO to the borrower's on-chain position so that a spent leaf cannot be replayed against a different position.
-- **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-n signing session.
+- **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-4 signing session.
 - **Key-path spend disabled.** The internal key is a deterministic **NUMS** key derived from `SHA256("SURGE-NUMS")`, whose output used by Surge is `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`, and is set as the Taproot x-only internal pubkey. This guarantees there is no usable private key for key-path signing, so every spend must reveal and execute a script path.
 
 ## Trust Model
