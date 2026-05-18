@@ -653,6 +653,113 @@ Surge has three core interfaces, each designed for a key participant:
 
 Surge is built ground-up for trust-minimized credit and no one can touch their Bitcoin without following predefined, public rules.
 
+### 💬 FAQs
+---
+title: FAQs
+description: Common questions about Surge's Bitcoin-native architecture and design choices
+---
+
+# 💬 FAQs
+
+
+**Why not use DLCs (Discreet Log Contracts)?**
+
+DLCs are single-use oracle contracts designed for event-based payouts. Surge's Vaults are persistent and programmable, supporting recurring actions like borrow, repay, partial liquidation, and unilateral exit.
+
+DLCs cannot maintain live vault state or multi-party control flows, so Surge uses **Taproot + MAST** scripts for reusable, native logic. Read more [here](/tech/dlcs).
+
+
+---
+
+**Why not use a single key-path spend instead of MAST leaves?**
+
+A key-path-only Taproot output exposes all logic under one aggregated key, reducing flexibility, observability, and unilateral-exit guarantees.
+
+**MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a NUMS internal key derived from `SHA256("SURGE-NUMS")` (`6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`) (see [Taproot Vaults](/tech/vaults)), so no aggregated signature can ever bypass the script branches.
+
+
+---
+
+**Where does my BTC actually live?**
+
+On Bitcoin. Your collateral is locked in a Pay-to-Taproot output committing three spend scripts (Repayment / Liquidation / Exit) under a NUMS internal key - there is no key-path spend, no wrapped BTC, and no bridge. The Vault is verifiable on a Bitcoin block explorer at all times.
+
+
+---
+
+**What makes Surge non-custodial?**
+
+Two guarantees, both enforced by Bitcoin script rather than by promise:
+
+1. **Cooperative repayment requires the borrower's signature.** The DCN alone cannot move BTC out of a Vault via the Repayment leaf - both `userPubkey` and the DCN's aggregate `loanPubkey` must sign.
+2. **Unilateral Exit is always available.** Even if the DCN, the relayer, the oracle, and every Surge service permanently disappear, the borrower can recover their BTC by spending the Exit leaf after a relative timelock (`OP_CHECKSEQUENCEVERIFY`, ≈ 1 year). See [Unilateral Exit](/tech/exit).
+
+
+---
+
+**Why does Surge use Lin24 threshold Schnorr instead of FROST?**
+
+Both are threshold Schnorr protocols, but Surge runs on **[Lin24](/tech/distributed-custody-network)** (Lindell, CiC 2024 - see [ePrint 2022/374](https://eprint.iacr.org/2022/374)) for two reasons:
+
+- **Stronger simulation-based proofs.** Lin24 provides full simulatability; FROST's analysis is in a weaker model.
+- **Identifiable abort.** If a signer misbehaves during a session, Lin24 produces cryptographic evidence identifying the offender - useful for slashing, signer rotation, and exclusion from subsequent sessions without coordinator-only testimony.
+
+The trade-off is one extra round per signing session (3 rounds vs FROST's 2). Surge accepts that for the stronger guarantees.
+
+
+---
+
+**What's the threshold? How many signers does it take to move BTC?**
+
+The DCN operates as a **3-of-4** Lin24 threshold signer. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
+
+
+---
+
+**Why CSV (relative timelock) for Unilateral Exit, not CLTV (absolute height)?**
+
+`OP_CHECKSEQUENCEVERIFY` is **relative** - the ~1-year delay counts from the funding transaction's confirmation, so every deposit gets its own clock. That matches the lifecycle of a credit line (which starts at deposit) better than an absolute date that would expire all positions at the same moment regardless of when they opened.
+
+
+---
+
+**What's the difference between variable and fixed-rate markets?**
+
+**Variable rate** comes from a floating-rate market: the borrow rate moves with utilization. **Fixed rate** comes from dedicated fixed-rate tranches (e.g. 6%, 8%) where you lock in a set rate for your loan.
+
+Liquidity is **moved** between the variable pool and fixed markets when borrowers take or repay fixed-rate loans - it is not duplicated, and there is no rehypothecation. LPs can opt in to fixed markets and set per-market allocation limits. See [Credit Markets](/tech/credit-markets) for the full picture, or the [Surge Multi-Market Lending Pool](https://surgehq.notion.site/Surge-Multi-Market-Lending-Pool-2fc232deac9080218404ea7605e713c6) deep-dive.
+
+
+---
+
+**What happens to my BTC if I get liquidated?**
+
+Liquidation does not seize your full collateral. The DCN spends only enough BTC from the Vault to cover the lot opened against your position; that BTC enters a [Dutch auction](/tech/dvaults-liquidation) on the EVM side, and proceeds retire the proportional debt plus the liquidation penalty in the **specific market** that issued your credit line.
+
+Any BTC surplus after debt settlement is **re-locked into a Vault UTXO under the same scripts** - your position continues with reduced collateral and reduced debt rather than terminating. Partial-liquidation lots are sized to minimise borrower loss and dampen liquidation cascades.
+
+
+---
+
+**Where does the LP yield come from?**
+
+From real Bitcoin-collateralised borrowing, not from token incentives or circular farming. When borrowers draw USDC against their BTC Vaults, they pay a borrow rate set by the [interest-rate model](/tech/contracts#rate-curve--interestratemodel) (variable market) or by market creation (fixed-rate markets). That borrow interest, minus a reserve factor, accrues to LP shares.
+
+The advertised APY band reflects the high-utilization region of the rate curve in the current deployment and moves with actual borrow demand. Auction proceeds during liquidation also flow back into the originating market, so risk and reward are segregated per-market rather than socialised.
+
+
+---
+
+**What happens if the relayer is compromised?**
+
+A compromised relayer can delay actions, over-submit them, or fail to observe state. It **cannot**:
+
+- Move BTC - every Bitcoin spend requires a DCN-signed Schnorr witness over a committed Vault leaf.
+- Forge a borrower authorisation - every gasless flow is gated by a borrower signature (EIP-2612, EIP-3009, or EIP-712).
+- Mint USDC that wasn't burned - destination mints require a Circle-issued IRIS attestation over a real source-chain burn.
+
+The relayer is convenience infrastructure; it is not a custody or signing authority.
+
 ### Branding and Logos [Bitcoin-native Credit Market]
 [Link to Media Kit](https://docs.surge.build/resources/media-kit)
 
@@ -834,6 +941,8 @@ description: Threshold Schnorr signing for Taproot Vaults using Lin24, signer po
 # 👥 Distributed Custody Network (DCN)
 
 A Vault spend that requires `loanPubkey` authorization is signed by the **Distributed Custody Network (DCN)**. The DCN is a set of independent signer organizations running threshold Schnorr signing.
+
+The current deployment uses a **3-of-4** signing threshold for Bitcoin spends.
 
 No single signer ever holds the full signing secret; each signer only holds a share. Signatures are produced only when quorum participation and policy checks both pass.
 
@@ -1044,113 +1153,6 @@ The tool can also be self-hosted from the **[surge-vault-exit-tool](https://gith
 - **No counter-party dependency after expiry.** The DCN, the oracle, and the Coordination Layer can all be permanently dead and the Exit leaf still spends.
 - **Relative, not absolute.** Every deposit gets its own CSV clock from its funding tx confirmation.
 - **Script-enforced, not trust-enforced.** There is no admin key, no governance override, and no upgrade path that can weaken this leaf for an already-funded UTXO. To change the Exit behaviour for *future* vaults, the vault template itself would have to be re-deployed; existing UTXOs retain the scripts they committed to at creation.
-
-### 💬 FAQs
----
-title: FAQs
-description: Common questions about Surge's Bitcoin-native architecture and design choices
----
-
-# 💬 FAQs
-
-
-**Why not use DLCs (Discreet Log Contracts)?**
-
-DLCs are single-use oracle contracts designed for event-based payouts. Surge's Vaults are persistent and programmable, supporting recurring actions like borrow, repay, partial liquidation, and unilateral exit.
-
-DLCs cannot maintain live vault state or multi-party control flows, so Surge uses **Taproot + MAST** scripts for reusable, native logic. Read more [here](/tech/dlcs).
-
-
----
-
-**Why not use a single key-path spend instead of MAST leaves?**
-
-A key-path-only Taproot output exposes all logic under one aggregated key, reducing flexibility, observability, and unilateral-exit guarantees.
-
-**MAST** lets each spend condition - Repayment, Liquidation, Exit - exist as its own committed branch. Only the executed leaf is revealed at spend time; everything else stays hidden. Surge goes one step further and **disables the key-path spend entirely** by using a NUMS internal key derived from `SHA256("SURGE-NUMS")` (`6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`) (see [Taproot Vaults](/tech/vaults)), so no aggregated signature can ever bypass the script branches.
-
-
----
-
-**Where does my BTC actually live?**
-
-On Bitcoin. Your collateral is locked in a Pay-to-Taproot output committing three spend scripts (Repayment / Liquidation / Exit) under a NUMS internal key - there is no key-path spend, no wrapped BTC, and no bridge. The Vault is verifiable on a Bitcoin block explorer at all times.
-
-
----
-
-**What makes Surge non-custodial?**
-
-Two guarantees, both enforced by Bitcoin script rather than by promise:
-
-1. **Cooperative repayment requires the borrower's signature.** The DCN alone cannot move BTC out of a Vault via the Repayment leaf - both `userPubkey` and the DCN's aggregate `loanPubkey` must sign.
-2. **Unilateral Exit is always available.** Even if the DCN, the relayer, the oracle, and every Surge service permanently disappear, the borrower can recover their BTC by spending the Exit leaf after a relative timelock (`OP_CHECKSEQUENCEVERIFY`, ≈ 1 year). See [Unilateral Exit](/tech/exit).
-
-
----
-
-**Why does Surge use Lin24 threshold Schnorr instead of FROST?**
-
-Both are threshold Schnorr protocols, but Surge runs on **[Lin24](/tech/distributed-custody-network)** (Lindell, CiC 2024 - see [ePrint 2022/374](https://eprint.iacr.org/2022/374)) for two reasons:
-
-- **Stronger simulation-based proofs.** Lin24 provides full simulatability; FROST's analysis is in a weaker model.
-- **Identifiable abort.** If a signer misbehaves during a session, Lin24 produces cryptographic evidence identifying the offender - useful for slashing, signer rotation, and exclusion from subsequent sessions without coordinator-only testimony.
-
-The trade-off is one extra round per signing session (3 rounds vs FROST's 2). Surge accepts that for the stronger guarantees.
-
-
----
-
-**What's the threshold? How many signers does it take to move BTC?**
-
-The DCN operates as a **3-of-n** Lin24 threshold signer for the current member set. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
-
-
----
-
-**Why CSV (relative timelock) for Unilateral Exit, not CLTV (absolute height)?**
-
-`OP_CHECKSEQUENCEVERIFY` is **relative** - the ~1-year delay counts from the funding transaction's confirmation, so every deposit gets its own clock. That matches the lifecycle of a credit line (which starts at deposit) better than an absolute date that would expire all positions at the same moment regardless of when they opened.
-
-
----
-
-**What's the difference between variable and fixed-rate markets?**
-
-**Variable rate** comes from a floating-rate market: the borrow rate moves with utilization. **Fixed rate** comes from dedicated fixed-rate tranches (e.g. 6%, 8%) where you lock in a set rate for your loan.
-
-Liquidity is **moved** between the variable pool and fixed markets when borrowers take or repay fixed-rate loans - it is not duplicated, and there is no rehypothecation. LPs can opt in to fixed markets and set per-market allocation limits. See [Credit Markets](/tech/credit-markets) for the full picture, or the [Surge Multi-Market Lending Pool](https://surgehq.notion.site/Surge-Multi-Market-Lending-Pool-2fc232deac9080218404ea7605e713c6) deep-dive.
-
-
----
-
-**What happens to my BTC if I get liquidated?**
-
-Liquidation does not seize your full collateral. The DCN spends only enough BTC from the Vault to cover the lot opened against your position; that BTC enters a [Dutch auction](/tech/dvaults-liquidation) on the EVM side, and proceeds retire the proportional debt plus the liquidation penalty in the **specific market** that issued your credit line.
-
-Any BTC surplus after debt settlement is **re-locked into a Vault UTXO under the same scripts** - your position continues with reduced collateral and reduced debt rather than terminating. Partial-liquidation lots are sized to minimise borrower loss and dampen liquidation cascades.
-
-
----
-
-**Where does the LP yield come from?**
-
-From real Bitcoin-collateralised borrowing, not from token incentives or circular farming. When borrowers draw USDC against their BTC Vaults, they pay a borrow rate set by the [interest-rate model](/tech/contracts#rate-curve--interestratemodel) (variable market) or by market creation (fixed-rate markets). That borrow interest, minus a reserve factor, accrues to LP shares.
-
-The advertised APY band reflects the high-utilization region of the rate curve in the current deployment and moves with actual borrow demand. Auction proceeds during liquidation also flow back into the originating market, so risk and reward are segregated per-market rather than socialised.
-
-
----
-
-**What happens if the relayer is compromised?**
-
-A compromised relayer can delay actions, over-submit them, or fail to observe state. It **cannot**:
-
-- Move BTC - every Bitcoin spend requires a DCN-signed Schnorr witness over a committed Vault leaf.
-- Forge a borrower authorisation - every gasless flow is gated by a borrower signature (EIP-2612, EIP-3009, or EIP-712).
-- Mint USDC that wasn't burned - destination mints require a Circle-issued IRIS attestation over a real source-chain burn.
-
-The relayer is convenience infrastructure; it is not a custody or signing authority.
 
 ### 🔄 Key Lifecycle
 ---
@@ -1832,7 +1834,7 @@ A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_
 
 - **MAST tree.** Three leaves committed at Vault creation: **Repayment**, **Liquidation**, **Exit**. Only the executed leaf is revealed at spend time; unused branches remain hidden.
 - **Vault binding.** The Repayment leaf commits a 32-byte `vaultId = keccak256(abi.encodePacked(userEvmAddress, nonce))`, binding the UTXO to the borrower's on-chain position so that a spent leaf cannot be replayed against a different position.
-- **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-n signing session.
+- **Threshold Schnorr ([BIP340](https://en.bitcoin.it/wiki/BIP_0340)) via Lin24.** The `loanPubkey` is an aggregate x-only key produced by a 3-of-4 signing session.
 - **Key-path spend disabled.** The internal key is a deterministic **NUMS** key derived from `SHA256("SURGE-NUMS")`, whose output used by Surge is `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`, and is set as the Taproot x-only internal pubkey. This guarantees there is no usable private key for key-path signing, so every spend must reveal and execute a script path.
 
 ## Trust Model

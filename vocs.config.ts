@@ -126,10 +126,6 @@ export default defineConfig({
             text: "Relayer & Workers",
             link: "/tech/relayer",
           },
-          {
-            text: "FAQs",
-            link: "/tech/faqs",
-          },
         ],
       },
       // {
@@ -145,15 +141,19 @@ export default defineConfig({
       //     },
       //   ],
       // },
-      // {
-      //   text: "RESOURCES",
-      //   items: [
-      //     {
-      //       text: "Media Kit",
-      //       link: "/resources/media-kit",
-      //     },
-      //   ],
-      // },
+      {
+        text: "RESOURCES",
+        items: [
+          {
+            text: "Brand Kit",
+            link: "/resources/media-kit",
+          },
+          {
+            text: "FAQs",
+            link: "/resources/faqs",
+          },
+        ],
+      },
     ],
   },
   socials: [

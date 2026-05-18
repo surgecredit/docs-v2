@@ -21,6 +21,7 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 - [💰 For Liquidity Providers](/product/for-liquidity-providers)
 - [🔭  Our Thesis](/product/our-thesis)
 - [🖼️ Product Overview](/product/overview)
+- [💬 FAQs](/resources/faqs)
 - [Branding and Logos [Bitcoin-native Credit Market]](/resources/media-kit)
 - [Quick Links](/resources/quick-links)
 
@@ -30,7 +31,6 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 - [👥 Distributed Custody Network (DCN)](/tech/distributed-custody-network)
 - [🎯 Deterministic Liquidation](/tech/dvaults-liquidation)
 - [⏳ Unilateral Exit](/tech/exit)
-- [💬 FAQs](/tech/faqs)
 - [🔄 Key Lifecycle](/tech/key-lifecycle)
 - [🛡 Key Shard Security](/tech/key-shard-security)
 - [🧾 Signing Policy](/tech/mpc-signing)
