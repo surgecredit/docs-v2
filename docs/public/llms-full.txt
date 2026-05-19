@@ -950,6 +950,159 @@ Surge has three core interfaces, each designed for a key participant:
 Surge is built ground-up for trust-minimized credit and no one can touch their Bitcoin without following predefined, public rules.
 
 ========================================
+File: /resources/brand-kit (Branding and Logos [Bitcoin-native Credit Market])
+========================================
+
+---
+title: Surge | Branding and Logos
+description: Surge Brand Kit and Logos
+---
+
+
+
+<div style={{
+  backgroundColor: '#FDDDD6',
+  borderRadius: '12px',
+  padding: '72px 40px',
+  marginBottom: '24px'
+}}>
+  <h1 style={{
+    color: '#FE7B17',
+    fontSize: '36px',
+    fontWeight: '700',
+    margin: '0',
+    letterSpacing: '-0.5px'
+  }}>Brand Guide</h1>
+</div>
+
+# Branding and Logos [Bitcoin-native Credit Market]
+
+## Specification
+
+- **Theme Color**
+  - HEX: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><span style={{ display: 'inline-block', width: '16px', height: '16px', backgroundColor: '#FE7B17', borderRadius: '3px', verticalAlign: 'middle' }}></span>#FE7B17</span>
+  - RGB: 254, 123, 23
+  - HSB: 26, 91, 100
+
+## Download Brand Pack (including SVGs)
+
+- [Surge Branding Logos.zip](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos.zip)
+
+## Regular Logos
+
+surge-full-primary-light:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-primary-light.png)
+
+surge-full-primary-dark:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-primary-dark.png)
+
+surge-full-monogram-light:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-monogram-light.png)
+
+surge-full-monogram-dark:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-monogram-dark.png)
+
+surge-icon-light:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-light.png)
+
+surge-icon-dark:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-dark.png)
+
+surge-icon-mono-light:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-mono-light.png)
+
+surge-icon-mono-dark:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-mono-dark.png)
+
+{/* surge-superstack-full-light:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-full-light.png)
+
+surge-superstack-full-dark:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-full-dark.png)
+
+surge-superstack-mono-full-light:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-mono-full-light.png)
+
+surge-superstack-mono-full-dark:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-mono-full-dark.png)
+
+clearspace-surge-superstack-full-primary:
+
+![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/clearspace-surge-superstack-full-primary.png)
+
+surge-superstack-do-not-misuse: */}
+
+{/* ![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-do-not-misuse.png) */}
+
+## Colours
+
+<div style={{ 
+  display: 'grid', 
+  gridTemplateColumns: 'repeat(3, 1fr)', 
+  gap: '24px', 
+  padding: '32px', 
+  backgroundColor: '#f5f5f5', 
+  borderRadius: '12px',
+  marginTop: '16px'
+}}>
+  {/* Orange */}
+  <div>
+    <div style={{ 
+      width: '100%', 
+      aspectRatio: '1', 
+      backgroundColor: '#FE7B17', 
+      borderRadius: '8px',
+      marginBottom: '16px'
+    }} />
+    <p style={{ color: '#FE7B17', fontWeight: '600', fontSize: '18px', margin: '0 0 8px 0' }}>Orange</p>
+    <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>#FE7B17</p>
+    <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>RGB (254, 123, 23)</p>
+  </div>
+  
+  {/* Black */}
+  <div>
+    <div style={{ 
+      width: '100%', 
+      aspectRatio: '1', 
+      backgroundColor: '#171717', 
+      borderRadius: '8px',
+      marginBottom: '16px'
+    }} />
+    <p style={{ color: '#171717', fontWeight: '600', fontSize: '18px', margin: '0 0 8px 0' }}>Black</p>
+    <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>#171717</p>
+    <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>RGB (23, 23, 23)</p>
+  </div>
+  
+  {/* White */}
+  <div>
+    <div style={{ 
+      width: '100%', 
+      aspectRatio: '1', 
+      backgroundColor: '#FFFFFF', 
+      borderRadius: '8px',
+      marginBottom: '16px',
+      border: '1px solid #e0e0e0'
+    }} />
+    <p style={{ color: '#333', fontWeight: '600', fontSize: '18px', margin: '0 0 8px 0' }}>White</p>
+    <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>#FFFFFF</p>
+    <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>RGB (255,255,255)</p>
+  </div>
+</div>
+
+
+========================================
 File: /resources/community-guidelines (<h1>🚨 COMMUNITY GUIDELINES 🚨 </h1> <br />)
 ========================================
 
@@ -1099,159 +1252,6 @@ A compromised relayer can delay actions, over-submit them, or fail to observe st
 The relayer is convenience infrastructure; it is not a custody or signing authority.
 
 </details>
-
-
-========================================
-File: /resources/media-kit (Branding and Logos [Bitcoin-native Credit Market])
-========================================
-
----
-title: Surge | Branding and Logos
-description: Surge Brand Kit and Logos
----
-
-
-
-<div style={{
-  backgroundColor: '#FDDDD6',
-  borderRadius: '12px',
-  padding: '72px 40px',
-  marginBottom: '24px'
-}}>
-  <h1 style={{
-    color: '#FE7B17',
-    fontSize: '36px',
-    fontWeight: '700',
-    margin: '0',
-    letterSpacing: '-0.5px'
-  }}>Brand Guide</h1>
-</div>
-
-# Branding and Logos [Bitcoin-native Credit Market]
-
-## Specification
-
-- **Theme Color**
-  - HEX: <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><span style={{ display: 'inline-block', width: '16px', height: '16px', backgroundColor: '#FE7B17', borderRadius: '3px', verticalAlign: 'middle' }}></span>#FE7B17</span>
-  - RGB: 254, 123, 23
-  - HSB: 26, 91, 100
-
-## Download Brand Pack (including SVGs)
-
-- [Surge Branding Logos.zip](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos.zip)
-
-## Regular Logos
-
-surge-full-primary-light:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-primary-light.png)
-
-surge-full-primary-dark:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-primary-dark.png)
-
-surge-full-monogram-light:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-monogram-light.png)
-
-surge-full-monogram-dark:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-full-monogram-dark.png)
-
-surge-icon-light:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-light.png)
-
-surge-icon-dark:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-dark.png)
-
-surge-icon-mono-light:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-mono-light.png)
-
-surge-icon-mono-dark:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-icon-mono-dark.png)
-
-{/* surge-superstack-full-light:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-full-light.png)
-
-surge-superstack-full-dark:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-full-dark.png)
-
-surge-superstack-mono-full-light:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-mono-full-light.png)
-
-surge-superstack-mono-full-dark:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-mono-full-dark.png)
-
-clearspace-surge-superstack-full-primary:
-
-![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/clearspace-surge-superstack-full-primary.png)
-
-surge-superstack-do-not-misuse: */}
-
-{/* ![surge-full-primary-black.png](https://surge.sfo3.cdn.digitaloceanspaces.com/assets/Surge%20Branding%20Logos/docs-only/surge-superstack-do-not-misuse.png) */}
-
-## Colours
-
-<div style={{ 
-  display: 'grid', 
-  gridTemplateColumns: 'repeat(3, 1fr)', 
-  gap: '24px', 
-  padding: '32px', 
-  backgroundColor: '#f5f5f5', 
-  borderRadius: '12px',
-  marginTop: '16px'
-}}>
-  {/* Orange */}
-  <div>
-    <div style={{ 
-      width: '100%', 
-      aspectRatio: '1', 
-      backgroundColor: '#FE7B17', 
-      borderRadius: '8px',
-      marginBottom: '16px'
-    }} />
-    <p style={{ color: '#FE7B17', fontWeight: '600', fontSize: '18px', margin: '0 0 8px 0' }}>Orange</p>
-    <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>#FE7B17</p>
-    <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>RGB (254, 123, 23)</p>
-  </div>
-  
-  {/* Black */}
-  <div>
-    <div style={{ 
-      width: '100%', 
-      aspectRatio: '1', 
-      backgroundColor: '#2F1401', 
-      borderRadius: '8px',
-      marginBottom: '16px'
-    }} />
-    <p style={{ color: '#2F1401', fontWeight: '600', fontSize: '18px', margin: '0 0 8px 0' }}>Black</p>
-    <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>#2F1401</p>
-    <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>RGB (47, 20, 1)</p>
-  </div>
-  
-  {/* White */}
-  <div>
-    <div style={{ 
-      width: '100%', 
-      aspectRatio: '1', 
-      backgroundColor: '#FFFFFF', 
-      borderRadius: '8px',
-      marginBottom: '16px',
-      border: '1px solid #e0e0e0'
-    }} />
-    <p style={{ color: '#333', fontWeight: '600', fontSize: '18px', margin: '0 0 8px 0' }}>White</p>
-    <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>#FFFFFF</p>
-    <p style={{ margin: '0', fontSize: '14px', color: '#666' }}>RGB (255,255,255)</p>
-  </div>
-</div>
 
 
 ========================================

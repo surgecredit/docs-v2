@@ -21,8 +21,8 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 - [💰 For Liquidity Providers](/product/for-liquidity-providers)
 - [🔭  Our Thesis](/product/our-thesis)
 - [🖼️ Product Overview](/product/overview)
+- [Branding and Logos [Bitcoin-native Credit Market]](/resources/brand-kit)
 - [💬 FAQs](/resources/faqs)
-- [Branding and Logos [Bitcoin-native Credit Market]](/resources/media-kit)
 - [Quick Links](/resources/quick-links)
 
 ### Technology & Architecture

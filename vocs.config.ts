@@ -146,7 +146,7 @@ export default defineConfig({
         items: [
           {
             text: "Brand Kit",
-            link: "/resources/media-kit",
+            link: "/resources/brand-kit",
           },
           {
             text: "FAQs",

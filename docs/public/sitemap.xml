@@ -61,17 +61,17 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://docs.surge.build/resources/brand-kit</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://docs.surge.build/resources/community-guidelines</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://docs.surge.build/resources/faqs</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://docs.surge.build/resources/media-kit</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

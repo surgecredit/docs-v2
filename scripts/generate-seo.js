@@ -183,9 +183,9 @@ docsMapping.forEach(section => {
 
                 llmsText += `- [${file.title}](${file.route})\n`;
 
-                // For Media Kit, just keep the link, don't dump the full content into docs.md
-                if (file.route === "/resources/media-kit") {
-                    docsMdContent += `### ${file.title}\n[Link to Media Kit](${BASE_URL}${file.route})\n\n`;
+                // For Brand Kit, just keep the link, don't dump the full content into docs.md
+                if (file.route === "/resources/brand-kit") {
+                    docsMdContent += `### ${file.title}\n[Link to Brand Kit](${BASE_URL}${file.route})\n\n`;
                     return;
                 }
 

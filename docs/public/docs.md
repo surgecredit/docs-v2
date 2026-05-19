@@ -653,6 +653,9 @@ Surge has three core interfaces, each designed for a key participant:
 
 Surge is built ground-up for trust-minimized credit and no one can touch their Bitcoin without following predefined, public rules.
 
+### Branding and Logos [Bitcoin-native Credit Market]
+[Link to Brand Kit](https://docs.surge.build/resources/brand-kit)
+
 ### 💬 FAQs
 ---
 title: FAQs
@@ -759,9 +762,6 @@ A compromised relayer can delay actions, over-submit them, or fail to observe st
 - Mint USDC that wasn't burned - destination mints require a Circle-issued IRIS attestation over a real source-chain burn.
 
 The relayer is convenience infrastructure; it is not a custody or signing authority.
-
-### Branding and Logos [Bitcoin-native Credit Market]
-[Link to Media Kit](https://docs.surge.build/resources/media-kit)
 
 ### Quick Links
 # Quick Links
