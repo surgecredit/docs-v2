@@ -1,0 +1,54 @@
+name: Scheduled Security Audit
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    name: Weekly audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run audit
+        id: audit
+        run: |
+          set +e
+          pnpm audit --prod --json > audit.json
+          status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          pnpm audit --prod || true
+          exit 0
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-report
+          path: audit.json
+          retention-days: 30
+
+      - name: Fail if vulnerabilities found
+        if: steps.audit.outputs.status != '0'
+        run: |
+          echo "::error::pnpm audit reported vulnerabilities. See the uploaded audit-report artifact."
+          exit 1
