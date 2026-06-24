@@ -1,5 +1,4 @@
 import React from "react";
-import GlobalAuthWrapper from "./docs/components/GlobalAuthWrapper";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -9,9 +8,5 @@ type LayoutProps = {
 };
 
 export default function Layout({ children }: LayoutProps) {
-  return (
-    <GlobalAuthWrapper>
-      <div className="surge-app-shell">{children}</div>
-    </GlobalAuthWrapper>
-  );
+  return <div className="surge-app-shell">{children}</div>;
 }
