@@ -343,6 +343,8 @@ If you render an earn opportunity and a user position, here is where each value 
 | Withdrawable now | `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` |
 | Wallet USDC balance | standard ERC-20 `balanceOf` on the USDC address |
 
+{/* Attribution section hidden until the referral program is up. Restore by removing this comment wrapper.
+
 ## Attribution
 
 If you want the liquidity your app brings to be credited to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
@@ -351,6 +353,8 @@ If you want the liquidity your app brings to be credited to you, append a short 
 - Or, if you already append an ERC-8021 builder code on Base, share it and we map that instead.
 
 Appending the tag does not change the deposit itself. Tell us which option you want and we will set up the rest.
+
+*/}
 
 ## Errors
 
@@ -797,6 +801,8 @@ If you render an earn opportunity and a user position, here is where each value 
 | Withdrawable now | `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` |
 | Wallet USDC balance | standard ERC-20 `balanceOf` on the USDC address |
 
+{/* Attribution section hidden until the referral program is up. Restore by removing this comment wrapper.
+
 ## Attribution
 
 If you want the liquidity your app brings to be credited to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
@@ -805,6 +811,8 @@ If you want the liquidity your app brings to be credited to you, append a short 
 - Or, if you already append an ERC-8021 builder code on Base, share it and we map that instead.
 
 Appending the tag does not change the deposit itself. Tell us which option you want and we will set up the rest.
+
+*/}
 
 ## Errors
 
