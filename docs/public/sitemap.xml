@@ -6,12 +6,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/earn/integration</loc>
+    <loc>https://docs.surge.build/earn/contracts</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/earn/overview</loc>
+    <loc>https://docs.surge.build/earn/sdk</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

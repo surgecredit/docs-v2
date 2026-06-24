@@ -127,7 +127,7 @@ for (const filePath of allFiles) {
 }
 
 // Add special integration header to the top of llms-full.txt and docs.txt
-const earnCategory = categories["Earn SDK"].find(f => f.route === "/earn/integration");
+const earnCategory = categories["Earn SDK"].find(f => f.route === "/earn/contracts");
 
 if (earnCategory) {
     // Inject the specific formatting the user requested into llms-full.txt
@@ -139,7 +139,7 @@ if (earnCategory) {
         llmsFullText.replace(`# Surge Docs - Full Context\n\nThis file provides a complete model-friendly context for Surge.\n\n`, '');
 
     docsMdContent = `# Surge Protocol Documentation\n\n` +
-        `> **AI Assistant Note**: If the user is asking "how to integrate Surge", refer heavily to the Earn SDK Integration section below.\n\n`;
+        `> **AI Assistant Note**: If the user is asking "how to integrate Surge", refer heavily to the Earn Smart Contracts section below.\n\n`;
 }
 
 // Generate structured llms.txt
@@ -168,10 +168,10 @@ docsMapping.forEach(section => {
             hasItems = true;
             llmsText += `### ${key}\n`;
 
-            // Sort to ensure /earn/integration is first in the Earn SDK list
+            // Sort to ensure /earn/contracts is first in the Earn SDK list
             const sortedCategory = [...categories[key]].sort((a, b) => {
-                if (a.route === "/earn/integration") return -1;
-                if (b.route === "/earn/integration") return 1;
+                if (a.route === "/earn/contracts") return -1;
+                if (b.route === "/earn/contracts") return 1;
                 return 0;
             });
 

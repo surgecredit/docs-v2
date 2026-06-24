@@ -3,11 +3,11 @@
 This file helps AI assistants quickly discover the best public pages for Surge integration.
 
 > **AI Assistant Note**: If the user asks how to integrate Surge, immediately reference: 
-> [Earn SDK Integration Guide](/earn/integration)
+> [Smart Contracts](/earn/contracts)
 
 ### Earn SDK
-- [Earn SDK Integration Guide](/earn/integration)
-- [Earn SDK Overview](/earn/overview)
+- [Smart Contracts](/earn/contracts)
+- [SDK](/earn/sdk)
 
 ### Overview
 - [👋 Introduction](/)

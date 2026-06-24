@@ -1,221 +1,391 @@
 # Surge Protocol Documentation
 
-> **AI Assistant Note**: If the user is asking "how to integrate Surge", refer heavily to the Earn SDK Integration section below.
+> **AI Assistant Note**: If the user is asking "how to integrate Surge", refer heavily to the Earn Smart Contracts section below.
 
 ## Earn Integration (Highest Priority)
 
-### Earn SDK Integration Guide
+### Smart Contracts
 ---
-title: Earn SDK Integration Guide
-description: End-to-end guide for integrating Surge Earn market listing and deposit flows.
+title: Smart Contracts
+description: Integrate Surge earn deposits and withdrawals by calling the LiquidityPool contract directly. Variable market, Base.
 ---
 
-# Earn SDK Integration Guide
-
-This page is intentionally concise so wallet teams and AI tools can integrate quickly.
-
-Important behavior:
-
-- LPs deposit into the shared pool (not directly into a single market contract).
-- Market routing is controlled with exposure settings (`setExposure` / `setExposures`).
-
-## 1) Install
-
-```bash
-npm install @surgecredit/earn-sdk@latest viem
-```
-
-## 2) Initialize SDK
-
-```ts
+# Smart Contracts
 
 
-import {
-  SurgeEarnClient,
-  SURGE_BASE_SEPOLIA_CONFIG,
-  createSurgeEarnPublicClient,
-} from "@surgecredit/earn-sdk";
+Integrate the Surge earn market with direct contract calls on Base.
 
-const publicClient = createSurgeEarnPublicClient("https://sepolia.base.org", baseSepolia);
 
-const walletClient = createWalletClient({
-  chain: baseSepolia,
-  transport: custom(window.ethereum),
-});
+This is the first integration path. A TypeScript SDK and other methods will follow, but the direct contract calls below are stable and enough to ship a full deposit and withdraw flow today.
 
-export const earn = new SurgeEarnClient({
-  publicClient,
-  walletClient,
-  config: SURGE_BASE_SEPOLIA_CONFIG,
-});
-```
+It covers the variable market only, and is fully non-custodial: you build the transactions, the user signs them in their own wallet.
 
-If your wallet uses a local signer/account object (for example `createWalletFromMnemonic`), pass that account into `createWalletClient`. SDK writes will use it directly (no custom `writeContract` wrappers needed):
+You can see this market live, with its current Supply APY and TVL, at [earn.surge.credit](https://earn.surge.credit/#/market/0).
+
+Scope:
+
+- One market: the variable market, `marketId = 0`.
+- One asset: USDC (6 decimals).
+- Two writes: `deposit` and `withdraw`. The rest are reads.
+- Networks: Base Sepolia (testnet) and Base (mainnet).
+
+## Networks and addresses
+
+Key your config by `chainId` so switching networks switches addresses with no code branch. The pool address and USDC address are all you hardcode. The market provider is read on-chain from `markets(0)`, so you never hardcode it.
+
+| | Base Sepolia (testnet) | Base (mainnet) |
+| --- | --- | --- |
+| chainId | `84532` | `8453` |
+| LiquidityPool | `0xed9613914c004Db819C8f0994a7388770E932Ef0` | `0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda` |
+| USDC | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` |
+
+Verify the contracts on the explorer before integrating:
+
+- Testnet scan: [sepolia.basescan.org](https://sepolia.basescan.org/address/0xed9613914c004Db819C8f0994a7388770E932Ef0)
+- Mainnet scan: [basescan.org](https://basescan.org/address/0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda)
+
+Public RPC endpoints are `https://sepolia.base.org` and `https://mainnet.base.org`. For testnet USDC, use the Circle faucet at [faucet.circle.com](https://faucet.circle.com) (select Base Sepolia).
 
 ```ts
+export const SURGE_EARN = {
+  84532: {
+    name: "base-sepolia",
+    pool: "0xed9613914c004Db819C8f0994a7388770E932Ef0",
+    usdc: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  },
+  8453: {
+    name: "base",
+    pool: "0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda",
+    usdc: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  },
+} as const;
 
-
-const account = mnemonicToAccount("test test test ...");
-
-const walletClient = createWalletClient({
-  account,
-  chain: baseSepolia,
-  transport: http("https://sepolia.base.org"),
-});
-
-const earn = new SurgeEarnClient({
-  publicClient,
-  walletClient,
-  config: SURGE_BASE_SEPOLIA_CONFIG,
-});
-
-await earn.deposit({ amountUsdc: "100", waitForReceipt: true });
+export const VARIABLE_MARKET_ID = 0;
+export const USDC_DECIMALS = 6;
 ```
 
-## 3) Read markets and user state
-
-```ts
-const address = "0xYourWalletAddress";
-
-const [markets, position, exposures, usdcBalance] = await Promise.all([
-  earn.listMarkets(),
-  earn.getUserPosition(address),
-  earn.getUserExposures(address),
-  earn.getWalletUsdcBalance(address),
-]);
-```
-
-## 4) Deposit flow (wallet invest)
-
-```ts
-const address = "0xYourWalletAddress";
-const amountUsdc = "100";
-
-const allowance = await earn.getAllowance(address);
-if (allowance === 0n) {
-  await earn.approveMaxUsdc({ waitForReceipt: true });
+```python
+SURGE_EARN = {
+    84532: {
+        "name": "base-sepolia",
+        "pool": "0xed9613914c004Db819C8f0994a7388770E932Ef0",
+        "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    },
+    8453: {
+        "name": "base",
+        "pool": "0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda",
+        "usdc": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    },
 }
 
-await earn.deposit({ amountUsdc, waitForReceipt: true });
+VARIABLE_MARKET_ID = 0
+USDC_DECIMALS = 6
 ```
 
-Target a fixed market allocation in one flow:
+## Minimal ABI
+
+These fragments are the complete set an earn integration calls. The subset is stable across both networks, so copy it as-is.
+
+
+Pool ABI, the earn function subset
+
+```json
+[
+  { "type": "function", "name": "deposit", "stateMutability": "nonpayable",
+    "inputs": [{ "name": "amount", "type": "uint256" }], "outputs": [] },
+  { "type": "function", "name": "withdraw", "stateMutability": "nonpayable",
+    "inputs": [{ "name": "amount", "type": "uint256" }], "outputs": [] },
+  { "type": "function", "name": "getUserSupplyAmount", "stateMutability": "view",
+    "inputs": [{ "name": "user", "type": "address" }, { "name": "marketId", "type": "uint256" }],
+    "outputs": [{ "type": "uint256" }] },
+  { "type": "function", "name": "userPositions", "stateMutability": "view",
+    "inputs": [{ "name": "user", "type": "address" }, { "name": "marketId", "type": "uint256" }],
+    "outputs": [{ "name": "supplyShares", "type": "uint256" }, { "name": "borrowShares", "type": "uint256" }] },
+  { "type": "function", "name": "getMarketBorrowRate", "stateMutability": "view",
+    "inputs": [{ "name": "marketId", "type": "uint256" }], "outputs": [{ "type": "uint256" }] },
+  { "type": "function", "name": "getUtilization", "stateMutability": "view",
+    "inputs": [{ "name": "marketId", "type": "uint256" }], "outputs": [{ "type": "uint256" }] },
+  { "type": "function", "name": "getAvailableLiquidity", "stateMutability": "view",
+    "inputs": [{ "name": "marketId", "type": "uint256" }], "outputs": [{ "type": "uint256" }] },
+  { "type": "function", "name": "markets", "stateMutability": "view",
+    "inputs": [{ "name": "marketId", "type": "uint256" }],
+    "outputs": [
+      { "name": "provider", "type": "address" },
+      { "name": "token", "type": "address" },
+      { "name": "active", "type": "bool" },
+      { "name": "totalSupplyShares", "type": "uint256" },
+      { "name": "totalSupplyAssets", "type": "uint256" },
+      { "name": "totalPhysicalSupply", "type": "uint256" },
+      { "name": "totalBorrowShares", "type": "uint256" },
+      { "name": "totalBorrowAssets", "type": "uint256" },
+      { "name": "totalPhysicalBorrow", "type": "uint256" },
+      { "name": "supplyExchangeRate", "type": "uint256" },
+      { "name": "borrowExchangeRate", "type": "uint256" },
+      { "name": "protocolEarnings", "type": "uint256" },
+      { "name": "protocolEarningsAvailable", "type": "uint256" },
+      { "name": "originationFeeBps", "type": "uint256" },
+      { "name": "reserveRateBps", "type": "uint256" },
+      { "name": "maxLtvBps", "type": "uint256" },
+      { "name": "liquidationThresholdBps", "type": "uint256" },
+      { "name": "lastAccrueTime", "type": "uint256" },
+      { "name": "protocolSupplyShares", "type": "uint256" }
+    ] },
+  { "type": "event", "name": "Deposit", "inputs": [
+      { "name": "user", "type": "address", "indexed": true },
+      { "name": "marketId", "type": "uint256", "indexed": true },
+      { "name": "amount", "type": "uint256", "indexed": false },
+      { "name": "shares", "type": "uint256", "indexed": false } ] },
+  { "type": "event", "name": "Withdraw", "inputs": [
+      { "name": "user", "type": "address", "indexed": true },
+      { "name": "marketId", "type": "uint256", "indexed": true },
+      { "name": "amount", "type": "uint256", "indexed": false },
+      { "name": "shares", "type": "uint256", "indexed": false } ] }
+]
+```
+
+
+
+`deposit` and `withdraw` take an `amount` only. The market is fixed to `0` inside the contract, so there is no market argument.
+
+For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The examples also read `getSupplyRate` on the market provider:
+
+```json
+[
+  { "type": "function", "name": "getSupplyRate", "stateMutability": "view",
+    "inputs": [{ "name": "borrowed", "type": "uint256" }, { "name": "liquidity", "type": "uint256" }],
+    "outputs": [{ "type": "uint256" }] }
+]
+```
+
+## Deposit
+
+Approve USDC to the pool, then deposit. Amounts are in base units, so 100 USDC is `100_000000`.
+
+- Spender for the approval is the pool itself. There is no router.
+- USDC is a standard ERC-20, no value is sent (`value = 0`).
+- The deposit credits the calling address. Funds come from `msg.sender`.
+- Approve the exact amount you are about to deposit. See [Security notes](#security-and-operational-notes).
+- Read the current allowance first and skip the approve if it already covers the amount, so you do not send a redundant transaction:
+
+```python
+if usdc.functions.allowance(user, cfg["pool"]).call() >= amount:
+    pass  # already approved, go straight to deposit
+```
+
+```python
+from web3 import Web3
+
+w3 = Web3(Web3.HTTPProvider(RPC_URL))
+cfg = SURGE_EARN[chain_id]
+pool = w3.eth.contract(address=Web3.to_checksum_address(cfg["pool"]), abi=POOL_ABI)
+usdc = w3.eth.contract(address=Web3.to_checksum_address(cfg["usdc"]), abi=ERC20_ABI)
+
+amount = 100 * 10**6  # 100 USDC
+
+# 1) approve exact amount, spender = pool
+approve_tx = usdc.functions.approve(cfg["pool"], amount).build_transaction({
+    "from": user,
+    "nonce": w3.eth.get_transaction_count(user),
+})
+
+# 2) deposit
+deposit_tx = pool.functions.deposit(amount).build_transaction({
+    "from": user,
+    "nonce": w3.eth.get_transaction_count(user) + 1,
+})
+# sign and send each tx with the user's wallet, approve first
+```
 
 ```ts
-await earn.depositAsLp({
-  amountUsdc: "100",
-  exposureUpdates: [{ marketId: 2, exposurePercent: 100 }],
-  waitForReceipt: true,
+
+const cfg = SURGE_EARN[chainId];
+const amount = parseUnits("100", 6); // 100 USDC
+
+// 1) approve exact amount, spender = pool
+await wallet.writeContract({
+  address: cfg.usdc,
+  abi: erc20Abi,
+  functionName: "approve",
+  args: [cfg.pool, amount],
+});
+
+// 2) deposit
+await wallet.writeContract({
+  address: cfg.pool,
+  abi: poolAbi,
+  functionName: "deposit",
+  args: [amount],
 });
 ```
 
-## 5) Withdraw flow
+The deposit emits `Deposit(user, 0, amount, shares)`.
+
+## Withdraw
+
+`withdraw(amount)` takes the amount in **USDC**, not in shares. This matters: read the user position in USDC and pass a USDC amount back.
+
+Withdrawals are bounded by available liquidity, which can be less than the user balance when utilization is high. Always clamp the request to `getAvailableLiquidity(0)`. See [Available to withdraw](#available-to-withdraw).
+
+```python
+amount = 50 * 10**6  # withdraw 50 USDC
+withdraw_tx = pool.functions.withdraw(amount).build_transaction({
+    "from": user,
+    "nonce": w3.eth.get_transaction_count(user),
+})
+# sign and send with the user's wallet
+```
 
 ```ts
-await earn.withdrawByUsdc({
-  amountUsdc: "25",
-  waitForReceipt: true,
+const amount = parseUnits("50", 6); // withdraw 50 USDC
+await wallet.writeContract({
+  address: cfg.pool,
+  abi: poolAbi,
+  functionName: "withdraw",
+  args: [amount],
 });
 ```
 
-## 6) Activity feed
+Withdraw needs no approval (it burns the user's internal shares). It emits `Withdraw(user, 0, amount, shares)`.
+
+## Read: user position
+
+`getUserSupplyAmount(user, 0)` returns the user's current claimable value in USDC base units (6 decimals). This already includes accrued interest, so it is principal plus yield combined.
+
+```python
+value6 = pool.functions.getUserSupplyAmount(user, 0).call()  # USDC, 6 decimals
+value_usdc = value6 / 1e6
+
+supply_shares = pool.functions.userPositions(user, 0).call()[0]  # raw shares
+```
 
 ```ts
-const activity = await earn.getUserActivity("0xYourWalletAddress", {
-  includeTimestamps: true,
-  limit: 25,
+const value6 = await client.readContract({
+  address: cfg.pool, abi: poolAbi,
+  functionName: "getUserSupplyAmount", args: [user, 0n],
+}); // USDC, 6 decimals
+```
+
+The contract does not store a separate principal vs earned split. If your UI shows earned yield, track the user's net deposits yourself (sum of `Deposit.amount` minus `Withdraw.amount` from events) and compute `earned = max(0, currentValue - netDeposited)`. Clamp at zero, since rounding can make a fresh position read slightly below the deposited amount.
+
+## Available to withdraw
+
+`getAvailableLiquidity(0)` returns the idle USDC available to withdraw right now, which is `totalPhysicalSupply - totalPhysicalBorrow`. A user's withdrawable amount is the smaller of their balance and this number.
+
+```python
+balance6 = pool.functions.getUserSupplyAmount(user, 0).call()
+avail6   = pool.functions.getAvailableLiquidity(0).call()
+withdrawable6 = min(balance6, avail6)
+```
+
+For a full exit, read the balance and available liquidity right before you build the transaction and pass the smaller of the two. A freshly read value closes the position cleanly. The only catch is the rare case where a liquidation lowers the rate between your read and your send: the withdraw reverts with `InvalidAmount`, so read again and resubmit.
+
+```python
+balance6 = pool.functions.getUserSupplyAmount(user, 0).call()
+avail6   = pool.functions.getAvailableLiquidity(0).call()
+amount   = min(balance6, avail6)
+if amount > 0:
+    tx = pool.functions.withdraw(amount).build_transaction({"from": user, "nonce": ...})
+    # reverts with InvalidAmount only if the rate dropped (a liquidation) since the read; re-read and retry
+```
+
+## Read: Supply APY
+
+Read the current Supply APY from the market provider's `getSupplyRate`, which returns basis points (divide by 100 for a percentage). This is the net lender rate, already after the protocol's reserve cut. Read the provider address from `markets(0).provider` rather than hardcoding it, since the protocol can change it.
+
+```python
+m = pool.functions.markets(0).call()
+provider_addr       = m[0]   # markets(0).provider
+total_supply_assets = m[4]
+total_borrow_assets = m[7]
+
+provider = w3.eth.contract(address=provider_addr, abi=PROVIDER_ABI)
+supply_apy_bps = provider.functions.getSupplyRate(total_borrow_assets, total_supply_assets).call()
+supply_apy_pct = supply_apy_bps / 100
+```
+
+```ts
+const market = await client.readContract({
+  address: cfg.pool, abi: poolAbi, functionName: "markets", args: [0n],
 });
+const supplyApyBps = await client.readContract({
+  address: market[0], abi: providerAbi,                        // market[0] = provider
+  functionName: "getSupplyRate", args: [market[7], market[4]], // borrowed, liquidity
+});
+const supplyApyPct = Number(supplyApyBps) / 100;
 ```
 
-## 7) React hooks (optional)
+Borrow APR and utilization are direct reads on the pool, also in basis points:
 
-```tsx
-
-function EarnView({ client, address }: { client: any; address: `0x${string}` }) {
-  const { data: markets } = useEarnMarkets(client, { pollIntervalMs: 15000 });
-  const { data: portfolio } = useEarnPortfolio(client, address);
-  const { data: activity } = useEarnActivity(client, { user: address, limit: 10, pollIntervalMs: 15000 });
-
-  return (
-    
-      Markets: {markets.length}
-      Current Value: {portfolio.position?.currentValue ?? 0}
-      Recent Activity: {activity.length}
-    
-  );
-}
+```python
+borrow_apr_pct  = pool.functions.getMarketBorrowRate(0).call() / 100
+utilization_pct = pool.functions.getUtilization(0).call() / 100
 ```
 
-## Integration checklist
+TVL is `markets(0).totalSupplyAssets` and total borrowed is `markets(0).totalBorrowAssets`, both USDC with 6 decimals. There is no minimum deposit or lockup on the variable market, so deposits and withdrawals are available at any time, subject to liquidity.
 
-- Wallet network is Base Sepolia (`chainId: 84532`)
-- Reliable Base Sepolia RPC configured
-- USDC token decimals treated as 6
-- Wait for transaction receipts before refreshing UI
-- Show tx hash and explorer link after write actions
+## Field mapping
 
-### Earn SDK Overview
+If you render an earn opportunity and a user position, here is where each value comes from.
+
+| Field | Source |
+| --- | --- |
+| Supply APY | provider `getSupplyRate(borrowed, liquidity)`, basis points / 100 |
+| Borrow APR | `getMarketBorrowRate(0) / 100` |
+| Utilization | `getUtilization(0) / 100` |
+| TVL | `markets(0).totalSupplyAssets`, 6 decimals |
+| Token | USDC, address from config, 6 decimals |
+| Minimum deposit | none (0) |
+| Lock / cooldown | none |
+| Position value (principal + earned) | `getUserSupplyAmount(user, 0)`, 6 decimals |
+| Earned only | `max(0, value - netDeposited)` (track deposits/withdrawals from events) |
+| Withdrawable now | `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` |
+| Wallet USDC balance | standard ERC-20 `balanceOf` on the USDC address |
+
+## Attribution
+
+If you want the liquidity your app brings to be credited to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
+
+- We assign you a partner id that you append to the deposit calldata.
+- Or, if you already append an ERC-8021 builder code on Base, share it and we map that instead.
+
+Appending the tag does not change the deposit itself. Tell us which option you want and we will set up the rest.
+
+## Errors
+
+The pool reverts with typed custom errors. Decode these to give users a clear reason instead of a generic failure.
+
+| Error | When |
+| --- | --- |
+| `InvalidAmount()` | Deposit or withdraw amount is `0`, or a withdraw is larger than the user's claimable balance |
+| `InsufficientLiquidity()` | Withdraw is larger than `getAvailableLiquidity(0)` |
+| `InsufficientShares()` | Defensive share-burn guard; not reachable on the normal withdraw path |
+| `MarketNotActive()` | Deposit while the market is deactivated. Withdraw still works |
+| `EnforcedPause()` | Deposit while the pool is paused. Withdraw still works |
+| `SafeERC20FailedOperation(address)` | The USDC `approve` or `transferFrom` failed, usually missing allowance or balance |
+
+## Security and operational notes
+
+These are the things to handle correctly before this carries real volume.
+
+- **Approvals.** Approve the exact deposit amount with the pool as spender. Avoid unlimited approvals so there is no standing allowance left to draw on later.
+- **Withdrawals are liquidity bound.** When utilization is high, available liquidity can be below a user's balance, and a withdraw above it reverts with `InsufficientLiquidity`. Always clamp to `getAvailableLiquidity(0)` and show the user the withdrawable amount separately from their balance.
+- **Closing a position.** To fully exit, withdraw the smaller of `getUserSupplyAmount(user, 0)` and `getAvailableLiquidity(0)`. A value read just before you send closes the position cleanly. The only catch: if a liquidation lowers the rate in the moment between your read and your transaction, the withdraw reverts with `InvalidAmount`, so read again and resubmit.
+- **A position can go down, not only up.** It usually grows as interest accrues, but if a borrower defaults and their collateral does not cover their credit, every lender's value takes a small hit, so `getUserSupplyAmount` can read lower than before. That is why the earned figure is clamped at zero.
+
+
+v0.0.1 · Updated June 24, 2026
+
+### SDK
 ---
-title: Earn SDK Overview
-description: Integrate Surge Earn markets into wallet and web applications.
+title: SDK
+description: TypeScript and Python SDKs for Surge earn. Coming soon.
 ---
 
-# Earn SDK Overview
+# SDK
 
-`@surgecredit/earn-sdk` is a JavaScript/TypeScript SDK for wallet teams and frontend apps that want to integrate Surge earn markets on Base Sepolia.
+The Surge earn SDKs (TypeScript and Python) are coming soon. The packages are not published yet.
 
-## What the SDK gives you
-
-- Market discovery (`listMarkets`) with APR, TVL, utilization, LTV, and reserve data.
-- User position reads (`getUserPosition`) including deposited value and LP token balance.
-- Exposure reads (`getUserExposures`) to show per-market allocation and target exposure.
-- Transaction helpers for approve, deposit, withdraw, and exposure updates.
-- Write methods support both injected wallets and local account signers (mnemonic/private-key wallets).
-- React hooks (`@surgecredit/earn-sdk/react`) for easy frontend state integration.
-
-LP behavior:
-
-- Deposits mint LP position in the shared pool.
-- Exposure settings control whether new allocation favors variable or fixed markets.
-
-## Default network configuration
-
-The SDK ships with a default Base Sepolia config:
-
-- Liquidity Pool: `0xA40C833639803132D409E344d1CB9A9DD5aAB411`
-- USDC: `0x036CbD53842c5426634e7929541eC2318f3dCF7e`
-
-You can override both addresses if you deploy to a new environment.
-
-## Install
-
-```bash
-npm install @surgecredit/earn-sdk@latest viem
-```
-
-## Quick start
-
-```ts
-
-import {
-  SurgeEarnClient,
-  SURGE_BASE_SEPOLIA_CONFIG,
-  createSurgeEarnPublicClient,
-} from "@surgecredit/earn-sdk";
-
-const publicClient = createSurgeEarnPublicClient("https://sepolia.base.org", baseSepolia);
-
-const earn = new SurgeEarnClient({
-  publicClient,
-  config: SURGE_BASE_SEPOLIA_CONFIG,
-});
-
-const markets = await earn.listMarkets();
-```
-
-## Next step
-
-Use the full [Integration Guide](/earn/integration) to wire wallet flows (approve/deposit/withdraw) and optional React hooks.
+To integrate today, use [Smart Contracts](/earn/contracts), which covers the full deposit, withdraw, and read flow with direct contract calls on Base.
 
 ## Overview
 
