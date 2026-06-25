@@ -46,7 +46,9 @@ Verify the contracts on the explorer before integrating:
 
 Public RPC endpoints are `https://sepolia.base.org` and `https://mainnet.base.org`. For testnet USDC, use the Circle faucet at [faucet.circle.com](https://faucet.circle.com) (select Base Sepolia).
 
-```ts
+:::code-group
+
+```ts [TypeScript]
 export const SURGE_EARN = {
   84532: {
     name: "base-sepolia",
@@ -64,7 +66,7 @@ export const VARIABLE_MARKET_ID = 0;
 export const USDC_DECIMALS = 6;
 ```
 
-```python
+```python [Python]
 SURGE_EARN = {
     84532: {
         "name": "base-sepolia",
@@ -81,6 +83,8 @@ SURGE_EARN = {
 VARIABLE_MARKET_ID = 0
 USDC_DECIMALS = 6
 ```
+
+:::
 
 ## Minimal ABI
 
@@ -172,7 +176,31 @@ if usdc.functions.allowance(user, cfg["pool"]).call() >= amount:
     pass  # already approved, go straight to deposit
 ```
 
-```python
+:::code-group
+
+```ts [TypeScript]
+
+const cfg = SURGE_EARN[chainId];
+const amount = parseUnits("100", 6); // 100 USDC
+
+// 1) approve exact amount, spender = pool
+await wallet.writeContract({
+  address: cfg.usdc,
+  abi: erc20Abi,
+  functionName: "approve",
+  args: [cfg.pool, amount],
+});
+
+// 2) deposit
+await wallet.writeContract({
+  address: cfg.pool,
+  abi: poolAbi,
+  functionName: "deposit",
+  args: [amount],
+});
+```
+
+```python [Python]
 from web3 import Web3
 
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
@@ -196,27 +224,7 @@ deposit_tx = pool.functions.deposit(amount).build_transaction({
 # sign and send each tx with the user's wallet, approve first
 ```
 
-```ts
-
-const cfg = SURGE_EARN[chainId];
-const amount = parseUnits("100", 6); // 100 USDC
-
-// 1) approve exact amount, spender = pool
-await wallet.writeContract({
-  address: cfg.usdc,
-  abi: erc20Abi,
-  functionName: "approve",
-  args: [cfg.pool, amount],
-});
-
-// 2) deposit
-await wallet.writeContract({
-  address: cfg.pool,
-  abi: poolAbi,
-  functionName: "deposit",
-  args: [amount],
-});
-```
+:::
 
 The deposit emits `Deposit(user, 0, amount, shares)`.
 
@@ -226,16 +234,9 @@ The deposit emits `Deposit(user, 0, amount, shares)`.
 
 Withdrawals are bounded by available liquidity, which can be less than the user balance when utilization is high. Always clamp the request to `getAvailableLiquidity(0)`. See [Available to withdraw](#available-to-withdraw).
 
-```python
-amount = 50 * 10**6  # withdraw 50 USDC
-withdraw_tx = pool.functions.withdraw(amount).build_transaction({
-    "from": user,
-    "nonce": w3.eth.get_transaction_count(user),
-})
-# sign and send with the user's wallet
-```
+:::code-group
 
-```ts
+```ts [TypeScript]
 const amount = parseUnits("50", 6); // withdraw 50 USDC
 await wallet.writeContract({
   address: cfg.pool,
@@ -245,25 +246,40 @@ await wallet.writeContract({
 });
 ```
 
+```python [Python]
+amount = 50 * 10**6  # withdraw 50 USDC
+withdraw_tx = pool.functions.withdraw(amount).build_transaction({
+    "from": user,
+    "nonce": w3.eth.get_transaction_count(user),
+})
+# sign and send with the user's wallet
+```
+
+:::
+
 Withdraw needs no approval (it burns the user's internal shares). It emits `Withdraw(user, 0, amount, shares)`.
 
 ## Read: user position
 
 `getUserSupplyAmount(user, 0)` returns the user's current claimable value in USDC base units (6 decimals). This already includes accrued interest, so it is principal plus yield combined.
 
-```python
+:::code-group
+
+```ts [TypeScript]
+const value6 = await client.readContract({
+  address: cfg.pool, abi: poolAbi,
+  functionName: "getUserSupplyAmount", args: [user, 0n],
+}); // USDC, 6 decimals
+```
+
+```python [Python]
 value6 = pool.functions.getUserSupplyAmount(user, 0).call()  # USDC, 6 decimals
 value_usdc = value6 / 1e6
 
 supply_shares = pool.functions.userPositions(user, 0).call()[0]  # raw shares
 ```
 
-```ts
-const value6 = await client.readContract({
-  address: cfg.pool, abi: poolAbi,
-  functionName: "getUserSupplyAmount", args: [user, 0n],
-}); // USDC, 6 decimals
-```
+:::
 
 The contract does not store a separate principal vs earned split. If your UI shows earned yield, track the user's net deposits yourself (sum of `Deposit.amount` minus `Withdraw.amount` from events) and compute `earned = max(0, currentValue - netDeposited)`. Clamp at zero, since rounding can make a fresh position read slightly below the deposited amount.
 
@@ -271,18 +287,12 @@ The contract does not store a separate principal vs earned split. If your UI sho
 
 `getAvailableLiquidity(0)` returns the idle USDC available to withdraw right now, which is `totalPhysicalSupply - totalPhysicalBorrow`. A user's withdrawable amount is the smaller of their balance and this number.
 
-```python
-balance6 = pool.functions.getUserSupplyAmount(user, 0).call()
-avail6   = pool.functions.getAvailableLiquidity(0).call()
-withdrawable6 = min(balance6, avail6)
-```
-
 For a full exit, read the balance and available liquidity right before you build the transaction and pass the smaller of the two. A freshly read value closes the position cleanly. The only catch is the rare case where a liquidation lowers the rate between your read and your send: the withdraw reverts with `InvalidAmount`, so read again and resubmit.
 
 ```python
 balance6 = pool.functions.getUserSupplyAmount(user, 0).call()
 avail6   = pool.functions.getAvailableLiquidity(0).call()
-amount   = min(balance6, avail6)
+amount   = min(balance6, avail6)   # withdrawable now; for a full exit this is the whole position
 if amount > 0:
     tx = pool.functions.withdraw(amount).build_transaction({"from": user, "nonce": ...})
     # reverts with InvalidAmount only if the rate dropped (a liquidation) since the read; re-read and retry
@@ -292,7 +302,20 @@ if amount > 0:
 
 Read the current Supply APY from the market provider's `getSupplyRate`, which returns basis points (divide by 100 for a percentage). This is the net lender rate, already after the protocol's reserve cut. Read the provider address from `markets(0).provider` rather than hardcoding it, since the protocol can change it.
 
-```python
+:::code-group
+
+```ts [TypeScript]
+const market = await client.readContract({
+  address: cfg.pool, abi: poolAbi, functionName: "markets", args: [0n],
+});
+const supplyApyBps = await client.readContract({
+  address: market[0], abi: providerAbi,                        // market[0] = provider
+  functionName: "getSupplyRate", args: [market[7], market[4]], // borrowed, liquidity
+});
+const supplyApyPct = Number(supplyApyBps) / 100;
+```
+
+```python [Python]
 m = pool.functions.markets(0).call()
 provider_addr       = m[0]   # markets(0).provider
 total_supply_assets = m[4]
@@ -303,16 +326,7 @@ supply_apy_bps = provider.functions.getSupplyRate(total_borrow_assets, total_sup
 supply_apy_pct = supply_apy_bps / 100
 ```
 
-```ts
-const market = await client.readContract({
-  address: cfg.pool, abi: poolAbi, functionName: "markets", args: [0n],
-});
-const supplyApyBps = await client.readContract({
-  address: market[0], abi: providerAbi,                        // market[0] = provider
-  functionName: "getSupplyRate", args: [market[7], market[4]], // borrowed, liquidity
-});
-const supplyApyPct = Number(supplyApyBps) / 100;
-```
+:::
 
 Borrow APR and utilization are direct reads on the pool, also in basis points:
 
@@ -362,7 +376,6 @@ The pool reverts with typed custom errors. Decode these to give users a clear re
 | --- | --- |
 | `InvalidAmount()` | Deposit or withdraw amount is `0`, or a withdraw is larger than the user's claimable balance |
 | `InsufficientLiquidity()` | Withdraw is larger than `getAvailableLiquidity(0)` |
-| `InsufficientShares()` | Defensive share-burn guard; not reachable on the normal withdraw path |
 | `MarketNotActive()` | Deposit while the market is deactivated. Withdraw still works |
 | `EnforcedPause()` | Deposit while the pool is paused. Withdraw still works |
 | `SafeERC20FailedOperation(address)` | The USDC `approve` or `transferFrom` failed, usually missing allowance or balance |
@@ -372,11 +385,11 @@ The pool reverts with typed custom errors. Decode these to give users a clear re
 These are the things to handle correctly before this carries real volume.
 
 - **Approvals.** Approve the exact deposit amount with the pool as spender. Avoid unlimited approvals so there is no standing allowance left to draw on later.
-- **Withdrawals are liquidity bound.** A withdraw is capped at `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` — when utilization is high, available liquidity can sit below a user's balance, so always clamp to it and show the withdrawable amount separately from the balance. Going over reverts with `InsufficientLiquidity`. To fully exit, read both values right before you send and pass the smaller one; the only catch is the rare case where a liquidation lowers the rate between your read and your transaction, which reverts with `InvalidAmount`, so read again and resubmit.
+- **Withdrawals are liquidity bound.** A withdraw is capped at `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))`; when utilization is high this sits below the user's balance, so clamp to it and surface the withdrawable amount separately. Exceeding it reverts with `InsufficientLiquidity`. Read both values right before sending (a full exit is just withdrawing up to this cap), and if a liquidation lowers the rate in between, the withdraw reverts with `InvalidAmount`, so re-read and resubmit.
 - **A position can go down, not only up.** It usually grows as interest accrues, but if a borrower defaults and their collateral does not cover their credit, every lender's value takes a small hit, so `getUserSupplyAmount` can read lower than before. That is why the earned figure is clamped at zero.
 
 
-v0.0.1 · Updated June 24, 2026
+v0.0.1
 
 ### SDK
 ---
