@@ -372,8 +372,7 @@ The pool reverts with typed custom errors. Decode these to give users a clear re
 These are the things to handle correctly before this carries real volume.
 
 - **Approvals.** Approve the exact deposit amount with the pool as spender. Avoid unlimited approvals so there is no standing allowance left to draw on later.
-- **Withdrawals are liquidity bound.** When utilization is high, available liquidity can be below a user's balance, and a withdraw above it reverts with `InsufficientLiquidity`. Always clamp to `getAvailableLiquidity(0)` and show the user the withdrawable amount separately from their balance.
-- **Closing a position.** To fully exit, withdraw the smaller of `getUserSupplyAmount(user, 0)` and `getAvailableLiquidity(0)`. A value read just before you send closes the position cleanly. The only catch: if a liquidation lowers the rate in the moment between your read and your transaction, the withdraw reverts with `InvalidAmount`, so read again and resubmit.
+- **Withdrawals are liquidity bound.** A withdraw is capped at `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` — when utilization is high, available liquidity can sit below a user's balance, so always clamp to it and show the withdrawable amount separately from the balance. Going over reverts with `InsufficientLiquidity`. To fully exit, read both values right before you send and pass the smaller one; the only catch is the rare case where a liquidation lowers the rate between your read and your transaction, which reverts with `InvalidAmount`, so read again and resubmit.
 - **A position can go down, not only up.** It usually grows as interest accrues, but if a borrower defaults and their collateral does not cover their credit, every lender's value takes a small hit, so `getUserSupplyAmount` can read lower than before. That is why the earned figure is clamped at zero.
 
 

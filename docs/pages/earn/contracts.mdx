@@ -356,7 +356,6 @@ The pool reverts with typed custom errors. Decode these to give users a clear re
 | --- | --- |
 | `InvalidAmount()` | Deposit or withdraw amount is `0`, or a withdraw is larger than the user's claimable balance |
 | `InsufficientLiquidity()` | Withdraw is larger than `getAvailableLiquidity(0)` |
-| `InsufficientShares()` | Defensive share-burn guard; not reachable on the normal withdraw path |
 | `MarketNotActive()` | Deposit while the market is deactivated. Withdraw still works |
 | `EnforcedPause()` | Deposit while the pool is paused. Withdraw still works |
 | `SafeERC20FailedOperation(address)` | The USDC `approve` or `transferFrom` failed, usually missing allowance or balance |
@@ -366,8 +365,7 @@ The pool reverts with typed custom errors. Decode these to give users a clear re
 These are the things to handle correctly before this carries real volume.
 
 - **Approvals.** Approve the exact deposit amount with the pool as spender. Avoid unlimited approvals so there is no standing allowance left to draw on later.
-- **Withdrawals are liquidity bound.** When utilization is high, available liquidity can be below a user's balance, and a withdraw above it reverts with `InsufficientLiquidity`. Always clamp to `getAvailableLiquidity(0)` and show the user the withdrawable amount separately from their balance.
-- **Closing a position.** To fully exit, withdraw the smaller of `getUserSupplyAmount(user, 0)` and `getAvailableLiquidity(0)`. A value read just before you send closes the position cleanly. The only catch: if a liquidation lowers the rate in the moment between your read and your transaction, the withdraw reverts with `InvalidAmount`, so read again and resubmit.
+- **Withdrawals are liquidity bound.** A withdraw is capped at `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))`; when utilization is high this sits below the user's balance, so clamp to it and surface the withdrawable amount separately. Exceeding it reverts with `InsufficientLiquidity`. Read both values right before sending — a full exit is just withdrawing up to this cap — and if a liquidation lowers the rate in between, the withdraw reverts with `InvalidAmount`, so re-read and resubmit.
 - **A position can go down, not only up.** It usually grows as interest accrues, but if a borrower defaults and their collateral does not cover their credit, every lender's value takes a small hit, so `getUserSupplyAmount` can read lower than before. That is why the earned figure is clamped at zero.
 
 <div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
