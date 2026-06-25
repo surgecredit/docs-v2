@@ -81,7 +81,7 @@ USDC_DECIMALS = 6
 
 ## Minimal ABI
 
-These fragments are the complete set an earn integration calls. The subset is stable across both networks, so copy it as-is.
+These fragments are the complete set an earn integration calls. The subset is stable across both networks, so copy it as-is. The examples load the Pool ABI below as `poolAbi` (TypeScript) or `POOL_ABI` (Python).
 
 <details>
 <summary style={{ cursor: "pointer", fontWeight: 600 }}>Pool ABI, the earn function subset</summary>
@@ -144,7 +144,7 @@ These fragments are the complete set an earn integration calls. The subset is st
 
 `deposit` and `withdraw` take an `amount` only. The market is fixed to `0` inside the contract, so there is no market argument.
 
-For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The examples also read `getSupplyRate` on the market provider:
+For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The examples also read `getSupplyRate` on the market provider. Load this fragment as `providerAbi` (TypeScript) or `PROVIDER_ABI` (Python):
 
 ```json
 [
