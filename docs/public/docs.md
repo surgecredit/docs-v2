@@ -91,7 +91,7 @@ USDC_DECIMALS = 6
 These fragments are the complete set an earn integration calls. The subset is stable across both networks, so copy it as-is. The examples load the Pool ABI below as `poolAbi` (TypeScript) or `POOL_ABI` (Python).
 
 
-Pool ABI, the earn function subset
+Pool ABI — the earn function subset
 
 ```json
 [
@@ -151,7 +151,31 @@ Pool ABI, the earn function subset
 
 `deposit` and `withdraw` take an `amount` only. The market is fixed to `0` inside the contract, so there is no market argument.
 
-For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The examples also read `getSupplyRate` on the market provider. Load this fragment as `providerAbi` (TypeScript) or `PROVIDER_ABI` (Python):
+For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The minimal subset the examples call:
+
+
+USDC ERC-20 ABI — approve, allowance, balanceOf
+
+```json
+[
+  { "type": "function", "name": "approve", "stateMutability": "nonpayable",
+    "inputs": [{ "name": "spender", "type": "address" }, { "name": "amount", "type": "uint256" }],
+    "outputs": [{ "type": "bool" }] },
+  { "type": "function", "name": "allowance", "stateMutability": "view",
+    "inputs": [{ "name": "owner", "type": "address" }, { "name": "spender", "type": "address" }],
+    "outputs": [{ "type": "uint256" }] },
+  { "type": "function", "name": "balanceOf", "stateMutability": "view",
+    "inputs": [{ "name": "account", "type": "address" }],
+    "outputs": [{ "type": "uint256" }] }
+]
+```
+
+
+
+The market provider is a **separate contract** from the pool. Read its address from `markets(0).provider`, never hardcode it. The examples use it only to read `getSupplyRate`; load this fragment as `providerAbi` (TypeScript) or `PROVIDER_ABI` (Python):
+
+
+Market provider ABI — getSupplyRate
 
 ```json
 [
@@ -160,6 +184,8 @@ For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it 
     "outputs": [{ "type": "uint256" }] }
 ]
 ```
+
+
 
 ## Deposit
 
