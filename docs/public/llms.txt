@@ -47,6 +47,7 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 - [📊 Credit Markets](/tech/credit-markets)
 
 ### Other
+- [Borrow SDK](/borrow/sdk)
 - [🏗️ Bitcoin-native Credit Infra](/credit-infra)
 
 Plain-text companion files:
