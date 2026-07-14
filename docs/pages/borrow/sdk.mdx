@@ -1,6 +1,6 @@
 ---
 title: Borrow SDK
-description: Integrate a Bitcoin-backed USDC credit line with the Surge Borrow SDK — a headless, signer-agnostic TypeScript client.
+description: Integrate a Bitcoin-backed USDC credit line with the Surge Borrow SDK - a headless, signer-agnostic TypeScript client.
 ---
 
 # Borrow SDK
@@ -9,20 +9,20 @@ description: Integrate a Bitcoin-backed USDC credit line with the Surge Borrow S
 Offer a Bitcoin-backed credit line in your app with the headless Surge Borrow SDK.
 </div>
 
-Access is gated to approved partners — reach out to the Surge team for a read-only npm token and test credentials. The shapes below match the shipped v0.1.
+Access is gated to approved partners - reach out to the Surge team for a read-only npm token and test credentials. The shapes below match the shipped v0.1.
 
 The SDK is **headless and signer-agnostic**: it never holds keys, renders no UI, and runs in the browser, Node, and React Native. You bring a Bitcoin taproot signer, an EVM signer, and a storage adapter; the SDK builds each intent, calls your signer, and talks to the Surge relayer.
 
-Scope: BTC collateral in a per-user taproot vault, USDC on Base (6 decimals), variable + fixed markets, and the full lifecycle — deposit + initial borrow, add collateral, borrow more, gasless repay, extend, withdraw — on **signet + Base Sepolia** (test) and **Bitcoin mainnet + Base** (production).
+Scope: BTC collateral in a per-user taproot vault, USDC on Base (6 decimals), variable + fixed markets, and the full lifecycle - deposit + initial borrow, add collateral, borrow more, gasless repay, extend, withdraw - on **signet + Base Sepolia** (test) and **Bitcoin mainnet + Base** (production).
 
 ## How it works
 
-1. **Session.** The user signs one Sign-In-with-Ethereum message and a session JWT is issued (persisted via your storage adapter, reused across restarts). The Bitcoin key comes from your `btcSigner`. There is no Bitcoin signature at login — the withdraw PSBT is the only one in the whole flow.
+1. **Session.** The user signs one Sign-In-with-Ethereum message and a session JWT is issued (persisted via your storage adapter, reused across restarts). The Bitcoin key comes from your `btcSigner`. There is no Bitcoin signature at login - the withdraw PSBT is the only one in the whole flow.
 2. **Vault.** The SDK derives the taproot deposit address locally from the user's key.
 3. **Deposit + borrow.** One signed intent covers collateral + initial borrow. The user sends BTC to the vault from any wallet; once it confirms, Surge opens the position on Base and USDC lands at the user's EVM address.
 4. **Manage.** Read collateral, debt, LTV and rate; borrow more, repay and withdraw gaslessly (Surge sponsors the EVM gas), extend the term, and pull BTC back out.
 
-Every action is a single `await` — inject the two signers once, and the SDK handles build → sign → submit inside each call. Almost every action takes a **`positionId`** (see [Position ID](#position-id)).
+Every action is a single `await` - inject the two signers once, and the SDK handles build → sign → submit inside each call. Almost every action takes a **`positionId`** (see [Position ID](#position-id)).
 
 ## Install and configure
 
@@ -33,13 +33,13 @@ import { createBorrowClient } from "@surgecredit/borrow-sdk";
 const client = createBorrowClient({
   network: "signet", // "signet" | "mainnet"
   storage: window.localStorage, // optional in the browser; see below
-  // evmRpcUrl / btcApiUrl are optional — omit to use the network's public defaults
+  // evmRpcUrl / btcApiUrl are optional - omit to use the network's public defaults
 });
 ```
 
-- **`network`** — `"signet"` (Bitcoin signet + Base Sepolia) or `"mainnet"` (Bitcoin mainnet + Base).
-- **`evmRpcUrl` / `btcApiUrl`** — optional. Omitted, they fall back to public defaults (which **rate-limit** — pass your own for production).
-- **`storage`** — where the session token is kept so users don't re-sign in on every restart. Optional in the browser (falls back to `localStorage`); **required on React Native and Node**.
+- **`network`** - `"signet"` (Bitcoin signet + Base Sepolia) or `"mainnet"` (Bitcoin mainnet + Base).
+- **`evmRpcUrl` / `btcApiUrl`** - optional. Omitted, they fall back to public defaults (which **rate-limit** - pass your own for production).
+- **`storage`** - where the session token is kept so users don't re-sign in on every restart. Optional in the browser (falls back to `localStorage`); **required on React Native and Node**.
 
 ```ts
 interface StorageAdapter {
@@ -49,7 +49,7 @@ interface StorageAdapter {
 }
 ```
 
-On React Native use a **secure** store (encrypted at rest), not plaintext AsyncStorage. Don't pass `sessionStorage` — it clears on close, logging the user out every restart.
+On React Native use a **secure** store (encrypted at rest), not plaintext AsyncStorage. Don't pass `sessionStorage` - it clears on close, logging the user out every restart.
 
 `viem` is the only peer dependency; the core client has no framework dependencies.
 
@@ -74,7 +74,7 @@ interface EvmSigner {
 | Side | Requirement |
 | --- | --- |
 | **EVM** | An EOA that signs EIP-191 messages and EIP-712 typed data. Borrowed USDC is disbursed to this address. (Smart-contract / ERC-1271 wallets aren't supported yet.) |
-| **Bitcoin** | A **taproot (P2TR)** account that exposes its x-only pubkey and script-path Schnorr-signs a PSBT the SDK provides. The BTC key **must** use the BIP-86 path for the network — signet `m/86'/1'/0'/0/0`, mainnet `m/86'/0'/0'/0/0` — or the derived vault won't match. |
+| **Bitcoin** | A **taproot (P2TR)** account that exposes its x-only pubkey and script-path Schnorr-signs a PSBT the SDK provides. The BTC key **must** use the BIP-86 path for the network - signet `m/86'/1'/0'/0/0`, mainnet `m/86'/0'/0'/0/0` - or the derived vault won't match. |
 
 **Address types:** the user's Bitcoin **key** must be taproot; the **deposit** can be funded from any wallet or address type; **withdrawals** pay out to any address (P2TR, SegWit, or legacy). Reference signer adapters (MetaMask, Unisat, mnemonic) ship in the SDK's `examples/playground`.
 
@@ -108,7 +108,7 @@ const positionId = await session.getPositionId(); // string | null (null until o
 
 ## Deposit and first borrow
 
-The first borrow is bundled with the deposit — there's no standalone borrow call. List markets, then create the deposit:
+The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, then create the deposit:
 
 ```ts
 const markets = await session.getMarkets();
@@ -147,7 +147,7 @@ Debt accrues at the position's market rate. Statuses are absolute data (amounts,
 
 ## Add collateral
 
-Send more BTC to the **same vault address**, then sync it in. No signature — it's a relayer-side reconcile.
+Send more BTC to the **same vault address**, then sync it in. No signature - it's a relayer-side reconcile.
 
 ```ts
 await session.addCollateral({ positionId });
@@ -163,7 +163,7 @@ Adding collateral raises `maxBorrowUsd`. Use `syncCollateral(positionId)` to rec
 await session.borrowMore({ positionId, amountUsd: "250" }); // { positionId, txHash }
 ```
 
-Pre-checked against the live LTV before the wallet is prompted — a draw over the max fails with `LTV_EXCEEDED` first. If the user also needs to add BTC in the same step, use `borrowMoreSync({ positionId, amountUsd })` and `watchBorrowMoreSync(...)`.
+Pre-checked against the live LTV before the wallet is prompted - a draw over the max fails with `LTV_EXCEEDED` first. If the user also needs to add BTC in the same step, use `borrowMoreSync({ positionId, amountUsd })` and `watchBorrowMoreSync(...)`.
 
 ## Repay
 
@@ -206,7 +206,7 @@ Throws `EXTENSION_ALREADY_PENDING` if one is already in flight. Drive the renewa
 
 ## Live activities
 
-A position's ongoing credit-line events — the same feed the app shows in its header. Each activity carries a coarse `state` and a ready-made `label`.
+A position's ongoing credit-line events - the same feed the app shows in its header. Each activity carries a coarse `state` and a ready-made `label`.
 
 ```ts
 const activities = await session.getActivities(positionId);
@@ -221,13 +221,13 @@ const stop = session.watchActivities(positionId, (activities) => {
 
 ## What your signers sign
 
-Every `watch*` returns an unsubscribe fn — call it on unmount to stop polling.
+Every `watch*` returns an unsubscribe fn - call it on unmount to stop polling.
 
 | Signer method | Signs | Used by |
 | --- | --- | --- |
 | `evmSigner.signMessage` | EIP-191 message | SIWE login; the action envelope on deposit, borrow-more, and extend |
 | `evmSigner.signTypedData` | EIP-712 typed data | repay (×2: authorization + USDC EIP-3009), withdraw authorization |
-| `btcSigner.signPsbt` | Taproot script-path PSBT (Schnorr) | withdraw only — the single Bitcoin signature |
+| `btcSigner.signPsbt` | Taproot script-path PSBT (Schnorr) | withdraw only - the single Bitcoin signature |
 
 Reads, `addCollateral`, and `syncCollateral` need no signature.
 
@@ -237,26 +237,26 @@ Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` an
 
 | Code | When |
 | --- | --- |
-| `SESSION_UNAUTHENTICATED` | No valid session (401) — create or resume it first |
+| `SESSION_UNAUTHENTICATED` | No valid session (401) - create or resume it first |
 | `NETWORK_ERROR` | The request failed to reach the gateway (offline / CORS) |
 | `GATEWAY_ERROR` | A gateway error not covered by a specific code (see `.status`) |
-| `DEPOSIT_ALREADY_ACTIVE` | A deposit is already in flight — resume it instead |
+| `DEPOSIT_ALREADY_ACTIVE` | A deposit is already in flight - resume it instead |
 | `EXTENSION_ALREADY_PENDING` | An extension is already pending |
 | `LTV_EXCEEDED` | The borrow/withdraw would exceed the max loan-to-value |
 | `INSUFFICIENT_COLLATERAL` | The action would leave the position under-collateralized |
 | `INSUFFICIENT_USDC_BALANCE` | Not enough USDC in the wallet to repay |
 | `VAULT_NOT_CONFIRMED` | Acting before the collateral deposit has confirmed |
-| `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed — usually a wrong BTC derivation path |
+| `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed - usually a wrong BTC derivation path |
 | `WITHDRAWAL_AMOUNT_MISMATCH` | The PSBT amount ≠ the authorized pending withdrawal |
 | `SIMULATION_REVERT` | The on-chain simulation reverted before submit |
-| `SIGN_REQUEST_EXPIRED` | A signature came back after the payload expired — retries with a fresh one |
+| `SIGN_REQUEST_EXPIRED` | A signature came back after the payload expired - retries with a fresh one |
 | `NONCE_REUSED` | A signed action envelope was replayed |
 
 Pre-flight validation runs before the SDK calls your signer, so the wallet is never prompted for an action that will fail.
 
 ## Testing on signet
 
-Integrate against signet first. Signet BTC is free from public faucets, and testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). A full lifecycle on signet — deposit through withdraw — is the acceptance bar before mainnet access. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.
+Integrate against signet first. Signet BTC is free from public faucets, and testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). A full lifecycle on signet - deposit through withdraw - is the acceptance bar before mainnet access. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.
 
 <div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
 v0.1
