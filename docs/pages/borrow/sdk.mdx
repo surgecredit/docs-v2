@@ -13,14 +13,14 @@ Access is gated to approved partners - reach out to the Surge team for a read-on
 
 The SDK is **headless and signer-agnostic**: it never holds keys, renders no UI, and runs in the browser, Node, and React Native. You bring a Bitcoin taproot signer, an EVM signer, and a storage adapter; the SDK builds each intent, calls your signer, and talks to the Surge relayer.
 
-Scope: BTC collateral in a per-user taproot vault, USDC on Base (6 decimals), variable + fixed markets, and the full lifecycle - deposit + initial borrow, add collateral, borrow more, gasless repay, extend, withdraw - on **signet + Base Sepolia** (test) and **Bitcoin mainnet + Base** (production).
+Scope: BTC collateral in a per-user taproot vault, USDC on Base (6 decimals), variable + fixed markets, and the full lifecycle - deposit + initial borrow, add collateral, borrow more, repay, extend, withdraw - on **signet + Base Sepolia** (test) and **Bitcoin mainnet + Base** (production).
 
 ## How it works
 
 1. **Session.** The user signs one Sign-In-with-Ethereum message and a session JWT is issued (persisted via your storage adapter, reused across restarts). The Bitcoin key comes from your `btcSigner`. There is no Bitcoin signature at login - the withdraw PSBT is the only one in the whole flow.
 2. **Vault.** The SDK derives the taproot deposit address locally from the user's key.
 3. **Deposit + borrow.** One signed intent covers collateral + initial borrow. The user sends BTC to the vault from any wallet; once it confirms, Surge opens the position on Base and USDC lands at the user's EVM address.
-4. **Manage.** Read collateral, debt, LTV and rate; borrow more, repay and withdraw gaslessly (Surge sponsors the EVM gas), extend the term, and pull BTC back out.
+4. **Manage.** Read collateral, debt, LTV and rate; borrow more, repay and withdraw, extend the term, and pull BTC back out.
 
 Every action is a single `await` - inject the two signers once, and the SDK handles build → sign → submit inside each call. Almost every action takes a **`positionId`** (see [Position ID](#position-id)).
 
@@ -167,7 +167,7 @@ Pre-checked against the live LTV before the wallet is prompted - a draw over the
 
 ## Repay
 
-Gasless: the user signs two EIP-712 payloads (repay authorization + USDC EIP-3009 transfer) and Surge relays and pays the gas. Overpayment is capped to the live debt.
+The user signs two EIP-712 payloads (repay authorization + USDC EIP-3009 transfer) and Surge relays the transaction. Overpayment is capped to the live debt.
 
 ```ts
 await session.repay({ positionId, amountUsd: "200" }); // { txHash }
@@ -175,7 +175,7 @@ await session.repay({ positionId, amountUsd: "200" }); // { txHash }
 
 ## Withdraw BTC
 
-Two signatures: an EIP-712 authorization (relayed gaslessly) and a PSBT signature (the vault repayment path is a 2-of-2 between the user and the Surge key, which co-signs after validating the request).
+Two signatures: an EIP-712 authorization (relayed by Surge) and a PSBT signature (the vault repayment path is a 2-of-2 between the user and the Surge key, which co-signs after validating the request).
 
 ```ts
 const { medium } = await session.getFeeRates();      // { fast, medium, slow } sat/vB
