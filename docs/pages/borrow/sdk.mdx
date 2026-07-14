@@ -165,6 +165,18 @@ await session.borrowMore({ positionId, amountUsd: "250" }); // { positionId, txH
 
 Pre-checked against the live LTV before the wallet is prompted - a draw over the max fails with `LTV_EXCEEDED` first. If the user also needs to add BTC in the same step, use `borrowMoreSync({ positionId, amountUsd })` and `watchBorrowMoreSync(...)`.
 
+### Re-borrowing after full repayment
+
+While a loan is active, the position is locked to its market. Once it's **fully repaid** (debt is `0`), it no longer carries an active market, so the user can pick a new one before drawing again. Switch the market first, then borrow:
+
+```ts
+// only valid on a zero-debt position; the relayer rejects it while a loan is active
+await session.switchMarket({ positionId, marketId }); // { positionId, marketId, confirmed }
+await session.borrowMore({ positionId, amountUsd: "250" });
+```
+
+`switchMarket` writes the chosen market to the position on-chain and confirms it before returning, so the subsequent draw uses the new market. Drive your UI from the position's debt: show a market picker when `debtUsd` is `0`, and lock it to the current market otherwise.
+
 ## Repay
 
 The user signs two EIP-712 payloads (repay authorization + USDC EIP-3009 transfer) and Surge relays the transaction. Overpayment is capped to the live debt.
@@ -229,7 +241,7 @@ Every `watch*` returns an unsubscribe fn - call it on unmount to stop polling.
 | `evmSigner.signTypedData` | EIP-712 typed data | repay (×2: authorization + USDC EIP-3009), withdraw authorization |
 | `btcSigner.signPsbt` | Taproot script-path PSBT (Schnorr) | withdraw only - the single Bitcoin signature |
 
-Reads, `addCollateral`, and `syncCollateral` need no signature.
+Reads, `addCollateral`, `syncCollateral`, and `switchMarket` need no signature (the session JWT authorizes them).
 
 ## Errors
 
