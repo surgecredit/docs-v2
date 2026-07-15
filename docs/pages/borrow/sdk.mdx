@@ -106,33 +106,9 @@ A credit line is identified by its **Position ID** (the position NFT). Get it on
 const positionId = await session.getPositionId(); // string | null (null until open)
 ```
 
-## Size the collateral
-
-How much BTC a draw needs depends on the **market**, because max LTV is per-market - the same $1,000 needs more collateral at 70% LTV than at 80%. Don't compute this yourself:
-
-```ts
-const { requiredSats, requiredBtc } = await client.getRequiredCollateral({
-  marketId: 0,
-  amountUsd: "1000",
-});
-// collateralValue = amountUsd / maxLtv -> sats at the oracle rate -> x 1.015 buffer
-```
-
-Pass `positionId` to draw against an existing position and you get only the **extra** collateral to send - its current collateral is subtracted and its debt counted in:
-
-```ts
-const q = await client.getRequiredCollateral({ marketId, amountUsd: "10", positionId });
-q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
-q.existingCollateralUsd   // "5.00"   already in the vault
-q.additionalCollateralUsd // "9.29"   the gap
-q.requiredSats            // 10472n   <- send this (0n = already enough)
-```
-
-The BTC/USD rate is the **Surge oracle's**, on both networks - read on-chain via the `evmRpcUrl` you already configure, so there's no price endpoint to set up, no API key, and nothing to proxy in a browser. It's deliberately not a market feed: the protocol values collateral by this oracle, so it's the only rate a draw can be sized against (on signet it's set by Surge and does not track the market at all). A 1.5% safety buffer is applied so a rate move between quoting and confirmation can't leave the draw under-collateralized; pass `bufferMultiplier: 1` for the raw minimum.
-
 ## Deposit and first borrow
 
-The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, size the collateral, then create the deposit:
+The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, size the collateral with [`getRequiredCollateral`](#utilities), then create the deposit:
 
 The minimum borrow is **$5** (`MIN_BORROW_USD`) — that's the only floor on opening a line; there's no minimum on the deposit itself. `createDeposit` rejects less before prompting for a signature.
 
@@ -271,6 +247,27 @@ const stop = session.watchActivities(positionId, (activities) => {
 ```
 
 `eventName` is one of `sync_collateral`, `borrow_more`, `withdrawal`, `credit_line_extension`.
+
+## Utilities
+
+Helpers for wiring up your UI. None are required - they're conveniences so you don't re-derive protocol maths.
+
+| Method | Returns |
+| --- | --- |
+| `getRequiredCollateral({ marketId, amountUsd, positionId? })` | BTC to lock for a draw. Sized by that market's max LTV, priced at the Surge oracle, plus a 1.5% safety buffer. With `positionId` it returns only the **extra** collateral to send - existing collateral subtracted, existing debt counted in - and `requiredSats: 0n` means the position already has enough. |
+| `getBtcPriceUsd()` | The Surge oracle's BTC/USD rate - what the protocol values collateral at. Read on-chain via `evmRpcUrl`. |
+| `getUsdcBalance(owner?)` | USDC balance of the EVM signer - where borrowed USDC lands. |
+| `getFeeRates()` | `{ fast, medium, slow }` BTC fee rates in sat/vB. |
+
+```ts
+const q = await client.getRequiredCollateral({ marketId: 1, amountUsd: "10", positionId });
+q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
+q.existingCollateralUsd   // "5.00"   already in the vault
+q.additionalCollateralUsd // "9.29"   the gap
+q.requiredSats            // 10472n   <- send this
+```
+
+Max LTV is per-market, so `marketId` decides the answer - the same $10 needs ~1/8 more collateral at 70% LTV than at 80%. For a fully-repaid position you intend to switch, pass the **target** market; while debt is live the market is locked and quoting a different one throws.
 
 ## What your signers sign
 

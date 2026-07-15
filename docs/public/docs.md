@@ -2246,26 +2246,31 @@ A credit line is identified by its **Position ID** (the position NFT). Get it on
 const positionId = await session.getPositionId(); // string | null (null until open)
 ```
 
-## Size the collateral
+## Deposit and first borrow
 
-How much BTC a draw needs depends on the **market**, because max LTV is per-market - the same $1,000 needs more collateral at 70% LTV than at 80%. Don't compute this yourself:
+The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, size the collateral with [`getRequiredCollateral`](#utilities), then create the deposit:
+
+The minimum borrow is **$5** (`MIN_BORROW_USD`) — that's the only floor on opening a line; there's no minimum on the deposit itself. `createDeposit` rejects less before prompting for a signature.
 
 ```ts
-const { requiredSats, requiredBtc } = await client.getRequiredCollateral({
-  marketId: 0,
+const markets = await session.getMarkets();
+// [{ marketId, kind: "variable" | "fixed", borrowRateApr,
+//    maxLtvBps, liquidationThresholdBps, active }]
+
+const { requiredSats } = await session.getRequiredCollateral({
+  marketId: markets[0].marketId,
   amountUsd: "1000",
 });
-// collateralValue = amountUsd / maxLtv -> sats at the oracle rate -> x 1.015 buffer
-```
 
-Pass `positionId` to draw against an existing position and you get only the **extra** collateral to send - its current collateral is subtracted and its debt counted in:
+const { depositId, vaultAddress } = await session.createDeposit({
+  collateralSats: requiredSats,
+  borrowAmountUsd: "1000",
+  marketId: markets[0].marketId,
+  durationDays: 90,
+});
+// show vaultAddress + QR; the user sends BTC from any wallet.
 
-```ts
-const q = await client.getRequiredCollateral({ marketId, amountUsd: "10", positionId });
-q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
-q.existingCollateralUsd   // "5.00"   already in the vault
-q.additionalCollateralUsd // "9.29"   the gap
-q.requiredSats            // 10472n    {
+const stop = session.watchDeposit(depositId, (s) => {
   // s.status advances; s.nft_id is set once the position mints
   if (s.nft_id) stop();
 });
@@ -2383,46 +2388,23 @@ const stop = session.watchActivities(positionId, (activities) => {
 
 `eventName` is one of `sync_collateral`, `borrow_more`, `withdrawal`, `credit_line_extension`.
 
-## What your signers sign
+## Utilities
 
-Every `watch*` returns an unsubscribe fn - call it on unmount to stop polling.
+Helpers for wiring up your UI. None are required - they're conveniences so you don't re-derive protocol maths.
 
-| Signer method | Signs | Used by |
-| --- | --- | --- |
-| `evmSigner.signMessage` | EIP-191 message | SIWE login; the action envelope on deposit, borrow-more, and extend |
-| `evmSigner.signTypedData` | EIP-712 typed data | repay (×2: authorization + USDC EIP-3009), withdraw authorization |
-| `btcSigner.signPsbt` | Taproot script-path PSBT (Schnorr) | withdraw only - the single Bitcoin signature |
-
-Reads, `addCollateral`, `syncCollateral`, and `switchMarket` need no signature (the session JWT authorizes them).
-
-## Errors
-
-Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` and `.details`). Branch on `.code`, never on the message.
-
-| Code | When |
+| Method | Returns |
 | --- | --- |
-| `SESSION_UNAUTHENTICATED` | No valid session (401) - create or resume it first |
-| `NETWORK_ERROR` | The request failed to reach the relayer, or an RPC read failed (offline / rate-limited RPC) |
-| `GATEWAY_ERROR` | A gateway error not covered by a specific code (see `.status`) |
-| `DEPOSIT_ALREADY_ACTIVE` | A deposit is already in flight - resume it instead |
-| `EXTENSION_ALREADY_PENDING` | An extension is already pending |
-| `LTV_EXCEEDED` | The borrow/withdraw would exceed the max loan-to-value |
-| `INSUFFICIENT_COLLATERAL` | The action would leave the position under-collateralized |
-| `INSUFFICIENT_USDC_BALANCE` | Not enough USDC in the wallet to repay |
-| `VAULT_NOT_CONFIRMED` | Acting before the collateral deposit has confirmed |
-| `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed - usually a wrong BTC derivation path |
-| `WITHDRAWAL_AMOUNT_MISMATCH` | The PSBT amount ≠ the authorized pending withdrawal |
-| `SIMULATION_REVERT` | The on-chain simulation reverted before submit |
-| `SIGN_REQUEST_EXPIRED` | A signature came back after the payload expired - retries with a fresh one |
-| `NONCE_REUSED` | A signed action envelope was replayed |
+| `getRequiredCollateral({ marketId, amountUsd, positionId? })` | BTC to lock for a draw. Sized by that market's max LTV, priced at the Surge oracle, plus a 1.5% safety buffer. With `positionId` it returns only the **extra** collateral to send - existing collateral subtracted, existing debt counted in - and `requiredSats: 0n` means the position already has enough. |
+| `getBtcPriceUsd()` | The Surge oracle's BTC/USD rate - what the protocol values collateral at. Read on-chain via `evmRpcUrl`. |
+| `getUsdcBalance(owner?)` | USDC balance of the EVM signer - where borrowed USDC lands. |
+| `getFeeRates()` | `{ fast, medium, slow }` BTC fee rates in sat/vB. |
 
-Pre-flight validation runs before the SDK calls your signer, so the wallet is never prompted for an action that will fail.
-
-## Testing on signet
-
-Integrate against signet first. Signet BTC is free from public faucets, and testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). A full lifecycle on signet - deposit through withdraw - is the acceptance bar before mainnet access. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.
-
-
+```ts
+const q = await client.getRequiredCollateral({ marketId: 1, amountUsd: "10", positionId });
+q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
+q.existingCollateralUsd   // "5.00"   already in the vault
+q.additionalCollateralUsd // "9.29"   the gap
+q.requiredSats            // 10472n   
 v0.1
 
 ### 🏗️ Bitcoin-native Credit Infra
