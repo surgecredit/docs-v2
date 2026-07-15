@@ -2173,13 +2173,12 @@ Every action is a single `await` - inject the two signers once, and the SDK hand
 const client = createBorrowClient({
   network: "signet", // "signet" | "mainnet"
   storage: window.localStorage, // optional in the browser; see below
-  // evmRpcUrl / btcApiUrl / coingeckoApiUrl are optional - omit to use the
-  // network's public defaults
+  // evmRpcUrl / btcApiUrl are optional - omit to use the network's public defaults
 });
 ```
 
 - **`network`** - `"signet"` (Bitcoin signet + Base Sepolia) or `"mainnet"` (Bitcoin mainnet + Base).
-- **`evmRpcUrl` / `btcApiUrl` / `coingeckoApiUrl`** - optional. Omitted, they fall back to public defaults (which **rate-limit** - pass your own for production). The relayer gateway, Surge oracle, and Supabase project are fixed per network and not configurable.
+- **`evmRpcUrl` / `btcApiUrl`** - optional. Omitted, they fall back to public defaults (which **rate-limit** - pass your own for production). The relayer API, Surge price oracle, and Supabase project are fixed per network and not configurable.
 - **`storage`** - where the session token is kept so users don't re-sign in on every restart. Optional in the browser (falls back to `localStorage`); **required on React Native and Node**.
 
 ```ts
@@ -2256,7 +2255,7 @@ const { requiredSats, requiredBtc } = await client.getRequiredCollateral({
   marketId: 0,
   amountUsd: "1000",
 });
-// collateralValue = amountUsd / maxLtv -> sats at the BTC/USD rate -> x 1.015 buffer
+// collateralValue = amountUsd / maxLtv -> sats at the oracle rate -> x 1.015 buffer
 ```
 
 Pass `positionId` to draw against an existing position and you get only the **extra** collateral to send - its current collateral is subtracted and its debt counted in:
