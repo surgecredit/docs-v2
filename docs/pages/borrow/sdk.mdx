@@ -281,6 +281,25 @@ Every `watch*` returns an unsubscribe fn - call it on unmount to stop polling.
 
 Reads, `addCollateral`, `syncCollateral`, and `switchMarket` need no signature (the session JWT authorizes them).
 
+## Liquidation
+
+Liquidation is settled by Surge and **cannot be user-driven**: the vault's liquidation leaf is a single-sig path spendable by Surge alone, and there's no relayer route. There is nothing to *do* - only state to read, and actions the SDK refuses.
+
+```ts
+const { inLiquidation, liquidated, type, at } = await session.getLiquidation(positionId);
+```
+
+| Field | Meaning |
+| --- | --- |
+| `inLiquidation` | The collateral is being seized **right now**. Gate every credit action on this. |
+| `liquidated` | A liquidation settled in the position's **current term** (already scoped - see below). |
+| `type` | `"full_liquidation"` (LTV breach) or `"delinquency"` (term ended unrepaid). |
+| `at` | ISO timestamp of the in-term liquidation, or `null`. |
+
+**`isActive: false` does not mean liquidated** - it's equally true of a position that was simply repaid and closed. `getLiquidation` is what tells them apart. `Position.inLiquidation` carries the live flag if you already have the position.
+
+**Why `liquidated` is scoped, and why not to compute it yourself:** the on-chain liquidation timestamp is never cleared, so a naive `timestamp > 0` brands a position that was liquidated, renewed, and has run cleanly ever since as liquidated forever. Scoping it means deriving the term's start from the vault's exit block, in Bitcoin block space - the SDK does this for you.
+
 ## Errors
 
 Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` and `.details`). Branch on `.code`, never on the message.
@@ -298,11 +317,18 @@ Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` an
 | `VAULT_NOT_CONFIRMED` | Acting before the collateral deposit has confirmed |
 | `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed - usually a wrong BTC derivation path |
 | `WITHDRAWAL_AMOUNT_MISMATCH` | The PSBT amount ≠ the authorized pending withdrawal |
+| `POSITION_IN_LIQUIDATION` | The collateral is being seized - no credit action applies |
+| `POSITION_EXPIRED` | The credit line has lapsed - repay to close, or extend to reopen |
+| `WITHDRAWAL_ALREADY_PENDING` | A withdrawal is authorized on-chain and spends the same vault UTXOs |
+| `INSUFFICIENT_MARKET_LIQUIDITY` | The draw exceeds what the market can lend right now |
+| `INVALID_WITHDRAW_ADDRESS` | `toBtcAddress` is empty, malformed, wrong-network, or your own vault address |
 | `SIMULATION_REVERT` | The on-chain simulation reverted before submit |
 | `SIGN_REQUEST_EXPIRED` | A signature came back after the payload expired - retries with a fresh one |
 | `NONCE_REUSED` | A signed action envelope was replayed |
 
 Pre-flight validation runs before the SDK calls your signer, so the wallet is never prompted for an action that will fail.
+
+**Gating.** Every mutating call first checks the position can actually take it, and throws rather than prompting. Liquidation is checked always and reported first - the collateral is already being taken, so it outranks every other state. Expiry, a pending withdrawal, and market liquidity are checked where they apply: a pending withdrawal blocks `extendCreditLine` (both spend the same vault UTXOs) but **not** `repay`, since repaying is how a holder de-risks. You don't have to pre-check to be safe - reading the state is how you avoid *offering* an action that will throw.
 
 ## Testing on signet
 

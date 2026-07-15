@@ -2404,7 +2404,43 @@ const q = await client.getRequiredCollateral({ marketId: 1, amountUsd: "10", pos
 q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
 q.existingCollateralUsd   // "5.00"   already in the vault
 q.additionalCollateralUsd // "9.29"   the gap
-q.requiredSats            // 10472n   
+q.requiredSats            // 10472n    0` brands a position that was liquidated, renewed, and has run cleanly ever since as liquidated forever. Scoping it means deriving the term's start from the vault's exit block, in Bitcoin block space - the SDK does this for you.
+
+## Errors
+
+Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` and `.details`). Branch on `.code`, never on the message.
+
+| Code | When |
+| --- | --- |
+| `SESSION_UNAUTHENTICATED` | No valid session (401) - create or resume it first |
+| `NETWORK_ERROR` | The request failed to reach the relayer, or an RPC read failed (offline / rate-limited RPC) |
+| `GATEWAY_ERROR` | A gateway error not covered by a specific code (see `.status`) |
+| `DEPOSIT_ALREADY_ACTIVE` | A deposit is already in flight - resume it instead |
+| `EXTENSION_ALREADY_PENDING` | An extension is already pending |
+| `LTV_EXCEEDED` | The borrow/withdraw would exceed the max loan-to-value |
+| `INSUFFICIENT_COLLATERAL` | The action would leave the position under-collateralized |
+| `INSUFFICIENT_USDC_BALANCE` | Not enough USDC in the wallet to repay |
+| `VAULT_NOT_CONFIRMED` | Acting before the collateral deposit has confirmed |
+| `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed - usually a wrong BTC derivation path |
+| `WITHDRAWAL_AMOUNT_MISMATCH` | The PSBT amount ≠ the authorized pending withdrawal |
+| `POSITION_IN_LIQUIDATION` | The collateral is being seized - no credit action applies |
+| `POSITION_EXPIRED` | The credit line has lapsed - repay to close, or extend to reopen |
+| `WITHDRAWAL_ALREADY_PENDING` | A withdrawal is authorized on-chain and spends the same vault UTXOs |
+| `INSUFFICIENT_MARKET_LIQUIDITY` | The draw exceeds what the market can lend right now |
+| `INVALID_WITHDRAW_ADDRESS` | `toBtcAddress` is empty, malformed, wrong-network, or your own vault address |
+| `SIMULATION_REVERT` | The on-chain simulation reverted before submit |
+| `SIGN_REQUEST_EXPIRED` | A signature came back after the payload expired - retries with a fresh one |
+| `NONCE_REUSED` | A signed action envelope was replayed |
+
+Pre-flight validation runs before the SDK calls your signer, so the wallet is never prompted for an action that will fail.
+
+**Gating.** Every mutating call first checks the position can actually take it, and throws rather than prompting. Liquidation is checked always and reported first - the collateral is already being taken, so it outranks every other state. Expiry, a pending withdrawal, and market liquidity are checked where they apply: a pending withdrawal blocks `extendCreditLine` (both spend the same vault UTXOs) but **not** `repay`, since repaying is how a holder de-risks. You don't have to pre-check to be safe - reading the state is how you avoid *offering* an action that will throw.
+
+## Testing on signet
+
+Integrate against signet first. Signet BTC is free from public faucets, and testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). A full lifecycle on signet - deposit through withdraw - is the acceptance bar before mainnet access. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.
+
+
 v0.1
 
 ### 🏗️ Bitcoin-native Credit Infra
