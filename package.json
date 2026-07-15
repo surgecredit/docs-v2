@@ -20,7 +20,7 @@
     "dotenv": "^17.2.2",
     "react": "latest",
     "react-dom": "latest",
-    "react-medium-image-zoom": "^5.2.8",
+    "react-medium-image-zoom": "^5.4.8",
     "typescript": "latest",
     "vocs": "1.4.1"
   },
