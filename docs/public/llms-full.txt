@@ -745,7 +745,8 @@ Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` an
 | `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed - usually a wrong BTC derivation path |
 | `WITHDRAWAL_AMOUNT_MISMATCH` | The PSBT amount ≠ the authorized pending withdrawal |
 | `POSITION_IN_LIQUIDATION` | The collateral is being seized - no credit action applies |
-| `POSITION_EXPIRED` | The credit line has lapsed - repay to close, or extend to reopen |
+| `POSITION_EXPIRED` | The term ended (`isActive: false`) and collateral remains - `extendCreditLine` renews it |
+| `POSITION_CLOSED` | The position is closed with no collateral left - nothing to renew, `createDeposit` opens a new line |
 | `WITHDRAWAL_ALREADY_PENDING` | A withdrawal is authorized on-chain and spends the same vault UTXOs |
 | `INSUFFICIENT_MARKET_LIQUIDITY` | The draw exceeds what the market can lend right now |
 | `INVALID_WITHDRAW_ADDRESS` | `toBtcAddress` is empty, malformed, wrong-network, or your own vault address |
@@ -755,7 +756,29 @@ Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` an
 
 Pre-flight validation runs before the SDK calls your signer, so the wallet is never prompted for an action that will fail.
 
-**Gating.** Every mutating call first checks the position can actually take it, and throws rather than prompting. Liquidation is checked always and reported first - the collateral is already being taken, so it outranks every other state. Expiry, a pending withdrawal, and market liquidity are checked where they apply: a pending withdrawal blocks `extendCreditLine` (both spend the same vault UTXOs) but **not** `repay`, since repaying is how a holder de-risks. You don't have to pre-check to be safe - reading the state is how you avoid *offering* an action that will throw.
+**Gating.** Every mutating call first checks the position can actually take it, and throws rather than prompting. Liquidation is checked always and reported first - the collateral is already being taken, so it outranks every other state. Whether the position is still live, a pending withdrawal, and market liquidity are checked where they apply: a pending withdrawal blocks `extendCreditLine` (both spend the same vault UTXOs) but **not** `repay`, since repaying is how a holder de-risks. You don't have to pre-check to be safe - reading the state is how you avoid *offering* an action that will throw.
+
+**When a position ends.** `position.isActive` is the actionability signal: it goes false when the term ends, when the line is repaid and closed, or when a liquidation settles. Drawing against any of those is refused; repay, withdraw, and `extendCreditLine` stay open, because renewing is the way out. Whether you get `POSITION_EXPIRED` or `POSITION_CLOSED` depends on whether collateral remains to renew against.
+
+Catching the code is enough to be safe, but the throw is a backstop rather than a UI. To avoid *offering* an action that will throw, read the state first:
+
+```ts
+const p = await client.getPosition(positionId);
+
+if (p.inLiquidation) {
+  // Nothing to do - the collateral is being seized. client.getLiquidation() for detail.
+} else if (p.isActive) {
+  // Live: draw / repay / withdraw as normal.
+} else if (p.collateralSats > 0n) {
+  await client.extendCreditLine({ positionId }); // renew the term, collateral intact
+} else {
+  // Closed with nothing left - open a new credit line with createDeposit().
+}
+```
+
+`isActive` tells you it's over; `collateralSats` tells you which remedy. Check `inLiquidation` first - it can be true on a still-active position, and it outranks everything.
+
+Don't gate on `position.expired` - it reports term status (has `loanExpiresAt` passed), not usability. The two come apart in both directions: a position can be past its term and still fully live, and a settled one keeps a future expiry date while being dead. Use `expired` to warn about a lapsing term; use `isActive` to decide what's allowed.
 
 ## Testing on signet
 
