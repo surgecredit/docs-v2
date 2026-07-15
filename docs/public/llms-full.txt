@@ -522,7 +522,7 @@ if (!(await session.userExists())) await session.registerUser();
 
 ```ts
 const vault = session.getVault(); // local derivation, no network call
-// { vaultId, depositAddress, scriptTree, network, exitTimelockBlocks, minDepositSats }
+// { vaultId, depositAddress, scriptTree, network, exitTimelockBlocks }
 ```
 
 ### Position ID
@@ -560,6 +560,8 @@ The BTC/USD rate is the **Surge oracle's**, on both networks - read on-chain via
 ## Deposit and first borrow
 
 The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, size the collateral, then create the deposit:
+
+The minimum borrow is **$5** (`MIN_BORROW_USD`) — that's the only floor on opening a line; there's no minimum on the deposit itself. `createDeposit` rejects less before prompting for a signature.
 
 ```ts
 const markets = await session.getMarkets();
@@ -667,6 +669,8 @@ const { txid } = await session.withdraw({
 session.watchWithdrawal(positionId, (u) => {/* … -> finalized | failed | expired */});
 ```
 
+`toBtcAddress` is validated **before any signature** — empty, malformed, wrong-network, and the user's **own vault address** all throw `INVALID_WITHDRAW_ADDRESS` up front, so a doomed destination never costs a signature or leaves a pending withdrawal behind. Guard the vault case in your UI too: it's a valid Bitcoin tx, so nothing downstream would reject it — the vault would pay itself, the collateral never leaves, and the miner fee is burned.
+
 Before prompting `btcSigner.signPsbt`, the SDK verifies the PSBT (outputs, amounts, change back to the vault). If a withdrawal is left unfinalized, `getPendingWithdrawal(positionId)` detects it and `resumeWithdrawal(...)` completes the Bitcoin leg without a fresh EVM signature.
 
 ## Extend the credit line
@@ -714,7 +718,7 @@ Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` an
 | Code | When |
 | --- | --- |
 | `SESSION_UNAUTHENTICATED` | No valid session (401) - create or resume it first |
-| `NETWORK_ERROR` | The request failed to reach the gateway (offline / CORS) |
+| `NETWORK_ERROR` | The request failed to reach the relayer, or an RPC read failed (offline / rate-limited RPC) |
 | `GATEWAY_ERROR` | A gateway error not covered by a specific code (see `.status`) |
 | `DEPOSIT_ALREADY_ACTIVE` | A deposit is already in flight - resume it instead |
 | `EXTENSION_ALREADY_PENDING` | An extension is already pending |
