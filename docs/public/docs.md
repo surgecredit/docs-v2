@@ -2173,12 +2173,13 @@ Every action is a single `await` - inject the two signers once, and the SDK hand
 const client = createBorrowClient({
   network: "signet", // "signet" | "mainnet"
   storage: window.localStorage, // optional in the browser; see below
-  // evmRpcUrl / btcApiUrl are optional - omit to use the network's public defaults
+  // evmRpcUrl / btcApiUrl / coingeckoApiUrl are optional - omit to use the
+  // network's public defaults
 });
 ```
 
 - **`network`** - `"signet"` (Bitcoin signet + Base Sepolia) or `"mainnet"` (Bitcoin mainnet + Base).
-- **`evmRpcUrl` / `btcApiUrl`** - optional. Omitted, they fall back to public defaults (which **rate-limit** - pass your own for production).
+- **`evmRpcUrl` / `btcApiUrl` / `coingeckoApiUrl`** - optional. Omitted, they fall back to public defaults (which **rate-limit** - pass your own for production). The relayer gateway, Surge oracle, and Supabase project are fixed per network and not configurable.
 - **`storage`** - where the session token is kept so users don't re-sign in on every restart. Optional in the browser (falls back to `localStorage`); **required on React Native and Node**.
 
 ```ts
@@ -2246,30 +2247,38 @@ A credit line is identified by its **Position ID** (the position NFT). Get it on
 const positionId = await session.getPositionId(); // string | null (null until open)
 ```
 
-## Deposit and first borrow
+## Size the collateral
 
-The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, then create the deposit:
+How much BTC a draw needs depends on the **market**, because max LTV is per-market - the same $1,000 needs more collateral at 70% LTV than at 80%. Don't compute this yourself:
 
 ```ts
-const markets = await session.getMarkets();
-// [{ marketId, kind: "variable" | "fixed", borrowRateApr,
-//    maxLtvBps, liquidationThresholdBps, active }]
-
-const { depositId, vaultAddress } = await session.createDeposit({
-  collateralSats: 500_000n,
-  borrowAmountUsd: "1000",
-  marketId: markets[0].marketId,
-  durationDays: 90,
+const { requiredSats, requiredBtc } = await client.getRequiredCollateral({
+  marketId: 0,
+  amountUsd: "1000",
 });
-// show vaultAddress + QR; the user sends BTC from any wallet.
+// collateralValue = amountUsd / maxLtv -> sats at the BTC/USD rate -> x 1.015 buffer
+```
 
-const stop = session.watchDeposit(depositId, (s) => {
+Pass `positionId` to draw against an existing position and you get only the **extra** collateral to send - its current collateral is subtracted and its debt counted in:
+
+```ts
+const q = await client.getRequiredCollateral({ marketId, amountUsd: "10", positionId });
+q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
+q.existingCollateralUsd   // "5.00"   already in the vault
+q.additionalCollateralUsd // "9.29"   the gap
+q.requiredSats            // 10472n    {
   // s.status advances; s.nft_id is set once the position mints
   if (s.nft_id) stop();
 });
 ```
 
-On confirmation Surge opens the position and USDC is disbursed to the session's EVM address. Use `getActiveDeposit()` to resume a pending deposit after a reload.
+On confirmation Surge opens the position and USDC is disbursed to the session's EVM address - confirm it landed with `getUsdcBalance()`:
+
+```ts
+const { usd } = await session.getUsdcBalance(); // { raw, usd, owner, tokenAddress }
+```
+
+Use `getDepositStatus(depositId)` for a one-shot status check, or `getActiveDeposit()` to find and resume a pending deposit after a reload (it looks the wallet's deposit up by EVM address).
 
 ## Read the position
 
@@ -2303,7 +2312,9 @@ Adding collateral raises `maxBorrowUsd`. Use `syncCollateral(positionId)` to rec
 await session.borrowMore({ positionId, amountUsd: "250" }); // { positionId, txHash }
 ```
 
-Pre-checked against the live LTV before the wallet is prompted - a draw over the max fails with `LTV_EXCEEDED` first. If the user also needs to add BTC in the same step, use `borrowMoreSync({ positionId, amountUsd })` and `watchBorrowMoreSync(...)`.
+Pre-checked against the live LTV before the wallet is prompted - a draw over the max fails with `LTV_EXCEEDED` first.
+
+To decide which call to make, quote it first: `getRequiredCollateral({ marketId, amountUsd, positionId })` returns `requiredSats: 0n` when the position already has enough - draw with `borrowMore`. Otherwise send `requiredSats` more BTC to the vault and use `borrowMoreSync({ positionId, amountUsd })` + `watchBorrowMoreSync(...)`, which draws and syncs the new collateral in one flow.
 
 ### Re-borrowing after full repayment
 
