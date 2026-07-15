@@ -11,8 +11,9 @@
     "dev": "node scripts/generate-seo.js && vocs dev",
     "build": "node scripts/generate-seo.js && vocs build",
     "preview": "vocs preview",
-    "audit": "pnpm audit --prod",
-    "audit:high": "pnpm audit --prod --audit-level=high"
+    "audit:prod": "node scripts/audit.mjs --prod",
+    "audit:high": "node scripts/audit.mjs --prod --audit-level=high",
+    "audit:all": "node scripts/audit.mjs --all"
   },
   "dependencies": {
     "@types/react": "latest",

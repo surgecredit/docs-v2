@@ -39,6 +39,7 @@ export default function BitcoinPlayground() {
             href={_item.url}
             key={ind}
             target="_blank"
+            rel="noreferrer"
           >
             <p className="text-lg text-[#2D3036] dark:text-white group-hover:text-[#f4431b]">
               {_item.title}

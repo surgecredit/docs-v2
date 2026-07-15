@@ -128,19 +128,15 @@ export default defineConfig({
           },
         ],
       },
-      // {
-      //   text: "EARN SDK",
-      //   items: [
-      //     {
-      //       text: "Earn Overview",
-      //       link: "/earn/overview",
-      //     },
-      //     {
-      //       text: "Integration Guide",
-      //       link: "/earn/integration",
-      //     },
-      //   ],
-      // },
+      {
+        text: "EARN",
+        items: [
+          {
+            text: "Integration",
+            link: "/earn/contracts",
+          },
+        ],
+      },
       {
         text: "RESOURCES",
         items: [
