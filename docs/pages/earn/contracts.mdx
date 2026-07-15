@@ -84,7 +84,7 @@ USDC_DECIMALS = 6
 These fragments are the complete set an earn integration calls. The subset is stable across both networks, so copy it as-is. The examples load the Pool ABI below as `poolAbi` (TypeScript) or `POOL_ABI` (Python).
 
 <details>
-<summary style={{ cursor: "pointer", fontWeight: 600 }}>Pool ABI — the earn function subset</summary>
+<summary style={{ cursor: "pointer", fontWeight: 600 }}>Pool ABI (the earn function subset)</summary>
 
 ```json
 [
@@ -147,7 +147,7 @@ These fragments are the complete set an earn integration calls. The subset is st
 For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The minimal subset the examples call:
 
 <details>
-<summary style={{ cursor: "pointer", fontWeight: 600 }}>USDC ERC-20 ABI — approve, allowance, balanceOf</summary>
+<summary style={{ cursor: "pointer", fontWeight: 600 }}>USDC ERC-20 ABI (approve, allowance, balanceOf)</summary>
 
 ```json
 [
@@ -168,7 +168,7 @@ For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it 
 The market provider is a **separate contract** from the pool. Read its address from `markets(0).provider`, never hardcode it. The examples use it only to read `getSupplyRate`; load this fragment as `providerAbi` (TypeScript) or `PROVIDER_ABI` (Python):
 
 <details>
-<summary style={{ cursor: "pointer", fontWeight: 600 }}>Market provider ABI — getSupplyRate</summary>
+<summary style={{ cursor: "pointer", fontWeight: 600 }}>Market provider ABI (getSupplyRate)</summary>
 
 ```json
 [
@@ -375,18 +375,12 @@ If you render an earn opportunity and a user position, here is where each value 
 | Withdrawable now | `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` |
 | Wallet USDC balance | standard ERC-20 `balanceOf` on the USDC address |
 
-{/* Attribution section hidden until the referral program is up. Restore by removing this comment wrapper.
-
 ## Attribution
 
-If you want the liquidity your app brings to be credited to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
+If you want the liquidity your app brings to be attributed to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
 
 - We assign you a partner id that you append to the deposit calldata.
 - Or, if you already append an ERC-8021 builder code on Base, share it and we map that instead.
-
-Appending the tag does not change the deposit itself. Tell us which option you want and we will set up the rest.
-
-*/}
 
 ## Errors
 

@@ -1,177 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://docs.surge.build/borrow/sdk</loc>
+    <loc>https://docs.surge.credit/borrow/sdk</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/credit-infra</loc>
+    <loc>https://docs.surge.credit/credit-infra</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/earn/contracts</loc>
+    <loc>https://docs.surge.credit/earn/contracts</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/earn/sdk</loc>
+    <loc>https://docs.surge.credit/earn/sdk</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/</loc>
+    <loc>https://docs.surge.credit/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/overview/bitcoin-lending-landscape</loc>
+    <loc>https://docs.surge.credit/overview/bitcoin-lending-landscape</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/overview/stablecoins</loc>
+    <loc>https://docs.surge.credit/overview/stablecoins</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/product/for-bitcoiners</loc>
+    <loc>https://docs.surge.credit/product/for-bitcoiners</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/product/for-distribution-partners</loc>
+    <loc>https://docs.surge.credit/product/for-distribution-partners</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/product/for-everyone</loc>
+    <loc>https://docs.surge.credit/product/for-everyone</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/product/for-liquidity-providers</loc>
+    <loc>https://docs.surge.credit/product/for-liquidity-providers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/product/our-thesis</loc>
+    <loc>https://docs.surge.credit/product/our-thesis</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/product/overview</loc>
+    <loc>https://docs.surge.credit/product/overview</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/resources/brand-kit</loc>
+    <loc>https://docs.surge.credit/resources/brand-kit</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/resources/community-guidelines</loc>
+    <loc>https://docs.surge.credit/resources/community-guidelines</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/resources/faqs</loc>
+    <loc>https://docs.surge.credit/resources/faqs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/resources/quick-links</loc>
+    <loc>https://docs.surge.credit/resources/quick-links</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/contracts</loc>
+    <loc>https://docs.surge.credit/tech/contracts</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/credit-markets</loc>
+    <loc>https://docs.surge.credit/tech/credit-markets</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/disaster-recovery</loc>
+    <loc>https://docs.surge.credit/tech/disaster-recovery</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/distributed-custody-network</loc>
+    <loc>https://docs.surge.credit/tech/distributed-custody-network</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/dlcs</loc>
+    <loc>https://docs.surge.credit/tech/dlcs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/dvaults-liquidation</loc>
+    <loc>https://docs.surge.credit/tech/dvaults-liquidation</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/exit</loc>
+    <loc>https://docs.surge.credit/tech/exit</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/key-lifecycle</loc>
+    <loc>https://docs.surge.credit/tech/key-lifecycle</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/key-shard-security</loc>
+    <loc>https://docs.surge.credit/tech/key-shard-security</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/mpc-signing</loc>
+    <loc>https://docs.surge.credit/tech/mpc-signing</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/oracles</loc>
+    <loc>https://docs.surge.credit/tech/oracles</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/overview</loc>
+    <loc>https://docs.surge.credit/tech/overview</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/payment</loc>
+    <loc>https://docs.surge.credit/tech/payment</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/relayer</loc>
+    <loc>https://docs.surge.credit/tech/relayer</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/reshare-onboarding</loc>
+    <loc>https://docs.surge.credit/tech/reshare-onboarding</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/self-custody-wallet</loc>
+    <loc>https://docs.surge.credit/tech/self-custody-wallet</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/transfers</loc>
+    <loc>https://docs.surge.credit/tech/transfers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.build/tech/vaults</loc>
+    <loc>https://docs.surge.credit/tech/vaults</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

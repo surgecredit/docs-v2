@@ -91,7 +91,7 @@ USDC_DECIMALS = 6
 These fragments are the complete set an earn integration calls. The subset is stable across both networks, so copy it as-is. The examples load the Pool ABI below as `poolAbi` (TypeScript) or `POOL_ABI` (Python).
 
 
-Pool ABI — the earn function subset
+Pool ABI (the earn function subset)
 
 ```json
 [
@@ -154,7 +154,7 @@ Pool ABI — the earn function subset
 For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The minimal subset the examples call:
 
 
-USDC ERC-20 ABI — approve, allowance, balanceOf
+USDC ERC-20 ABI (approve, allowance, balanceOf)
 
 ```json
 [
@@ -175,7 +175,7 @@ USDC ERC-20 ABI — approve, allowance, balanceOf
 The market provider is a **separate contract** from the pool. Read its address from `markets(0).provider`, never hardcode it. The examples use it only to read `getSupplyRate`; load this fragment as `providerAbi` (TypeScript) or `PROVIDER_ABI` (Python):
 
 
-Market provider ABI — getSupplyRate
+Market provider ABI (getSupplyRate)
 
 ```json
 [
@@ -381,18 +381,12 @@ If you render an earn opportunity and a user position, here is where each value 
 | Withdrawable now | `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` |
 | Wallet USDC balance | standard ERC-20 `balanceOf` on the USDC address |
 
-{/* Attribution section hidden until the referral program is up. Restore by removing this comment wrapper.
-
 ## Attribution
 
-If you want the liquidity your app brings to be credited to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
+If you want the liquidity your app brings to be attributed to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
 
 - We assign you a partner id that you append to the deposit calldata.
 - Or, if you already append an ERC-8021 builder code on Base, share it and we map that instead.
-
-Appending the tag does not change the deposit itself. Tell us which option you want and we will set up the rest.
-
-*/}
 
 ## Errors
 
@@ -866,7 +860,7 @@ Surge has three core interfaces, each designed for a key participant:
 Surge is built ground-up for trust-minimized credit and no one can touch their Bitcoin without following predefined, public rules.
 
 ### Branding and Logos [Bitcoin-native Credit Market]
-[Link to Brand Kit](https://docs.surge.build/resources/brand-kit)
+[Link to Brand Kit](https://docs.surge.credit/resources/brand-kit)
 
 ### 💬 FAQs
 ---
@@ -982,7 +976,7 @@ Website: [https://surge.build](https://surge.build)
 
 Twitter: [https://x.com/surge_credit](https://x.com/surge_credit)
 
-{/* Telegram: [https://t.me/surgebuild](https://t.me/surgebuild) */}
+
 
 LinkedIn:  [https://linkedin.com/company/surgebuild](https://www.linkedin.com/company/surgecredit)
 
@@ -2292,7 +2286,7 @@ Send more BTC to the **same vault address**, then sync it in. No signature - it'
 ```ts
 await session.addCollateral({ positionId });
 // { positionId, status, confirmedSats, onchainSats, unconfirmedSats }
-session.watchCollateralSync(positionId, (u) => {/* watching -> success */});
+session.watchCollateralSync(positionId, (u) => );
 ```
 
 Adding collateral raises `maxBorrowUsd`. Use `syncCollateral(positionId)` to reconcile any drift on load.
@@ -2340,7 +2334,7 @@ const { txid } = await session.withdraw({
 });
 // { txid, resumed, withdrawnSats }
 
-session.watchWithdrawal(positionId, (u) => {/* … -> finalized | failed | expired */});
+session.watchWithdrawal(positionId, (u) => );
 ```
 
 Before prompting `btcSigner.signPsbt`, the SDK verifies the PSBT (outputs, amounts, change back to the vault). If a withdrawal is left unfinalized, `getPendingWithdrawal(positionId)` detects it and `resumeWithdrawal(...)` completes the Bitcoin leg without a fresh EVM signature.
@@ -2351,7 +2345,7 @@ Refresh the term on an open position without repaying; debt and collateral carry
 
 ```ts
 await session.extendCreditLine({ positionId }); // { evmTxHash?, btcTxid, alreadyPending }
-session.watchExtension(positionId, (u) => {/* … -> confirmed | finalized */});
+session.watchExtension(positionId, (u) => );
 ```
 
 Throws `EXTENSION_ALREADY_PENDING` if one is already in flight. Drive the renewal prompt from `position.loanExpiresAt`, not a stored flag.

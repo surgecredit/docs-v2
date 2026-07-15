@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 
 const DOCS_DIR = path.resolve(__dirname, "../docs/pages");
 const PUBLIC_DIR = path.resolve(__dirname, "../docs/public");
-const BASE_URL = "https://docs.surge.build";
+const BASE_URL = "https://docs.surge.credit";
 
 const LEGACY_ROUTE_MD_DIRS = ["overview", "product", "tech", "resources", "earn"];
 
@@ -60,8 +60,14 @@ function getTitleFromMdx(content, routePath) {
     return last ? last.charAt(0).toUpperCase() + last.slice(1).replace(/-/g, " ") : "Overview";
 }
 
+// Strip MDX comments {/* ... */}. These never render on the site, so anything
+// inside one is deliberately hidden and must not reach the generated files.
+function stripMdxComments(content) {
+    return content.replace(/\{\s*\/\*[\s\S]*?\*\/\s*\}/g, '');
+}
+
 function cleanMdxContent(content) {
-    return content
+    return stripMdxComments(content)
         .replace(/^import\s+.*?;\s*$/gm, '')
         .replace(/<Card[^>]*>([\s\S]*?)<\/Card>/gi, '$1')
         .replace(/<Callout[^>]*>([\s\S]*?)<\/Callout>/gi, '> $1')
@@ -93,7 +99,9 @@ for (const filePath of allFiles) {
     if (routePath.endsWith("/")) routePath = routePath.slice(0, -1);
 
     const formattedRoute = routePath ? `/${routePath}` : "/";
-    const content = fs.readFileSync(filePath, "utf-8");
+    // Strip hidden MDX comments up front so no downstream consumer (docs.md,
+    // llms-full.txt) can leak content that the rendered site hides.
+    const content = stripMdxComments(fs.readFileSync(filePath, "utf-8"));
     const title = getTitleFromMdx(content, routePath);
 
     const cleanedContent = cleanMdxContent(content);
