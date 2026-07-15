@@ -55,7 +55,7 @@ On React Native use a **secure** store (encrypted at rest), not plaintext AsyncS
 
 ## Signers
 
-Two small interfaces, both required. Browser Bitcoin wallets (Xverse, Unisat, Leather) match `BtcSigner` almost one-to-one; any EVM wallet matches `EvmSigner`.
+Two small interfaces, both required. Nothing in them is browser-specific - anything that can Schnorr-sign a PSBT satisfies `BtcSigner`, and anything that signs EIP-191/EIP-712 satisfies `EvmSigner`. Browser wallets (Xverse, Unisat, Leather) happen to match `BtcSigner` almost one-to-one, but a key you derive yourself, a mobile wallet SDK, or a server-side signer work the same way - the SDK never holds keys and doesn't care where the signature comes from.
 
 ```ts
 interface BtcSigner {
