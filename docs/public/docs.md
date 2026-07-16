@@ -2172,7 +2172,7 @@ const client = createBorrowClient({
 ```
 
 - **`network`** - `"signet"` (Bitcoin signet + Base Sepolia) or `"mainnet"` (Bitcoin mainnet + Base).
-- **`evmRpcUrl` / `btcApiUrl`** - optional. Omitted, they fall back to public defaults (which **rate-limit** - pass your own for production).
+- **`evmRpcUrl` / `btcApiUrl`** - optional. Omitted, they fall back to public defaults (which **rate-limit** - pass your own for production). The relayer API, Surge price oracle, and Supabase project are fixed per network and not configurable.
 - **`storage`** - where the session token is kept so users don't re-sign in on every restart. Optional in the browser (falls back to `localStorage`); **required on React Native and Node**.
 
 ```ts
@@ -2189,7 +2189,7 @@ On React Native use a **secure** store (encrypted at rest), not plaintext AsyncS
 
 ## Signers
 
-Two small interfaces, both required. Browser Bitcoin wallets (Xverse, Unisat, Leather) match `BtcSigner` almost one-to-one; any EVM wallet matches `EvmSigner`.
+Two small interfaces, both required. `BtcSigner` is satisfied by anything that can Schnorr-sign a PSBT; `EvmSigner` by anything that signs EIP-191/EIP-712. A key you derive yourself, a wallet SDK, or a server-side signer all work the same way - the SDK never holds keys and doesn't care where the signature comes from.
 
 ```ts
 interface BtcSigner {
@@ -2229,7 +2229,7 @@ if (!(await session.userExists())) await session.registerUser();
 
 ```ts
 const vault = session.getVault(); // local derivation, no network call
-// { vaultId, depositAddress, scriptTree, network, exitTimelockBlocks, minDepositSats }
+// { vaultId, depositAddress, scriptTree, network, exitTimelockBlocks }
 ```
 
 ### Position ID
@@ -2242,15 +2242,22 @@ const positionId = await session.getPositionId(); // string | null (null until o
 
 ## Deposit and first borrow
 
-The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, then create the deposit:
+The first borrow is bundled with the deposit - there's no standalone borrow call. List markets, size the collateral with [`getRequiredCollateral`](#utilities), then create the deposit:
+
+The minimum borrow is **$5** (`MIN_BORROW_USD`) — that's the only floor on opening a line; there's no minimum on the deposit itself. `createDeposit` rejects less before prompting for a signature.
 
 ```ts
 const markets = await session.getMarkets();
 // [{ marketId, kind: "variable" | "fixed", borrowRateApr,
 //    maxLtvBps, liquidationThresholdBps, active }]
 
+const { requiredSats } = await session.getRequiredCollateral({
+  marketId: markets[0].marketId,
+  amountUsd: "1000",
+});
+
 const { depositId, vaultAddress } = await session.createDeposit({
-  collateralSats: 500_000n,
+  collateralSats: requiredSats,
   borrowAmountUsd: "1000",
   marketId: markets[0].marketId,
   durationDays: 90,
@@ -2263,7 +2270,13 @@ const stop = session.watchDeposit(depositId, (s) => {
 });
 ```
 
-On confirmation Surge opens the position and USDC is disbursed to the session's EVM address. Use `getActiveDeposit()` to resume a pending deposit after a reload.
+On confirmation Surge opens the position and USDC is disbursed to the session's EVM address - confirm it landed with `getUsdcBalance()`:
+
+```ts
+const { usd } = await session.getUsdcBalance(); // { raw, usd, owner, tokenAddress }
+```
+
+Use `getDepositStatus(depositId)` for a one-shot status check, or `getActiveDeposit()` to find and resume a pending deposit after a reload (it looks the wallet's deposit up by EVM address).
 
 ## Read the position
 
@@ -2297,7 +2310,9 @@ Adding collateral raises `maxBorrowUsd`. Use `syncCollateral(positionId)` to rec
 await session.borrowMore({ positionId, amountUsd: "250" }); // { positionId, txHash }
 ```
 
-Pre-checked against the live LTV before the wallet is prompted - a draw over the max fails with `LTV_EXCEEDED` first. If the user also needs to add BTC in the same step, use `borrowMoreSync({ positionId, amountUsd })` and `watchBorrowMoreSync(...)`.
+Pre-checked against the live LTV before the wallet is prompted - a draw over the max fails with `LTV_EXCEEDED` first.
+
+To decide which call to make, quote it first: `getRequiredCollateral({ marketId, amountUsd, positionId })` returns `requiredSats: 0n` when the position already has enough - draw with `borrowMore`. Otherwise send `requiredSats` more BTC to the vault and use `borrowMoreSync({ positionId, amountUsd })` + `watchBorrowMoreSync(...)`, which draws and syncs the new collateral in one flow.
 
 ### Re-borrowing after full repayment
 
@@ -2337,6 +2352,8 @@ const { txid } = await session.withdraw({
 session.watchWithdrawal(positionId, (u) => );
 ```
 
+`toBtcAddress` is validated **before any signature** — empty, malformed, wrong-network, and the user's **own vault address** all throw `INVALID_WITHDRAW_ADDRESS` up front, so a doomed destination never costs a signature or leaves a pending withdrawal behind. Guard the vault case in your UI too: it's a valid Bitcoin tx, so nothing downstream would reject it — the vault would pay itself, the collateral never leaves, and the miner fee is burned.
+
 Before prompting `btcSigner.signPsbt`, the SDK verifies the PSBT (outputs, amounts, change back to the vault). If a withdrawal is left unfinalized, `getPendingWithdrawal(positionId)` detects it and `resumeWithdrawal(...)` completes the Bitcoin leg without a fresh EVM signature.
 
 ## Extend the credit line
@@ -2365,40 +2382,32 @@ const stop = session.watchActivities(positionId, (activities) => {
 
 `eventName` is one of `sync_collateral`, `borrow_more`, `withdrawal`, `credit_line_extension`.
 
-## What your signers sign
+## Utilities
 
-Every `watch*` returns an unsubscribe fn - call it on unmount to stop polling.
+Helpers for wiring up your UI. None are required - they're conveniences so you don't re-derive protocol maths.
 
-| Signer method | Signs | Used by |
-| --- | --- | --- |
-| `evmSigner.signMessage` | EIP-191 message | SIWE login; the action envelope on deposit, borrow-more, and extend |
-| `evmSigner.signTypedData` | EIP-712 typed data | repay (×2: authorization + USDC EIP-3009), withdraw authorization |
-| `btcSigner.signPsbt` | Taproot script-path PSBT (Schnorr) | withdraw only - the single Bitcoin signature |
-
-Reads, `addCollateral`, `syncCollateral`, and `switchMarket` need no signature (the session JWT authorizes them).
-
-## Errors
-
-Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` and `.details`). Branch on `.code`, never on the message.
-
-| Code | When |
+| Method | Returns |
 | --- | --- |
-| `SESSION_UNAUTHENTICATED` | No valid session (401) - create or resume it first |
-| `NETWORK_ERROR` | The request failed to reach the gateway (offline / CORS) |
-| `GATEWAY_ERROR` | A gateway error not covered by a specific code (see `.status`) |
-| `DEPOSIT_ALREADY_ACTIVE` | A deposit is already in flight - resume it instead |
-| `EXTENSION_ALREADY_PENDING` | An extension is already pending |
-| `LTV_EXCEEDED` | The borrow/withdraw would exceed the max loan-to-value |
-| `INSUFFICIENT_COLLATERAL` | The action would leave the position under-collateralized |
-| `INSUFFICIENT_USDC_BALANCE` | Not enough USDC in the wallet to repay |
-| `VAULT_NOT_CONFIRMED` | Acting before the collateral deposit has confirmed |
-| `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed - usually a wrong BTC derivation path |
-| `WITHDRAWAL_AMOUNT_MISMATCH` | The PSBT amount ≠ the authorized pending withdrawal |
-| `SIMULATION_REVERT` | The on-chain simulation reverted before submit |
-| `SIGN_REQUEST_EXPIRED` | A signature came back after the payload expired - retries with a fresh one |
-| `NONCE_REUSED` | A signed action envelope was replayed |
+| `getRequiredCollateral({ marketId, amountUsd, positionId? })` | BTC to lock for a draw. Sized by that market's max LTV, priced at the Surge oracle, plus a 1.5% safety buffer. With `positionId` it returns only the **extra** collateral to send - existing collateral subtracted, existing debt counted in - and `requiredSats: 0n` means the position already has enough. |
+| `getBtcPriceUsd()` | The Surge oracle's BTC/USD rate - what the protocol values collateral at. Read on-chain via `evmRpcUrl`. |
+| `getUsdcBalance(owner?)` | USDC balance of the EVM signer - where borrowed USDC lands. |
+| `getFeeRates()` | `{ fast, medium, slow }` BTC fee rates in sat/vB. |
 
-Pre-flight validation runs before the SDK calls your signer, so the wallet is never prompted for an action that will fail.
+```ts
+const q = await client.getRequiredCollateral({ marketId: 1, amountUsd: "10", positionId });
+q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
+q.existingCollateralUsd   // "5.00"   already in the vault
+q.additionalCollateralUsd // "9.29"   the gap
+q.requiredSats            // 10472n    0n) {
+  await client.extendCreditLine({ positionId }); // renew the term, collateral intact
+} else {
+  // Closed with nothing left - open a new credit line with createDeposit().
+}
+```
+
+`isActive` tells you it's over; `collateralSats` tells you which remedy. Check `inLiquidation` first - it can be true on a still-active position, and it outranks everything.
+
+Don't gate on `position.expired` - it reports term status (has `loanExpiresAt` passed), not usability. The two come apart in both directions: a position can be past its term and still fully live, and a settled one keeps a future expiry date while being dead. Use `expired` to warn about a lapsing term; use `isActive` to decide what's allowed.
 
 ## Testing on signet
 

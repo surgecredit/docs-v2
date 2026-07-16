@@ -60,8 +60,11 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
-
       - name: Audit (fail on high severity)
-        run: pnpm audit --prod --audit-level=high
+        run: |
+          # `pnpm audit` calls npm's legacy audit endpoint, which was retired and now
+          # returns HTTP 410 — so it fails on every run regardless of the dependency
+          # tree. Audit through npm's bulk advisory endpoint instead: resolve a
+          # lockfile from package.json without installing, then audit prod deps only.
+          npm install --package-lock-only --ignore-scripts
+          npm audit --omit=dev --audit-level=high
