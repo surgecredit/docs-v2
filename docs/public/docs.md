@@ -2195,7 +2195,7 @@ On React Native use a **secure** store (encrypted at rest), not plaintext AsyncS
 
 ## Signers
 
-Two small interfaces, both required. Nothing in them is browser-specific - anything that can Schnorr-sign a PSBT satisfies `BtcSigner`, and anything that signs EIP-191/EIP-712 satisfies `EvmSigner`. Browser wallets (Xverse, Unisat, Leather) happen to match `BtcSigner` almost one-to-one, but a key you derive yourself, a mobile wallet SDK, or a server-side signer work the same way - the SDK never holds keys and doesn't care where the signature comes from.
+Two small interfaces, both required. `BtcSigner` is satisfied by anything that can Schnorr-sign a PSBT; `EvmSigner` by anything that signs EIP-191/EIP-712. A key you derive yourself, a wallet SDK, or a server-side signer all work the same way - the SDK never holds keys and doesn't care where the signature comes from.
 
 ```ts
 interface BtcSigner {
@@ -2404,51 +2404,7 @@ const q = await client.getRequiredCollateral({ marketId: 1, amountUsd: "10", pos
 q.collateralValueUsd      // "14.29"  total needed: (debt + 10) / maxLtv
 q.existingCollateralUsd   // "5.00"   already in the vault
 q.additionalCollateralUsd // "9.29"   the gap
-q.requiredSats            // 10472n    0` brands a position that was liquidated, renewed, and has run cleanly ever since as liquidated forever. Scoping it means deriving the term's start from the vault's exit block, in Bitcoin block space - the SDK does this for you.
-
-## Errors
-
-Every flow throws a typed `BorrowError` with a stable `.code` (plus `.status` and `.details`). Branch on `.code`, never on the message.
-
-| Code | When |
-| --- | --- |
-| `SESSION_UNAUTHENTICATED` | No valid session (401) - create or resume it first |
-| `NETWORK_ERROR` | The request failed to reach the relayer, or an RPC read failed (offline / rate-limited RPC) |
-| `GATEWAY_ERROR` | A gateway error not covered by a specific code (see `.status`) |
-| `DEPOSIT_ALREADY_ACTIVE` | A deposit is already in flight - resume it instead |
-| `EXTENSION_ALREADY_PENDING` | An extension is already pending |
-| `LTV_EXCEEDED` | The borrow/withdraw would exceed the max loan-to-value |
-| `INSUFFICIENT_COLLATERAL` | The action would leave the position under-collateralized |
-| `INSUFFICIENT_USDC_BALANCE` | Not enough USDC in the wallet to repay |
-| `VAULT_NOT_CONFIRMED` | Acting before the collateral deposit has confirmed |
-| `VAULT_ADDRESS_MISMATCH` | Local vault re-derivation disagreed - usually a wrong BTC derivation path |
-| `WITHDRAWAL_AMOUNT_MISMATCH` | The PSBT amount ≠ the authorized pending withdrawal |
-| `POSITION_IN_LIQUIDATION` | The collateral is being seized - no credit action applies |
-| `POSITION_EXPIRED` | The term ended (`isActive: false`) and collateral remains - `extendCreditLine` renews it |
-| `POSITION_CLOSED` | The position is closed with no collateral left - nothing to renew, `createDeposit` opens a new line |
-| `WITHDRAWAL_ALREADY_PENDING` | A withdrawal is authorized on-chain and spends the same vault UTXOs |
-| `INSUFFICIENT_MARKET_LIQUIDITY` | The draw exceeds what the market can lend right now |
-| `INVALID_WITHDRAW_ADDRESS` | `toBtcAddress` is empty, malformed, wrong-network, or your own vault address |
-| `SIMULATION_REVERT` | The on-chain simulation reverted before submit |
-| `SIGN_REQUEST_EXPIRED` | A signature came back after the payload expired - retries with a fresh one |
-| `NONCE_REUSED` | A signed action envelope was replayed |
-
-Pre-flight validation runs before the SDK calls your signer, so the wallet is never prompted for an action that will fail.
-
-**Gating.** Every mutating call first checks the position can actually take it, and throws rather than prompting. Liquidation is checked always and reported first - the collateral is already being taken, so it outranks every other state. Whether the position is still live, a pending withdrawal, and market liquidity are checked where they apply: a pending withdrawal blocks `extendCreditLine` (both spend the same vault UTXOs) but **not** `repay`, since repaying is how a holder de-risks. You don't have to pre-check to be safe - reading the state is how you avoid *offering* an action that will throw.
-
-**When a position ends.** `position.isActive` is the actionability signal: it goes false when the term ends, when the line is repaid and closed, or when a liquidation settles. Drawing against any of those is refused; repay, withdraw, and `extendCreditLine` stay open, because renewing is the way out. Whether you get `POSITION_EXPIRED` or `POSITION_CLOSED` depends on whether collateral remains to renew against.
-
-Catching the code is enough to be safe, but the throw is a backstop rather than a UI. To avoid *offering* an action that will throw, read the state first:
-
-```ts
-const p = await client.getPosition(positionId);
-
-if (p.inLiquidation) {
-  // Nothing to do - the collateral is being seized. client.getLiquidation() for detail.
-} else if (p.isActive) {
-  // Live: draw / repay / withdraw as normal.
-} else if (p.collateralSats > 0n) {
+q.requiredSats            // 10472n    0n) {
   await client.extendCreditLine({ positionId }); // renew the term, collateral intact
 } else {
   // Closed with nothing left - open a new credit line with createDeposit().

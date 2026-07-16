@@ -482,7 +482,7 @@ On React Native use a **secure** store (encrypted at rest), not plaintext AsyncS
 
 ## Signers
 
-Two small interfaces, both required. Nothing in them is browser-specific - anything that can Schnorr-sign a PSBT satisfies `BtcSigner`, and anything that signs EIP-191/EIP-712 satisfies `EvmSigner`. Browser wallets (Xverse, Unisat, Leather) happen to match `BtcSigner` almost one-to-one, but a key you derive yourself, a mobile wallet SDK, or a server-side signer work the same way - the SDK never holds keys and doesn't care where the signature comes from.
+Two small interfaces, both required. `BtcSigner` is satisfied by anything that can Schnorr-sign a PSBT; `EvmSigner` by anything that signs EIP-191/EIP-712. A key you derive yourself, a wallet SDK, or a server-side signer all work the same way - the SDK never holds keys and doesn't care where the signature comes from.
 
 ```ts
 interface BtcSigner {
@@ -724,8 +724,6 @@ const { inLiquidation, liquidated, type, at } = await session.getLiquidation(pos
 | `at` | ISO timestamp of the in-term liquidation, or `null`. |
 
 **`isActive: false` does not mean liquidated** - it's equally true of a position that was simply repaid and closed. `getLiquidation` is what tells them apart. `Position.inLiquidation` carries the live flag if you already have the position.
-
-**Why `liquidated` is scoped, and why not to compute it yourself:** the on-chain liquidation timestamp is never cleared, so a naive `timestamp > 0` brands a position that was liquidated, renewed, and has run cleanly ever since as liquidated forever. Scoping it means deriving the term's start from the vault's exit block, in Bitcoin block space - the SDK does this for you.
 
 ## Errors
 
