@@ -28,7 +28,6 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 ### Technology & Architecture
 - [📜 Smart Contracts](/tech/contracts)
 - [🛟 Disaster Recovery](/tech/disaster-recovery)
-- [👥 Distributed Custody Network (DCN)](/tech/distributed-custody-network)
 - [🎯 Deterministic Liquidation](/tech/dvaults-liquidation)
 - [⏳ Unilateral Exit](/tech/exit)
 - [🔄 Key Lifecycle](/tech/key-lifecycle)
@@ -40,6 +39,7 @@ This file helps AI assistants quickly discover the best public pages for Surge i
 - [🛰 Relayer & Workers](/tech/relayer)
 - [🔁 Reshare & Signer Onboarding](/tech/reshare-onboarding)
 - [🔐 Self-Custody User Wallet](/tech/self-custody-wallet)
+- [👥 Threshold Signer Network (TSN)](/tech/threshold-signer-network)
 - [🔄 Transfers](/tech/transfers)
 - [🔐 Taproot Vaults](/tech/vaults)
 

@@ -77,8 +77,8 @@ export default defineConfig({
             ],
           },
           {
-            text: "Distributed Custody Network",
-            link: "/tech/distributed-custody-network",
+            text: "Threshold Signer Network",
+            link: "/tech/threshold-signer-network",
             collapsed: true,
             items: [
               {

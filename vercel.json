@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/tech/distributed-custody-network",
+      "destination": "/tech/threshold-signer-network",
+      "permanent": true
+    }
+  ]
+}

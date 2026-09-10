@@ -111,11 +111,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://docs.surge.credit/tech/distributed-custody-network</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://docs.surge.credit/tech/dlcs</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -172,6 +167,11 @@
   </url>
   <url>
     <loc>https://docs.surge.credit/tech/self-custody-wallet</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://docs.surge.credit/tech/threshold-signer-network</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

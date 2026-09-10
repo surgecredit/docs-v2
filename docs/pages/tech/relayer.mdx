@@ -5,9 +5,9 @@ description: The service layer that keeps Bitcoin state and contract state synch
 
 # 🛰 Relayer & Workers
 
-Between Vaults on Bitcoin and the debt ledger on EVM sits a service whose job is to keep both sides in sync: observe deposits and withdrawals, drive contract calls, coordinate with the DCN for spends, and complete cross-chain transfers.
+Between Vaults on Bitcoin and the debt ledger on EVM sits a service whose job is to keep both sides in sync: observe deposits and withdrawals, drive contract calls, coordinate with the TSN for spends, and complete cross-chain transfers.
 
-The relayer **does not hold custody** of BTC. It does not hold DCN signing keys. It can propose spends and submit EVM transactions, but BTC movement still requires DCN quorum signatures and contract-side authorization.
+The relayer **does not hold custody** of BTC. It does not hold TSN signing keys. It can propose spends and submit EVM transactions, but BTC movement still requires TSN quorum signatures and contract-side authorization.
 
 ## Service Shape
 
@@ -34,13 +34,13 @@ Ingests on-chain events from `VaultManager`, `AuctionHouse`, and `LiquidityPool`
 
 - Streams events via WebSocket where available; falls back to HTTP polling with bounded block ranges.
 - Persists each event, sequences them per position, and dispatches to internal handlers.
-- Handlers drive follow-up calls. For example, successful repayment triggers withdrawal authorization and liquidation events drive BTC-side sweep coordination with the DCN.
+- Handlers drive follow-up calls. For example, successful repayment triggers withdrawal authorization and liquidation events drive BTC-side sweep coordination with the TSN.
 
 ### `withdrawal-confirmation-worker`
 
 When a borrower requests BTC withdrawal after partial or full repayment:
 
-- The DCN produces a spend for the user's configured withdrawal address.
+- The TSN produces a spend for the user's configured withdrawal address.
 - This worker watches for the transaction on Bitcoin, verifies the sats moved and confirmations threshold, and calls `confirmWithdrawal(...)` on chain so the position accounting is finalized.
 - Tolerances are bounded: amount is checked against the pending withdrawal minus an audit-configurable dust tolerance; timestamp is checked with a grace window to tolerate block-timestamp drift.
 
@@ -77,13 +77,13 @@ The relayer is convenience infrastructure, not a trust anchor. When it is unavai
 
 - BTC remains under Taproot script on Bitcoin. Nothing the relayer does or fails to do can move it.
 - EVM contract state is canonical - debt, shares, and position NFTs are unchanged by relayer downtime.
-- The **Unilateral Exit** path stays available to any borrower whose CSV timelock has elapsed. A borrower who wants out does not need the relayer, the DCN, or any Surge-operated service to recover their BTC.
+- The **Unilateral Exit** path stays available to any borrower whose CSV timelock has elapsed. A borrower who wants out does not need the relayer, the TSN, or any Surge-operated service to recover their BTC.
 
 **What gets delayed while it is down.**
 
 - **New borrows.** A BTC deposit still lands on Bitcoin, but `submitLoan(...)` is not called until the indexer catches up, so USDC is not disbursed yet.
 - **Health checks and liquidations.** Oracle-driven health submissions pause; a position that would otherwise have been liquidated stays in its pre-event state until monitoring resumes.
-- **Withdrawal finalization.** A DCN-signed BTC withdrawal may still broadcast, but `confirmWithdrawal(...)` on EVM only fires once the confirmation worker sees the transaction.
+- **Withdrawal finalization.** A TSN-signed BTC withdrawal may still broadcast, but `confirmWithdrawal(...)` on EVM only fires once the confirmation worker sees the transaction.
 - **Cross-chain mints.** Pending CCTP burns wait for the attestation worker to submit `receiveMessage` on the destination chain. Funds are not lost - the burn is already recorded with Circle - the destination mint is simply delayed.
 - **Gasless actions.** Repay / withdraw / bridge calls that rely on the relayer to pay gas queue until it returns; a user can always submit the same action themselves from a funded wallet.
 
@@ -91,12 +91,12 @@ The user-visible shape of an outage is a pause, not a loss. Positions sit where 
 
 ## What the Relayer Is Not
 
-- **Not a custody service.** BTC is never at the relayer. Any BTC move requires a DCN-signed Taproot spend.
-- **Not the signing authority.** The relayer proposes spends; per-signer validators in the DCN decide whether to sign.
+- **Not a custody service.** BTC is never at the relayer. Any BTC move requires a TSN-signed Taproot spend.
+- **Not the signing authority.** The relayer proposes spends; per-signer validators in the TSN decide whether to sign.
 - **Not the source of truth.** Canonical state is Bitcoin plus EVM contracts; relayer persistence is workflow state.
 
 ## References
 
-- [Distributed Custody Network](/tech/distributed-custody-network) for DCN signing.
+- [Threshold Signer Network](/tech/threshold-signer-network) for the signing side.
 - [Smart Contracts](/tech/contracts) for the EVM side.
 - [Credit Markets](/tech/credit-markets) for markets on liquidity pool.

@@ -7,20 +7,20 @@ description: How surge benefits the Liquidity providers and Market makers holdin
 
 # 💰 For Liquidity Providers
 
-Surge introduces a novel multi-market architecture, managed by a Decentralised Custody Network (DCN). 
+Surge introduces a novel multi-market architecture, managed by a Decentralised Custody Network (TSN). 
 These markets act as the liquidity layer between BTC and stablecoin capital, enabling Bitcoiners to access different credit markets with different terms while LPs earn risk based yield from actual credit usage.
 
 Unlike traditional DeFi platforms that rely on speculative trading activity, Surge enables LPs to earn predictable, usage-driven yield, with added incentives for participating in network operations like liquidations.
 
 
-## 🧩 The Architecture: LP markets + DCN
+## 🧩 The Architecture: LP markets + TSN
 
-At the heart of Surge’s lending mechanism is a multi-chain, DCN-coordinated communication layer:
+At the heart of Surge’s lending mechanism is a multi-chain, TSN-coordinated communication layer:
 - Markets exist natively in stablecoins (USDC, USDT) on Ethereum (Base).
-- When a Bitcoiner requests credit, the DCN verifies BTC collateral on-chain, signs a Bitcoin transaction, and authorizes the stablecoin disbursement.
-- The DCN jointly maintains custody policies, validate credit conditions, and enforce programmatic rules for repayment, liquidation, and timelocks.
+- When a Bitcoiner requests credit, the TSN verifies BTC collateral on-chain, signs a Bitcoin transaction, and authorizes the stablecoin disbursement.
+- The TSN jointly maintains custody policies, validate credit conditions, and enforce programmatic rules for repayment, liquidation, and timelocks.
 
-The DCN effectively bridges Bitcoin and Ethereum/Base trust-minimized, with no wrapping or custodial middlemen.
+The TSN effectively bridges Bitcoin and Ethereum/Base trust-minimized, with no wrapping or custodial middlemen.
 
 ## 📈 Variable vs Fixed Supply
 
@@ -31,15 +31,15 @@ Surge’s multi-market layer can offer both **variable** (floating) and **fixed-
 - **Withdrawing from fixed** - To “withdraw” from a fixed market you swap your position with another lender that wants exposure to that fixed market. If no lenders are available to swap, you can enter a queue, offer to swap your position at a discount, or wait for a borrower from that market to repay.
 
 
-## 📊 LP Dashboard & DCN Participation
+## 📊 LP Dashboard & TSN Participation
 
 LPs interact through an intuitive web interface to:
 - Deposit supported stablecoins into active liquidity pools
 - Monitor pool health, active credit lines, interest accrued, and risk metrics
 - Configure preferences like pool size, chain, stablecoin, and duration
-- Join the queue to run a Distributed Custody node
+- Join the queue to run a Threshold Signer node
 
-Running a Distributed Custody node is optional, but highly encouraged for active LPs. It enables:
+Running a Threshold Signer node is optional, but highly encouraged for active LPs. It enables:
 - Priority yield opportunities and liquidation incentives
 - Visibility into on-chain conditions and vault-level transparency
 
