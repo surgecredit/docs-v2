@@ -17,8 +17,9 @@ This vault enforces three deterministic spending paths:
 2. **Liquidation:** 
   - If the credit line reaches **90% LTV**, the TSN signs a **full liquidation** transaction—only when validated by the chainlink oracle attestation. The entire credit line is closed in one event.
   - If the credit line is not paid off or rolled over at the end of term, the TSN will sign a **partial liquidation** transaction. BTC is sold in a sized lot to cover debt + interest; any surplus is sent back into the borrower's now expired vault.
-3. **Transfer:** Bitcoiners may transfer loans to and from Surge's credit market. This requires signatures from the Bitcoiner, TSN, and a third party credit provider.
-4. **Time-Locked Recovery:** If the system becomes unresponsive or the TSN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
+3. **Time-Locked Recovery:** If the system becomes unresponsive or the TSN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
+
+Transfers to and from third-party credit providers are not a fourth path. There is no Transfer leaf in the script tree: a transfer settles cooperatively through the Repayment flow, signed by the Bitcoiner, the TSN, and the other provider. See [Transfers](/tech/transfers).
 
 This ensures that funds are always:
 - Non-custodial – borrower shares control with the TSN 
