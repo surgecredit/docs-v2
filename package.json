@@ -16,12 +16,12 @@
     "audit:all": "node scripts/audit.mjs --all"
   },
   "dependencies": {
-    "@types/react": "latest",
+    "@types/react": "^19.3.0",
     "dotenv": "^17.2.2",
-    "react": "latest",
-    "react-dom": "latest",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "react-medium-image-zoom": "^5.2.8",
-    "typescript": "latest",
+    "typescript": "^6.0.3",
     "vocs": "1.4.1"
   },
   "devDependencies": {
