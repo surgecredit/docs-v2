@@ -35,15 +35,15 @@ On Bitcoin. Your collateral is locked in a Pay-to-Taproot output committing thre
 
 Two guarantees, both enforced by Bitcoin script rather than by promise:
 
-1. **Cooperative repayment requires the borrower's signature.** The DCN alone cannot move BTC out of a Vault via the Repayment leaf - both `userPubkey` and the DCN's aggregate `loanPubkey` must sign.
-2. **Unilateral Exit is always available.** Even if the DCN, the relayer, the oracle, and every Surge service permanently disappear, the borrower can recover their BTC by spending the Exit leaf after a relative timelock (`OP_CHECKSEQUENCEVERIFY`, ≈ 1 year). See [Unilateral Exit](/tech/exit).
+1. **Cooperative repayment requires the borrower's signature.** The TSN alone cannot move BTC out of a Vault via the Repayment leaf - both `userPubkey` and the TSN's aggregate `loanPubkey` must sign.
+2. **Unilateral Exit is always available.** Even if the TSN, the relayer, the oracle, and every Surge service permanently disappear, the borrower can recover their BTC by spending the Exit leaf after a relative timelock (`OP_CHECKSEQUENCEVERIFY`, ≈ 1 year). See [Unilateral Exit](/tech/exit).
 
 </details>
 ---
 <details>
 <summary>**Why does Surge use Lin24 threshold Schnorr instead of FROST?**</summary>
 
-Both are threshold Schnorr protocols, but Surge runs on **[Lin24](/tech/distributed-custody-network)** (Lindell, CiC 2024 - see [ePrint 2022/374](https://eprint.iacr.org/2022/374)) for two reasons:
+Both are threshold Schnorr protocols, but Surge runs on **[Lin24](/tech/threshold-signer-network)** (Lindell, CiC 2024 - see [ePrint 2022/374](https://eprint.iacr.org/2022/374)) for two reasons:
 
 - **Stronger simulation-based proofs.** Lin24 provides full simulatability; FROST's analysis is in a weaker model.
 - **Identifiable abort.** If a signer misbehaves during a session, Lin24 produces cryptographic evidence identifying the offender - useful for slashing, signer rotation, and exclusion from subsequent sessions without coordinator-only testimony.
@@ -55,7 +55,7 @@ The trade-off is one extra round per signing session (3 rounds vs FROST's 2). Su
 <details>
 <summary>**What's the threshold? How many signers does it take to move BTC?**</summary>
 
-The DCN operates as a **3-of-4** Lin24 threshold signer. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
+The TSN operates as a **3-of-4** Lin24 threshold signer. Below threshold, no signature can be produced - even an attacker who compromises two organisations cannot forge a Bitcoin spend. The access structure can be evolved (members added or removed, threshold changed) via [Reshare & Signer Onboarding](/tech/reshare-onboarding) without changing the public key or any deployed Vault address.
 
 </details>
 ---
@@ -80,7 +80,7 @@ Liquidity is **moved** between the variable pool and fixed markets when borrower
 
 It depends on **why** the liquidation was triggered:
 
-**Undercollateralization (90% LTV)** — Surge performs a **full liquidation**. The entire position is closed in one event. The DCN sweeps the Vault collateral to a Dutch [auction](/tech/dvaults-liquidation) on the EVM side. Proceeds retire the **full outstanding debt** plus the liquidation penalty in the **specific market** that issued your credit line. Any BTC remaining after debt and penalty settlement is returned to you.
+**Undercollateralization (90% LTV)** — Surge performs a **full liquidation**. The entire position is closed in one event. The TSN sweeps the Vault collateral to a Dutch [auction](/tech/dvaults-liquidation) on the EVM side. Proceeds retire the **full outstanding debt** plus the liquidation penalty in the **specific market** that issued your credit line. Any BTC remaining after debt and penalty settlement is returned to you.
 
 **Delinquency (unpaid at term end)** — Surge performs a **partial liquidation**. A sized lot of collateral is swept and auctioned; proceeds retire **proportional debt** and the penalty. Any BTC surplus is **re-locked into your Vault UTXO** under the same scripts—your position continues with reduced collateral and reduced debt rather than terminating.
 
@@ -100,7 +100,7 @@ The advertised APY band reflects the high-utilization region of the rate curve i
 
 A compromised relayer can delay actions, over-submit them, or fail to observe state. It **cannot**:
 
-- Move BTC - every Bitcoin spend requires a DCN-signed Schnorr witness over a committed Vault leaf.
+- Move BTC - every Bitcoin spend requires a TSN-signed Schnorr witness over a committed Vault leaf.
 - Forge a borrower authorisation - every gasless flow is gated by a borrower signature (EIP-2612, EIP-3009, or EIP-712).
 - Mint USDC that wasn't burned - destination mints require a Circle-issued IRIS attestation over a real source-chain burn.
 

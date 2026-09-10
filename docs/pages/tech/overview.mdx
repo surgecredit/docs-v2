@@ -1,6 +1,6 @@
 ---
 title: Technical Overview
-description: How Surge composes Bitcoin Taproot vaults, a distributed custody network, EVM credit contracts, and CCTP v2 into one Bitcoin-native credit market
+description: How Surge composes Bitcoin Taproot vaults, a threshold signer network, EVM credit contracts, and CCTP v2 into one Bitcoin-native credit market
 ---
 import ZoomImage from "../../components/ZoomImage";
 
@@ -15,9 +15,9 @@ The system is built from four cooperating components. Each owns a distinct layer
 | Component | Where it lives | What it owns |
 |---|---|---|
 | **Taproot Vaults** | Bitcoin | The collateral. Programmable spend conditions (Repayment / Liquidation / Exit) committed at vault creation. |
-| **Distributed Custody Network (DCN)** | Off-chain decentralized signer organisations | Threshold Schnorr signatures on Bitcoin spends. No signer holds a complete key, no quorum can move BTC outside policy. |
+| **Threshold Signer Network (TSN)** | Off-chain decentralized signer organisations | Threshold Schnorr signatures on Bitcoin spends. No signer holds a complete key, no quorum can move BTC outside policy. |
 | **Smart Contracts** | EVM (Base, Ethereum) | The debt ledger, share-based liquidity pool, interest-rate model, and Dutch-auction liquidation. |
-| **Relayer & Workers** | Off-chain service | The coordinator. Watches Bitcoin, drives the contracts, proposes spends to the DCN, and finalises CCTP transfers. Holds no custody. |
+| **Relayer & Workers** | Off-chain service | The coordinator. Watches Bitcoin, drives the contracts, proposes spends to the TSN, and finalises CCTP transfers. Holds no custody. |
 
 A **stablecoin liquidity layer**  routes USDC across chains so the pool stays canonical regardless of where supply originated. A **per-signer oracle path** feeds BTC/USD into health calculations.
 
@@ -32,19 +32,19 @@ A **stablecoin liquidity layer**  routes USDC across chains so the pool stays ca
 
 
 
-1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key derived from `SHA256("SURGE-NUMS")` (output: `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`), with key-path spend disabled. The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the DCN.
+1. **Borrower deposits BTC** to a Taproot output whose scriptTree commits the three spend leaves and uses a NUMS internal key derived from `SHA256("SURGE-NUMS")` (output: `6a1bac977b8af761b330d1473dba1e5cfc75b3256a1ae900b78a369e175423f2`), with key-path spend disabled. The deposit address is derived deterministically from the borrower's wallet plus an aggregate `loanPubkey` produced by the TSN.
 2. **Relayer observes the deposit** at the configured confirmation depth and calls `VaultManager.submitLoan(...)` on the EVM side. A `PositionID` is minted and the stablecoin liability is recorded on the canonical ledger.
 3. **Borrower receives USDC** - drawn from `LiquidityPool` on Base today, with Ethereum routing supported through CCTP v2. Additional chains are planned.
 4. **Position lives.** The relayer streams oracle price updates into the position's health calculation; workers monitor the collateral ratio against `MinCR` and the liquidation threshold.
 5. **Closure** happens on one of three Bitcoin spend paths:
-   - **Repayment** (cooperative) - borrower repays USDC, the DCN co-signs a release of BTC to the borrower's withdrawal address.
-   - **Liquidation** (DCN, authorised) - collateral ratio breaches the liquidation threshold, or the credit line is past term and unpaid, the DCN signs a sweep to a Dutch auction, proceeds retire the originating market's debt.
+   - **Repayment** (cooperative) - borrower repays USDC, the TSN co-signs a release of BTC to the borrower's withdrawal address.
+   - **Liquidation** (TSN, authorised) - collateral ratio breaches the liquidation threshold, or the credit line is past term and unpaid, the TSN signs a sweep to a Dutch auction, proceeds retire the originating market's debt.
    - **Unilateral Exit** (borrower alone, after CSV) - if everything else fails, the borrower spends the Exit leaf after a relative timelock and walks away with their BTC.
 
 ## Why Each Layer Exists
 
 - **Taproot Vaults keep custody on Bitcoin.** Collateral stays under script control; no bridge, wrapped BTC, or platform custody assumptions.
-- **The DCN provides threshold signing without multisig footprint.** On-chain spends look like standard Schnorr signatures while signer policy is enforced off-chain by independent validators.
+- **The TSN provides threshold signing without multisig footprint.** On-chain spends look like standard Schnorr signatures while signer policy is enforced off-chain by independent validators.
 - **EVM contracts run the credit engine.** Debt accounting, market logic, rates, and liquidation are handled where stateful finance is efficient, while BTC custody remains on Bitcoin.
 - **The relayer handles operations, not authority.** It automates monitoring, submissions, and cross-chain settlement, but cannot move BTC or mint unbacked USDC.
 

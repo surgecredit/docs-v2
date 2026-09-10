@@ -7,7 +7,7 @@ import ZoomImage from "../../components/ZoomImage";
 
 
 # 🖼️ Product Overview
-Surge is a Bitcoin-native credit market powered by taproot-based UTXOs, where every credit line is a dedicated UTXO with two signers: the Bitcoiner and a Decentralised Custody Network (DCN).
+Surge is a Bitcoin-native credit market powered by taproot-based UTXOs, where every credit line is a dedicated UTXO with two signers: the Bitcoiner and the Threshold Signer Network (TSN).
 
 ## How it Works
 Today, each Bitcoiner uses the Surge mobile app to access the Surge Credit Markets. In the app they send BTC to a unique dVault, a Taproot-based, programmable vault. 
@@ -15,15 +15,16 @@ This vault enforces three deterministic spending paths:
 
 1. **Voluntary Repayment:** If no credit is drawn, or once the borrower repays, they can withdraw BTC directly, without signer network intervention. 
 2. **Liquidation:** 
-  - If the credit line reaches **90% LTV**, the DCN signs a **full liquidation** transaction—only when validated by the chainlink oracle attestation. The entire credit line is closed in one event.
-  - If the credit line is not paid off or rolled over at the end of term, the DCN will sign a **partial liquidation** transaction. BTC is sold in a sized lot to cover debt + interest; any surplus is sent back into the borrower's now expired vault.
-3. **Transfer:** Bitcoiners may transfer loans to and from Surge's credit market. This requires signatures from the Bitcoiner, DCN, and a third party credit provider.
-4. **Time-Locked Recovery:** If the system becomes unresponsive or the DCN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
+  - If the credit line reaches **90% LTV**, the TSN signs a **full liquidation** transaction—only when validated by the chainlink oracle attestation. The entire credit line is closed in one event.
+  - If the credit line is not paid off or rolled over at the end of term, the TSN will sign a **partial liquidation** transaction. BTC is sold in a sized lot to cover debt + interest; any surplus is sent back into the borrower's now expired vault.
+3. **Time-Locked Recovery:** If the system becomes unresponsive or the TSN goes offline, the BTC becomes spendable by the borrower after a pre-set time lock.
+
+Transfers to and from third-party credit providers are not a fourth path. There is no Transfer leaf in the script tree: a transfer settles cooperatively through the Repayment flow, signed by the Bitcoiner, the TSN, and the other provider. See [Transfers](/tech/transfers).
 
 This ensures that funds are always:
-- Non-custodial – borrower shares control with the DCN 
+- Non-custodial – borrower shares control with the TSN 
 - Verifiably on-chain – visible and auditable at all times
-- Decentralized – DCN is distributed with multiple parties and economically aligned
+- Decentralized – TSN is distributed with multiple parties and economically aligned
 
 Once the BTC is locked, stablecoin liquidity is released from the Ethereum-based smart contract (USDC supported, USDT coming soon), sent directly to the borrower's self custodied wallet. 
 The smart contracts implement multiple markets where Bitcoiners can tap liquidity, and LPs earn yield, with infrastructure ensuring safety and execution. The different markets can offer both **variable** (floating) and **fixed-rate** markets.
@@ -39,7 +40,7 @@ The smart contracts implement multiple markets where Bitcoiners can tap liquidit
 
 Surge has three core interfaces, each designed for a key participant:
 - **Bitcoiners:** Access the credit market via Surge’s mobile app (iOS, Android; PWA coming soon) or via distribution partners who white label Surge's permissionless Credit Market. No paperwork, just verifiable BTC and stablecoin access in less than 30 minutes.
-- **Liquidity Providers:** Contribute stablecoins into markets, earn yield from variable and/or fixed-rate markets, and optionally run signer nodes in our DCN to protect the rules based system.
-- **Distributed Custody Network Members:** Access technical data, audit trails, oracle feeds, system status, and open-source repos via surge.build, our transparency hub.
+- **Liquidity Providers:** Contribute stablecoins into markets, earn yield from variable and/or fixed-rate markets, and optionally run signer nodes in our TSN to protect the rules based system.
+- **Threshold Signer Network Members:** Access technical data, audit trails, oracle feeds, system status, and open-source repos via surge.build, our transparency hub.
 
 Surge is built ground-up for trust-minimized credit and no one can touch their Bitcoin without following predefined, public rules.

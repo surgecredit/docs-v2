@@ -18,7 +18,7 @@ The applications you see are one expression of Surge. The infrastructure underne
 These are Surge's own apps - the front doors most users will walk through.
 
 - **Surge Borrow App (iOS, Android).** Where Bitcoiners open credit lines against their BTC. Sign in with email + OTP, deposit BTC into a programmable Taproot vault, draw stablecoins, repay flexibly. PWA support coming.
-- **Surge Earn Dashboard.** Where liquidity providers supply stablecoins to the credit market and earn yield from real Bitcoin-collateralized borrowing. LPs configure exposure across variable and fixed-rate markets, monitor pool health, and (optionally) join the Distributed Custody Network.
+- **Surge Earn Dashboard.** Where liquidity providers supply stablecoins to the credit market and earn yield from real Bitcoin-collateralized borrowing. LPs configure exposure across variable and fixed-rate markets, monitor pool health, and (optionally) join the Threshold Signer Network.
 
 These apps are designed, built, and operated by the team behind Surge. They are not the only way to access the protocol.
 
@@ -29,15 +29,15 @@ Underneath the apps sits the actual credit market - the part that makes Surge *B
 The infrastructure has four cooperating components, each owning a distinct layer of the system:
 
 - **Taproot Vaults.** BTC collateral lives in Pay-to-Taproot outputs on Bitcoin, with three pre-committed spend paths: cooperative repayment, authorized liquidation, and unilateral exit after a relative timelock. No bridge, no wrapped BTC, no platform custody.
-- **Distributed Custody Network (DCN).** A set of independent signer organizations running threshold Schnorr signing. No single signer holds a complete key; signatures are produced only when quorum participation and policy checks both pass.
+- **Threshold Signer Network (TSN).** A set of independent signer organizations running threshold Schnorr signing. No single signer holds a complete key; signatures are produced only when quorum participation and policy checks both pass.
 - **Smart Contracts (EVM).** The debt ledger, share-based liquidity pool, interest-rate model, and Dutch-auction liquidation. BTC custody stays on Bitcoin; stateful credit accounting runs where it is efficient.
-- **Relayer & Workers.** Off-chain coordinator that watches Bitcoin, drives the contracts, proposes spends to the DCN, and finalizes cross-chain transfers. Holds no custody, holds no signing keys.
+- **Relayer & Workers.** Off-chain coordinator that watches Bitcoin, drives the contracts, proposes spends to the TSN, and finalizes cross-chain transfers. Holds no custody, holds no signing keys.
 
 For a deeper walk through the architecture, see **[Tech Overview](/tech/overview)**.
 
 ## Others can build on it
 
-The infrastructure is permissionless. Any team can integrate the same dVaults, DCN, and liquidity layer that power Surge's own apps - and ship borrow or earn products under their own brand.
+The infrastructure is permissionless. Any team can integrate the same dVaults, TSN, and liquidity layer that power Surge's own apps - and ship borrow or earn products under their own brand.
 
 - **White-label borrow.** Wallets, exchanges, and neobanks can offer "borrow against your Bitcoin" to their users without operating custody or running a lending book. Surge handles collateral verification, disbursement, and repayments; the partner owns the user experience.
 - **White-label earn.** Savings apps and treasury products can offer yield on stablecoins, backed by real Bitcoin-collateralized credit, without operating the lending or custody infrastructure.
@@ -57,7 +57,7 @@ Surge separates the two explicitly.
 
 This separation is structural, not cosmetic.
 
-- **The protocol outlives any single operator.** If the app company stopped tomorrow, the dVaults, DCN, smart contracts, and Foundation-stewarded specs would continue to exist and continue to be usable by other builders.
+- **The protocol outlives any single operator.** If the app company stopped tomorrow, the dVaults, TSN, smart contracts, and Foundation-stewarded specs would continue to exist and continue to be usable by other builders.
 - **No commercial conflict at the protocol layer.** Decisions about specs, parameters, and signer membership are made by the Foundation under public, open-source governance - not by whichever company has the largest book.
 - **Builders compete on equal footing.** The same APIs, the same liquidity, the same custody guarantees are available to Surge's own app and to a third-party wallet on day one.
 
@@ -66,6 +66,6 @@ What the Foundation publishes - repos, specs, audits, signer-set composition, or
 ## How to read the rest of these docs
 
 - **Curious how the Bitcoin side works?** Start with [Taproot Vaults](/tech/vaults).
-- **Curious how signatures are produced without a private key?** Start with the [Distributed Custody Network](/tech/distributed-custody-network).
+- **Curious how signatures are produced without a private key?** Start with the [Threshold Signer Network](/tech/threshold-signer-network).
 - **Curious how rates, debt, and liquidations are accounted for?** Start with [Smart Contracts](/tech/contracts) and [Credit Markets](/tech/credit-markets).
 - **Want the whole architecture in one page?** Start with [Tech Overview](/tech/overview).

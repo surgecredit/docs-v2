@@ -5,9 +5,9 @@ description: Adding, removing, and rotating signer organizations without changin
 
 # 🔁 Reshare & Signer Onboarding
 
-Adding a new signer organization to the DCN, retiring an existing one, or changing the threshold are not operations a Lin24 refresh can do. Refresh produces new shares for the **same** access structure. **Reshare** produces new shares for a **different** access structure - a new party count, a new threshold, a new set of signer organizations - while keeping the same public key and therefore the same on-chain addresses, vault scripts, and active commitments.
+Adding a new signer organization to the TSN, retiring an existing one, or changing the threshold are not operations a Lin24 refresh can do. Refresh produces new shares for the **same** access structure. **Reshare** produces new shares for a **different** access structure - a new party count, a new threshold, a new set of signer organizations - while keeping the same public key and therefore the same on-chain addresses, vault scripts, and active commitments.
 
-A reshare is the only way to evolve the DCN's membership safely. It is a cryptographic primitive, not a configuration change.
+A reshare is the only way to evolve the TSN's membership safely. It is a cryptographic primitive, not a configuration change.
 
 ## Why Reshare Is Its Own Protocol
 
@@ -19,7 +19,7 @@ Three things make reshare hard:
 
 ## Four-Phase Reshare
 
-The reshare protocol, as orchestrated by the DCN, runs in four phases. The transitions between phases are designed so a failure at any point is recoverable.
+The reshare protocol, as orchestrated by the TSN, runs in four phases. The transitions between phases are designed so a failure at any point is recoverable.
 
 ### Phase 1 - Fragment Generation
 

@@ -14,7 +14,7 @@ The `Debt Ledger` is the canonical ledger for BTC-backed liabilities. Every acti
 Key properties:
 
 - **Tick-based position tracking.** Positions are grouped by interest-rate tick rather than carried as per-position compounding values. This makes interest accrual O(1) per interaction per position and avoids per-block writes across the active set.
-- **Collateral is attested, not custodied.** The manager records satoshi collateral amounts reported by the [Relayer](/tech/relayer) after BTC deposit confirmation. Moving BTC on Bitcoin requires a Taproot spend authorized by the DCN - the manager cannot move BTC directly.
+- **Collateral is attested, not custodied.** The manager records satoshi collateral amounts reported by the [Relayer](/tech/relayer) after BTC deposit confirmation. Moving BTC on Bitcoin requires a Taproot spend authorized by the TSN - the manager cannot move BTC directly.
 - **Health checks are callable by relayers or anyone.** `checkHealth(positionId)` evaluates `CR` against policy thresholds and opens an auction when liquidation conditions are met.
 - **EIP-712 + EIP-3009 repayment.** `repayWithERC3009` accepts a pre-signed USDC `transferWithAuthorization` so repayments are gasless from the borrower's perspective.
 

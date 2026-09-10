@@ -5,7 +5,7 @@ description: Surge's BTC/USD price feed - medianized inputs, per-signer validati
 
 # 🌐 Oracle System
 
-The **Oracle System** is Surge's BTC/USD price feed. Unlike external oracle plug-ins, Surge treats price discovery as a **first-class part of the protocol**: the price that drives a borrower's collateral ratio is the same price every signer in the [Distributed Custody Network](/tech/distributed-custody-network) sees and validates against before producing a signature.
+The **Oracle System** is Surge's BTC/USD price feed. Unlike external oracle plug-ins, Surge treats price discovery as a **first-class part of the protocol**: the price that drives a borrower's collateral ratio is the same price every signer in the [Threshold Signer Network](/tech/threshold-signer-network) sees and validates against before producing a signature.
 
 The Oracle System powered by:
 
@@ -28,7 +28,7 @@ The intent is that no single off-chain actor can move a position into liquidatio
 
 ## Per-Signer Oracle Validation
 
-Each DCN signer validates the price grounding of every authorisation before participating in signing session:
+Each TSN signer validates the price grounding of every authorisation before participating in signing session:
 
 - **Freshness.** The price is no older than the configured staleness window.
 - **Cross-signer consistency.** The price the signer sees locally agrees with the protocol's consensus price within a configured delta.

@@ -1,11 +1,11 @@
 ---
 title: Unilateral Exit
-description: CSV-timelocked Taproot path that guarantees BTC recovery if the DCN or Coordination Layer disappears
+description: CSV-timelocked Taproot path that guarantees BTC recovery if the TSN or Coordination Layer disappears
 ---
 
 # ⏳ Unilateral Exit
 
-The **Unilateral Exit** is the third and final path in every Vault. It guarantees that the borrower can always recover BTC on Bitcoin alone, without the DCN, the Coordination Layer, the oracle, or any Surge infrastructure.
+The **Unilateral Exit** is the third and final path in every Vault. It guarantees that the borrower can always recover BTC on Bitcoin alone, without the TSN, the Coordination Layer, the oracle, or any Surge infrastructure.
 
 This guarantee is enforced by Bitcoin's relative timelock primitive, not by a protocol promise.
 
@@ -13,10 +13,10 @@ This guarantee is enforced by Bitcoin's relative timelock primitive, not by a pr
 
 Two of the three Vault paths require coordinated authorization:
 
-- **Repayment** needs both the borrower and the DCN.
-- **Liquidation** needs the DCN (authorized by the Coordination Layer).
+- **Repayment** needs both the borrower and the TSN.
+- **Liquidation** needs the TSN (authorized by the Coordination Layer).
 
-If those external systems fail - the DCN goes offline, oracle feeds stop, the Coordination Layer halts - the borrower must still be able to reclaim BTC. That is exactly what the Exit path enforces: after a fixed relative delay, the borrower alone can spend the output.
+If those external systems fail - the TSN goes offline, oracle feeds stop, the Coordination Layer halts - the borrower must still be able to reclaim BTC. That is exactly what the Exit path enforces: after a fixed relative delay, the borrower alone can spend the output.
 
 ## Script
 
@@ -32,7 +32,7 @@ OP_DROP
 ## Illustrative Timeline
 
 - A borrower deposits BTC into a Vault and receives stablecoin.
-- Later, external systems become unavailable (for example, the DCN and Coordination Layer stop operating).
+- Later, external systems become unavailable (for example, the TSN and Coordination Layer stop operating).
 - Once the relative CSV delay has fully elapsed, the borrower creates a spend that reveals the Exit path and broadcasts it.
 - The borrower recovers BTC directly from Bitcoin script enforcement, without requiring any counter-party coordination.
 
@@ -49,6 +49,6 @@ The tool can also be self-hosted from the **[surge-vault-exit-tool](https://gith
 
 ## Properties
 
-- **No counter-party dependency after expiry.** The DCN, the oracle, and the Coordination Layer can all be permanently dead and the Exit leaf still spends.
+- **No counter-party dependency after expiry.** The TSN, the oracle, and the Coordination Layer can all be permanently dead and the Exit leaf still spends.
 - **Relative, not absolute.** Every deposit gets its own CSV clock from its funding tx confirmation.
 - **Script-enforced, not trust-enforced.** There is no admin key, no governance override, and no upgrade path that can weaken this leaf for an already-funded UTXO. To change the Exit behaviour for *future* vaults, the vault template itself would have to be re-deployed; existing UTXOs retain the scripts they committed to at creation.

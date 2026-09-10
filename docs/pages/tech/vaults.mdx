@@ -19,9 +19,9 @@ A **Vault** is a Pay-to-Taproot output ([BIP341](https://en.bitcoin.it/wiki/BIP_
 
 | Scenario | Who can spend | Leaf used |
 |---|---|---|
-| Cooperative closure | User **and** DCN co-sign | Repayment |
-| Collateral unhealthy or credit delinquent at term | DCN unilateral | Liquidation |
-| DCN / coordination layer disappears | User alone after ~1 year relative timelock | Exit |
+| Cooperative closure | User **and** TSN co-sign | Repayment |
+| Collateral unhealthy or credit delinquent at term | TSN unilateral | Liquidation |
+| TSN / coordination layer disappears | User alone after ~1 year relative timelock | Exit |
 
 Delinquency (credit line not paid at term) is handled by the **Liquidation** leaf, it is a different *trigger reason*, not a different script. Transfers to/from a third-party marketplace are coordinated cooperatively through the Repayment flow. See [Transfers](/tech/transfers).
 
@@ -34,13 +34,13 @@ Delinquency (credit line not paid at term) is handled by the **Liquidation** lea
 
 ## Script Anatomy
 
-### 1. Repayment (user + DCN)
+### 1. Repayment (user + TSN)
 
 The path commits `vaultId`, drops it, then requires both signatures (`userPubkey` and `loanPubkey`) with `OP_CHECKSIG` + `OP_CHECKSIGADD == 2`.
 
 Cooperative closure only. Neither side can close alone through this path.
 
-### 2. Liquidation (DCN only)
+### 2. Liquidation (TSN only)
 
 The path requires a valid `loanPubkey` signature.
 
@@ -50,7 +50,7 @@ This path is used when the Coordination Layer authorizes liquidation, such as a 
 
 The path enforces `OP_CHECKSEQUENCEVERIFY`, then requires `userPubkey` signature.
 
-After the delay elapses, the borrower can recover funds without DCN participation.
+After the delay elapses, the borrower can recover funds without TSN participation.
 
 ## Vault Lifecycle
 
@@ -59,7 +59,7 @@ After the delay elapses, the borrower can recover funds without DCN participatio
 3. **Monitoring.** Oracle price updates drive the position's live collateral ratio; worker processes track health and term.
 4. **Closure.** One of three leaves is executed:
    - **Repay** - proportional BTC released to the user's withdrawal address.
-   - **Liquidate** - At **90% LTV**, the full credit line is liquidated: collateral moves to the DCN-controlled sweep address, a Dutch auction runs on the EVM side against the market that issued the credit line, proceeds retire the full debt and penalty, and any BTC surplus after settlement is returned to the borrower. The position is closed. For **delinquency** (unpaid at term end), a partial liquidation applies instead: a sized lot is swept, proportional debt is retired, and any surplus BTC is re-locked into a Vault UTXO under the same scripts.
+   - **Liquidate** - At **90% LTV**, the full credit line is liquidated: collateral moves to the TSN-controlled sweep address, a Dutch auction runs on the EVM side against the market that issued the credit line, proceeds retire the full debt and penalty, and any BTC surplus after settlement is returned to the borrower. The position is closed. For **delinquency** (unpaid at term end), a partial liquidation applies instead: a sized lot is swept, proportional debt is retired, and any surplus BTC is re-locked into a Vault UTXO under the same scripts.
    - **Exit** - user alone spends after CSV expiry.
 
 ## Why This Is Safe
@@ -67,4 +67,4 @@ After the delay elapses, the borrower can recover funds without DCN participatio
 - **Bitcoin script is final authority.** Off-chain services can request actions, but BTC only moves when a valid committed Taproot leaf is satisfied on-chain.
 - **No hidden key-path backdoor.** The Vault uses a NUMS internal key derived from `SHA256("SURGE-NUMS")`, so key-path signing is not available.
 - **Repayment is bound to the correct position.** `vaultId` in the Repayment leaf prevents replaying a valid witness against a different Vault.
-- **Borrower recovery is guaranteed by script.** After CSV expiry, the Exit path can be spent by the borrower without depending on the DCN or platform availability.
+- **Borrower recovery is guaranteed by script.** After CSV expiry, the Exit path can be spent by the borrower without depending on the TSN or platform availability.

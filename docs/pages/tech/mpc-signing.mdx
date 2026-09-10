@@ -1,15 +1,15 @@
 ---
 title: Signing Policy
-description: How the DCN decides whether to sign - authentication, per-signer validation, the one-honest-node policy, and transport security
+description: How the TSN decides whether to sign - authentication, per-signer validation, the one-honest-node policy, and transport security
 ---
 
 # 🧾 Signing Policy
 
-The [Lin24 protocol](/tech/distributed-custody-network) guarantees that no signature is produced without a threshold of honest signers. It does **not** decide *what* gets signed - that is enforced by Surge's signer policy and quorum access-structure configuration. This page describes the policy each signer enforces locally, the one-honest-node policy enforced across the cluster, and the transport guarantees between signers.
+The [Lin24 protocol](/tech/threshold-signer-network) guarantees that no signature is produced without a threshold of honest signers. It does **not** decide *what* gets signed - that is enforced by Surge's signer policy and quorum access-structure configuration. This page describes the policy each signer enforces locally, the one-honest-node policy enforced across the cluster, and the transport guarantees between signers.
 
 ## Defence-in-Depth Layers
 
-A spend request has to pass nine independent checks before a Bitcoin transaction leaves the DCN:
+A spend request has to pass nine independent checks before a Bitcoin transaction leaves the TSN:
 
 | # | Layer | Role |
 |---|---|---|
@@ -33,8 +33,8 @@ Validator categories:
 - **Deposit & script validators.** Confirm the input UTXO matches a known Vault with the expected MAST tree; confirm the leaf being spent matches the authorization reason (Repayment vs Liquidation).
 - **Loan-state validators.** Read position state from contracts; confirm `debtUsd`, collateral ratio, and term match the authorization.
 - **Oracle validators.** Confirm the BTC/USD price used for the authorization is current, within deviation bounds, and consistent across signers.
-- **Output validators.** Confirm output addresses are in the expected set - user withdrawal address for Repayment, configured DCN sweep address for Liquidation. Reject any output going to a signer-controlled address.
-- **Timelock validators.** Confirm the Exit CSV on this vault has not yet expired. Once it has, the borrower's Exit path dominates and the DCN must refuse to spend.
+- **Output validators.** Confirm output addresses are in the expected set - user withdrawal address for Repayment, configured TSN sweep address for Liquidation. Reject any output going to a signer-controlled address.
+- **Timelock validators.** Confirm the Exit CSV on this vault has not yet expired. Once it has, the borrower's Exit path dominates and the TSN must refuse to spend.
 - **Session validators.** Confirm the session ID is well-formed and unused (anti-replay via a persistent `used_sessions` table).
 
 A request that fails any validator on any signer produces no signature on that signer. Because a Lin24 signing round needs at least `t` honest participants to produce an output, even a single well-placed validator failure stops the spend.

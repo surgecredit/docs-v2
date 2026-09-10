@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 jobs:
   audit:
@@ -29,26 +28,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
 
+      # Fails on any severity, unlike the per-PR audit which gates on high. The
+      # weekly run is where low and moderate findings surface before they age.
       - name: Run audit
-        id: audit
-        run: |
-          set +e
-          pnpm audit --prod --json > audit.json
-          status=$?
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-          pnpm audit --prod || true
-          exit 0
-
-      - name: Upload audit report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: audit-report
-          path: audit.json
-          retention-days: 30
-
-      - name: Fail if vulnerabilities found
-        if: steps.audit.outputs.status != '0'
-        run: |
-          echo "::error::pnpm audit reported vulnerabilities. See the uploaded audit-report artifact."
-          exit 1
+        run: pnpm audit:prod

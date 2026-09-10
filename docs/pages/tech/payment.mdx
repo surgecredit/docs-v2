@@ -5,13 +5,13 @@ description: Cooperative closure of a Vault via the vaultId-bound Repayment path
 
 # 💰 Repayment Path
 
-The **Repayment path** is the cooperative closure path of a Vault. It releases the borrower's BTC once the stablecoin debt is settled. There is no bridge, wrapped asset, or custodial hand-off - only a Bitcoin spend that becomes valid when both the borrower and the DCN sign against the path bound to this specific position.
+The **Repayment path** is the cooperative closure path of a Vault. It releases the borrower's BTC once the stablecoin debt is settled. There is no bridge, wrapped asset, or custodial hand-off - only a Bitcoin spend that becomes valid when both the borrower and the TSN sign against the path bound to this specific position.
 
 ## How It Works
 
 1. **Debt reduction.** The borrower repays stablecoins (e.g. USDC) to the protocol via `VaultManager.repay(...)` (or the gasless EIP-3009 variant `repayWithERC3009`). The on-chain ledger updates `debtUsd` for the position.
-2. **Release authorization.** Once the on-chain ledger reflects the repayment and the position is healthy, the [Relayer](/tech/relayer) requests a Repayment-leaf spend for a proportional BTC amount; the DCN's per-signer validators independently confirm the on-chain state before participating.
-3. **Co-signing.** The DCN runs a Lin24 threshold Schnorr signing session to produce the `loanPubkey` signature, and the borrower's wallet produces the `userPubkey` signature. The signatures are assembled into the Repayment witness.
+2. **Release authorization.** Once the on-chain ledger reflects the repayment and the position is healthy, the [Relayer](/tech/relayer) requests a Repayment-leaf spend for a proportional BTC amount; the TSN's per-signer validators independently confirm the on-chain state before participating.
+3. **Co-signing.** The TSN runs a Lin24 threshold Schnorr signing session to produce the `loanPubkey` signature, and the borrower's wallet produces the `userPubkey` signature. The signatures are assembled into the Repayment witness.
 4. **Full closure.** When `debtUsd == 0`, the whole UTXO can be spent. BTC is returned to the borrower's withdrawal address in a single transaction.
 
 ## Script
@@ -27,10 +27,10 @@ OP_NUMEQUAL
 
 The leading `<vaultId> OP_DROP` is a commitment, not a runtime check - it forces the leaf (and therefore the taptree, the Taproot address, and the script tree root) to be unique to this position, so a valid witness for one Vault cannot be replayed against another.
 
-The final `OP_2 OP_NUMEQUAL` requires exactly two valid signatures - both the borrower *and* the DCN aggregate key must sign. Neither side can close the Vault without the other via this path.
+The final `OP_2 OP_NUMEQUAL` requires exactly two valid signatures - both the borrower *and* the TSN aggregate key must sign. Neither side can close the Vault without the other via this path.
 
 ## Properties
 
-- **User custody preserved.** The DCN cannot use Repayment to move BTC without the borrower's signature.
-- **DCN attestation preserved.** The borrower cannot close the vault without the DCN's signature, which is only produced after the Coordination Layer confirms the repayment.
-- **BIP340-compatible signature component.** The DCN authorization signature itself is standard Schnorr.
+- **User custody preserved.** The TSN cannot use Repayment to move BTC without the borrower's signature.
+- **TSN attestation preserved.** The borrower cannot close the vault without the TSN's signature, which is only produced after the Coordination Layer confirms the repayment.
+- **BIP340-compatible signature component.** The TSN authorization signature itself is standard Schnorr.
