@@ -53,8 +53,8 @@ importers:
         version: 1.4.1(@types/node@25.3.0)(@types/react@19.3.0)(jiti@2.6.1)(lightningcss@1.31.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(rollup@4.59.0)(typescript@6.0.3)
     devDependencies:
       tailwindcss:
-        specifier: ^4.0.7
-        version: 4.2.1
+        specifier: ^4.3.3
+        version: 4.3.3
 
 packages:
 
@@ -3124,8 +3124,8 @@ packages:
   tailwindcss@4.1.15:
     resolution: {integrity: sha512-k2WLnWkYFkdpRv+Oby3EBXIyQC8/s1HOFMBUViwtAh6Z5uAozeUSMQlIsn/c6Q2iJzqG6aJT3wdPaRNj70iYxQ==}
 
-  tailwindcss@4.2.1:
-    resolution: {integrity: sha512-/tBrSQ36vCleJkAOsy9kbNTgaxvGbyOamC30PRePTQe/o1MFwEKHQk4Cn7BNGaPtjp+PuUrByJehM1hgxfq4sw==}
+  tailwindcss@4.3.3:
+    resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
 
   tapable@2.3.0:
     resolution: {integrity: sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg==}
@@ -6953,7 +6953,7 @@ snapshots:
 
   tailwindcss@4.1.15: {}
 
-  tailwindcss@4.2.1: {}
+  tailwindcss@4.3.3: {}
 
   tapable@2.3.0: {}
 
