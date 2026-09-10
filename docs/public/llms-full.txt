@@ -2265,7 +2265,7 @@ description: How Surge makes it easier for Bitcoiners
 ## Your Bitcoin, Your Terms.
 Access a Bitcoin-native Credit Market, without giving up full-custody. It’s built for everyday Bitcoiners who value sovereignty, transparency, and verifiable custody, not centralized black boxes.
 
-Your BTC stays in a unique, programmable Taproot vault, secured by a Decentralized Custody Network using threshold Schnorr signatures. 
+Your BTC stays in a unique, programmable Taproot vault, secured by the Threshold Signer Network using threshold Schnorr signatures. 
 It’s on-chain, auditable, and non-custodial, always.
 
 
@@ -2336,7 +2336,7 @@ description: How distribution partners can plug into Surge's permissionless syst
 
 # 🤝 For Distribution Partners
 
-Surge’s credit market is **permissionless**: any distribution partner can integrate and offer borrow or earn products under their own brand. You get the same on-chain infrastructure - dVaults, the Decentralised Custody Network (TSN), and the liquidity layer - without building custody or lending from scratch.
+Surge’s credit market is **permissionless**: any distribution partner can integrate and offer borrow or earn products under their own brand. You get the same on-chain infrastructure - dVaults, the Threshold Signer Network (TSN), and the liquidity layer - without building custody or lending from scratch.
 
 ## 🔌 Permissionless by design
 
@@ -2428,7 +2428,7 @@ description: How surge benefits the Liquidity providers and Market makers holdin
 
 # 💰 For Liquidity Providers
 
-Surge introduces a novel multi-market architecture, managed by a Decentralised Custody Network (TSN). 
+Surge introduces a novel multi-market architecture, managed by the Threshold Signer Network (TSN). 
 These markets act as the liquidity layer between BTC and stablecoin capital, enabling Bitcoiners to access different credit markets with different terms while LPs earn risk based yield from actual credit usage.
 
 Unlike traditional DeFi platforms that rely on speculative trading activity, Surge enables LPs to earn predictable, usage-driven yield, with added incentives for participating in network operations like liquidations.
@@ -2514,7 +2514,7 @@ import ZoomImage from "../../components/ZoomImage";
 
 
 # 🖼️ Product Overview
-Surge is a Bitcoin-native credit market powered by taproot-based UTXOs, where every credit line is a dedicated UTXO with two signers: the Bitcoiner and a Decentralised Custody Network (TSN).
+Surge is a Bitcoin-native credit market powered by taproot-based UTXOs, where every credit line is a dedicated UTXO with two signers: the Bitcoiner and the Threshold Signer Network (TSN).
 
 ## How it Works
 Today, each Bitcoiner uses the Surge mobile app to access the Surge Credit Markets. In the app they send BTC to a unique dVault, a Taproot-based, programmable vault. 
