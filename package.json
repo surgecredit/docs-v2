@@ -22,7 +22,7 @@
     "react-dom": "^19.3.0",
     "react-medium-image-zoom": "^5.4.9",
     "typescript": "^6.0.3",
-    "vocs": "1.4.1"
+    "vocs": "2.10.0"
   },
   "devDependencies": {
     "tailwindcss": "^4.3.3"
