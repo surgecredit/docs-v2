@@ -96,6 +96,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://docs.surge.credit/sdks</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://docs.surge.credit/tech/contracts</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

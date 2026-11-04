@@ -141,7 +141,13 @@ export default function Layout({ children }: LayoutProps) {
       });
     };
 
+    // Vocs renders no <main>, so screen readers cannot jump to the content.
+    const markMainLandmark = () => {
+      document.querySelector("article")?.setAttribute("role", "main");
+    };
+
     const scanMenus = () => {
+      markMainLandmark();
       const menus = Array.from(
         document.querySelectorAll<HTMLElement>('[role="menu"]')
       );

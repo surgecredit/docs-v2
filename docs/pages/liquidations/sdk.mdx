@@ -9,7 +9,7 @@ description: Integrate Surge Credit liquidation auctions with the @surgecredit/a
 Bid on liquidated BTC collateral with a few lines of TypeScript.
 </div>
 
-`@surgecredit/auction-sdk` surfaces the Surge positions up for auction on Base, and the calls
+[`@surgecredit/auction-sdk`](https://www.npmjs.com/package/@surgecredit/auction-sdk) surfaces the Surge positions up for auction on Base, and the calls
 to buy their collateral. It is non-custodial and signer-agnostic. You bring viem clients, the
 SDK builds the calls, the user signs.
 
@@ -33,6 +33,8 @@ Every position is a BTC-collateralized, USDC-denominated credit line identified 
    your BTC address as the collateral recipient.
 
 ## Install
+
+On npm: [`@surgecredit/auction-sdk`](https://www.npmjs.com/package/@surgecredit/auction-sdk)
 
 ```bash
 npm install @surgecredit/auction-sdk viem
@@ -223,7 +225,3 @@ no custody, so the wallet you pass in stays yours throughout.
 
 Working in another language, or want zero dependencies? The same flow is available as direct
 contract calls in [Smart Contracts](/liquidations/contracts).
-
-<div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
-v0.1.1
-</div>

@@ -1,15 +1,15 @@
 ---
-title: TypeScript SDK
+title: Earn SDK
 description: Integrate Surge earn deposits, withdrawals, APY and positions with the @surgecredit/earn-sdk TypeScript client. Base, USDC, non-custodial.
 ---
 
-# TypeScript SDK
+# Earn SDK
 
 <div style={{ opacity: 0.65, fontSize: "1.15em", marginBottom: "1.25rem" }}>
 Add a Surge earn opportunity to your app with a few lines of TypeScript.
 </div>
 
-`@surgecredit/earn-sdk` wraps the earn side of Surge: your users deposit USDC into the shared pool on Base and earn the lending yield borrowers pay. It is non-custodial. You bring viem clients, the SDK builds the calls, the user signs in their own wallet. The SDK never holds keys.
+[`@surgecredit/earn-sdk`](https://www.npmjs.com/package/@surgecredit/earn-sdk) wraps the earn side of Surge: your users deposit USDC into the shared pool on Base and earn the lending yield borrowers pay. It is non-custodial. You bring viem clients, the SDK builds the calls, the user signs in their own wallet. The SDK never holds keys.
 
 It is a thin, typed layer over the same contract surface documented in [Smart Contracts](/earn/contracts). Use the SDK if you work in TypeScript and want position, APY and liquidity reads plus safe deposit and withdraw helpers out of the box. Use the raw contract calls if you are in another language or want zero dependencies.
 
@@ -20,6 +20,8 @@ Scope:
 - Networks: Base (mainnet) and Base Sepolia (`signet`).
 
 ## Install
+
+On npm: [`@surgecredit/earn-sdk`](https://www.npmjs.com/package/@surgecredit/earn-sdk)
 
 ```bash
 npm install @surgecredit/earn-sdk viem
@@ -163,7 +165,3 @@ To have the liquidity your app brings attributed to you, append your partner tag
 | `signet` | Base Sepolia | `84532` | `0xed9613914c004Db819C8f0994a7388770E932Ef0` |
 
 For advanced setups you can pass a full `config` object instead of `network`. See [Smart Contracts](/earn/contracts) for the raw addresses, ABIs, and the equivalent Python flow.
-
-<div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
-v0.2.0
-</div>

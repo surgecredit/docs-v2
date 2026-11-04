@@ -46,7 +46,7 @@ export default function SurgeIntro() {
             <p className="text-lg text-[#2D3036] dark:text-white group-hover:text-[#f4431b]">
               {_item.title}
             </p>
-            <img src="/assets/arrow_right.svg" alt="MPC TSS bridge" />
+            <img src="/assets/arrow_right.svg" alt="" />
           </a>
         ))}
       </div>

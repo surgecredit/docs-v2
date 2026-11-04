@@ -3,416 +3,42 @@
 This file provides a complete model-friendly context for Surge.
 
 ========================================
-File: /earn/contracts (Smart Contracts)
+File: /sdks (SDKs)
 ========================================
 
 ---
-title: Smart Contracts
-description: Integrate Surge earn deposits and withdrawals by calling the LiquidityPool contract directly. Variable market, Base.
+title: SDKs
+description: The Surge TypeScript SDKs. Borrow against BTC, earn yield on USDC, or bid on liquidation auctions, without holding user keys.
 ---
 
-# Smart Contracts
+# SDKs
 
-<div style={{ opacity: 0.65, fontSize: "1.15em", marginBottom: "1.25rem" }}>
-Integrate the Surge earn market with direct contract calls on Base.
-</div>
+Three TypeScript packages, one for each side of the market. All three are on npm and hold no keys: your users' wallets sign.
 
-This is the first integration path. A TypeScript SDK and other methods will follow, but the direct contract calls below are stable and enough to ship a full deposit and withdraw flow today.
-
-It covers the variable market only, and is fully non-custodial: you build the transactions, the user signs them in their own wallet.
-
-You can see this market live, with its current Supply APY and TVL, at [earn.surge.credit](https://earn.surge.credit/#/market/0).
-
-Scope:
-
-- One market: the variable market, `marketId = 0`.
-- One asset: USDC (6 decimals).
-- Two writes: `deposit` and `withdraw`. The rest are reads.
-- Networks: Base Sepolia (testnet) and Base (mainnet).
-
-## Networks and addresses
-
-Key your config by `chainId` so switching networks switches addresses with no code branch. The pool address and USDC address are all you hardcode. The market provider is read on-chain from `markets(0)`, so you never hardcode it.
-
-| | Base Sepolia (testnet) | Base (mainnet) |
+| I want to | Docs | npm |
 | --- | --- | --- |
-| <span style={{ fontWeight: 600 }}>chainId</span> | `84532` | `8453` |
-| <span style={{ fontWeight: 600 }}>LiquidityPool</span> | `0xed9613914c004Db819C8f0994a7388770E932Ef0` | `0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda` |
-| <span style={{ fontWeight: 600 }}>USDC</span> | `0x036CbD53842c5426634e7929541eC2318f3dCF7e` | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` |
+| Offer a credit line against BTC | [Borrow SDK](/borrow/sdk) | [`@surgecredit/borrow-sdk`](https://www.npmjs.com/package/@surgecredit/borrow-sdk) |
+| Offer yield on USDC | [Earn SDK](/earn/sdk) | [`@surgecredit/earn-sdk`](https://www.npmjs.com/package/@surgecredit/earn-sdk) |
+| Bid on liquidated BTC collateral | [Auction SDK](/liquidations/sdk) | [`@surgecredit/auction-sdk`](https://www.npmjs.com/package/@surgecredit/auction-sdk) |
 
-Verify the contracts on the explorer before integrating:
+Install with `viem`, for example:
 
-- Testnet scan: [sepolia.basescan.org](https://sepolia.basescan.org/address/0xed9613914c004Db819C8f0994a7388770E932Ef0)
-- Mainnet scan: [basescan.org](https://basescan.org/address/0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda)
-
-Public RPC endpoints are `https://sepolia.base.org` and `https://mainnet.base.org`. For testnet USDC, use the Circle faucet at [faucet.circle.com](https://faucet.circle.com) (select Base Sepolia).
-
-:::code-group
-
-```ts [TypeScript]
-export const SURGE_EARN = {
-  84532: {
-    name: "base-sepolia",
-    pool: "0xed9613914c004Db819C8f0994a7388770E932Ef0",
-    usdc: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-  },
-  8453: {
-    name: "base",
-    pool: "0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda",
-    usdc: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-  },
-} as const;
-
-export const VARIABLE_MARKET_ID = 0;
-export const USDC_DECIMALS = 6;
+```bash
+npm install @surgecredit/borrow-sdk viem
 ```
 
-```python [Python]
-SURGE_EARN = {
-    84532: {
-        "name": "base-sepolia",
-        "pool": "0xed9613914c004Db819C8f0994a7388770E932Ef0",
-        "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-    },
-    8453: {
-        "name": "base",
-        "pool": "0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda",
-        "usdc": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-    },
-}
+## Not using TypeScript
 
-VARIABLE_MARKET_ID = 0
-USDC_DECIMALS = 6
-```
+Earn and auctions can be integrated with direct contract calls on Base: see [Earn Contracts](/earn/contracts) and [Auction Contracts](/liquidations/contracts).
 
-:::
+## Testing
 
-## Minimal ABI
+Each SDK takes a `network`: `"mainnet"` (Bitcoin and Base) or `"signet"` (Surge's custom signet and Base Sepolia). See [Testing on signet](/borrow/sdk#testing-on-signet) before you start.
 
-These fragments are the complete set an earn integration calls. The subset is stable across both networks, so copy it as-is. The examples load the Pool ABI below as `poolAbi` (TypeScript) or `POOL_ABI` (Python).
+## Using these docs with an AI tool
 
-<details>
-<summary style={{ cursor: "pointer", fontWeight: 600 }}>Pool ABI (the earn function subset)</summary>
-
-```json
-[
-  { "type": "function", "name": "deposit", "stateMutability": "nonpayable",
-    "inputs": [{ "name": "amount", "type": "uint256" }], "outputs": [] },
-  { "type": "function", "name": "withdraw", "stateMutability": "nonpayable",
-    "inputs": [{ "name": "amount", "type": "uint256" }], "outputs": [] },
-  { "type": "function", "name": "getUserSupplyAmount", "stateMutability": "view",
-    "inputs": [{ "name": "user", "type": "address" }, { "name": "marketId", "type": "uint256" }],
-    "outputs": [{ "type": "uint256" }] },
-  { "type": "function", "name": "userPositions", "stateMutability": "view",
-    "inputs": [{ "name": "user", "type": "address" }, { "name": "marketId", "type": "uint256" }],
-    "outputs": [{ "name": "supplyShares", "type": "uint256" }, { "name": "borrowShares", "type": "uint256" }] },
-  { "type": "function", "name": "getMarketBorrowRate", "stateMutability": "view",
-    "inputs": [{ "name": "marketId", "type": "uint256" }], "outputs": [{ "type": "uint256" }] },
-  { "type": "function", "name": "getUtilization", "stateMutability": "view",
-    "inputs": [{ "name": "marketId", "type": "uint256" }], "outputs": [{ "type": "uint256" }] },
-  { "type": "function", "name": "getAvailableLiquidity", "stateMutability": "view",
-    "inputs": [{ "name": "marketId", "type": "uint256" }], "outputs": [{ "type": "uint256" }] },
-  { "type": "function", "name": "markets", "stateMutability": "view",
-    "inputs": [{ "name": "marketId", "type": "uint256" }],
-    "outputs": [
-      { "name": "provider", "type": "address" },
-      { "name": "token", "type": "address" },
-      { "name": "active", "type": "bool" },
-      { "name": "totalSupplyShares", "type": "uint256" },
-      { "name": "totalSupplyAssets", "type": "uint256" },
-      { "name": "totalPhysicalSupply", "type": "uint256" },
-      { "name": "totalBorrowShares", "type": "uint256" },
-      { "name": "totalBorrowAssets", "type": "uint256" },
-      { "name": "totalPhysicalBorrow", "type": "uint256" },
-      { "name": "supplyExchangeRate", "type": "uint256" },
-      { "name": "borrowExchangeRate", "type": "uint256" },
-      { "name": "protocolEarnings", "type": "uint256" },
-      { "name": "protocolEarningsAvailable", "type": "uint256" },
-      { "name": "originationFeeBps", "type": "uint256" },
-      { "name": "reserveRateBps", "type": "uint256" },
-      { "name": "maxLtvBps", "type": "uint256" },
-      { "name": "liquidationThresholdBps", "type": "uint256" },
-      { "name": "lastAccrueTime", "type": "uint256" },
-      { "name": "protocolSupplyShares", "type": "uint256" }
-    ] },
-  { "type": "event", "name": "Deposit", "inputs": [
-      { "name": "user", "type": "address", "indexed": true },
-      { "name": "marketId", "type": "uint256", "indexed": true },
-      { "name": "amount", "type": "uint256", "indexed": false },
-      { "name": "shares", "type": "uint256", "indexed": false } ] },
-  { "type": "event", "name": "Withdraw", "inputs": [
-      { "name": "user", "type": "address", "indexed": true },
-      { "name": "marketId", "type": "uint256", "indexed": true },
-      { "name": "amount", "type": "uint256", "indexed": false },
-      { "name": "shares", "type": "uint256", "indexed": false } ] }
-]
-```
-
-</details>
-
-`deposit` and `withdraw` take an `amount` only. The market is fixed to `0` inside the contract, so there is no market argument.
-
-For USDC, use any standard ERC-20 ABI (`approve`, `allowance`, `balanceOf`); it is built into viem as `erc20Abi`. The minimal subset the examples call:
-
-<details>
-<summary style={{ cursor: "pointer", fontWeight: 600 }}>USDC ERC-20 ABI (approve, allowance, balanceOf)</summary>
-
-```json
-[
-  { "type": "function", "name": "approve", "stateMutability": "nonpayable",
-    "inputs": [{ "name": "spender", "type": "address" }, { "name": "amount", "type": "uint256" }],
-    "outputs": [{ "type": "bool" }] },
-  { "type": "function", "name": "allowance", "stateMutability": "view",
-    "inputs": [{ "name": "owner", "type": "address" }, { "name": "spender", "type": "address" }],
-    "outputs": [{ "type": "uint256" }] },
-  { "type": "function", "name": "balanceOf", "stateMutability": "view",
-    "inputs": [{ "name": "account", "type": "address" }],
-    "outputs": [{ "type": "uint256" }] }
-]
-```
-
-</details>
-
-The market provider is a **separate contract** from the pool. Read its address from `markets(0).provider`, never hardcode it. The examples use it only to read `getSupplyRate`; load this fragment as `providerAbi` (TypeScript) or `PROVIDER_ABI` (Python):
-
-<details>
-<summary style={{ cursor: "pointer", fontWeight: 600 }}>Market provider ABI (getSupplyRate)</summary>
-
-```json
-[
-  { "type": "function", "name": "getSupplyRate", "stateMutability": "view",
-    "inputs": [{ "name": "borrowed", "type": "uint256" }, { "name": "liquidity", "type": "uint256" }],
-    "outputs": [{ "type": "uint256" }] }
-]
-```
-
-</details>
-
-## Deposit
-
-Approve USDC to the pool, then deposit. Amounts are in base units, so 100 USDC is `100_000000`.
-
-- Spender for the approval is the pool itself. There is no router.
-- USDC is a standard ERC-20, no value is sent (`value = 0`).
-- The deposit credits the calling address. Funds come from `msg.sender`.
-- Approve the exact amount you are about to deposit. See [Security notes](#security-and-operational-notes).
-- Read the current allowance first and skip the approve if it already covers the amount, so you do not send a redundant transaction:
-
-```python
-if usdc.functions.allowance(user, cfg["pool"]).call() >= amount:
-    pass  # already approved, go straight to deposit
-```
-
-:::code-group
-
-```ts [TypeScript]
-import { parseUnits } from "viem";
-
-const cfg = SURGE_EARN[chainId];
-const amount = parseUnits("100", 6); // 100 USDC
-
-// 1) approve exact amount, spender = pool
-await wallet.writeContract({
-  address: cfg.usdc,
-  abi: erc20Abi,
-  functionName: "approve",
-  args: [cfg.pool, amount],
-});
-
-// 2) deposit
-await wallet.writeContract({
-  address: cfg.pool,
-  abi: poolAbi,
-  functionName: "deposit",
-  args: [amount],
-});
-```
-
-```python [Python]
-from web3 import Web3
-
-w3 = Web3(Web3.HTTPProvider(RPC_URL))
-cfg = SURGE_EARN[chain_id]
-pool = w3.eth.contract(address=Web3.to_checksum_address(cfg["pool"]), abi=POOL_ABI)
-usdc = w3.eth.contract(address=Web3.to_checksum_address(cfg["usdc"]), abi=ERC20_ABI)
-
-amount = 100 * 10**6  # 100 USDC
-
-# 1) approve exact amount, spender = pool
-approve_tx = usdc.functions.approve(cfg["pool"], amount).build_transaction({
-    "from": user,
-    "nonce": w3.eth.get_transaction_count(user),
-})
-
-# 2) deposit
-deposit_tx = pool.functions.deposit(amount).build_transaction({
-    "from": user,
-    "nonce": w3.eth.get_transaction_count(user) + 1,
-})
-# sign and send each tx with the user's wallet, approve first
-```
-
-:::
-
-The deposit emits `Deposit(user, 0, amount, shares)`.
-
-## Withdraw
-
-`withdraw(amount)` takes the amount in **USDC**, not in shares. This matters: read the user position in USDC and pass a USDC amount back.
-
-Withdrawals are bounded by available liquidity, which can be less than the user balance when utilization is high. Always clamp the request to `getAvailableLiquidity(0)`. See [Available to withdraw](#available-to-withdraw).
-
-:::code-group
-
-```ts [TypeScript]
-const amount = parseUnits("50", 6); // withdraw 50 USDC
-await wallet.writeContract({
-  address: cfg.pool,
-  abi: poolAbi,
-  functionName: "withdraw",
-  args: [amount],
-});
-```
-
-```python [Python]
-amount = 50 * 10**6  # withdraw 50 USDC
-withdraw_tx = pool.functions.withdraw(amount).build_transaction({
-    "from": user,
-    "nonce": w3.eth.get_transaction_count(user),
-})
-# sign and send with the user's wallet
-```
-
-:::
-
-Withdraw needs no approval (it burns the user's internal shares). It emits `Withdraw(user, 0, amount, shares)`.
-
-## Read: user position
-
-`getUserSupplyAmount(user, 0)` returns the user's current claimable value in USDC base units (6 decimals). This already includes accrued interest, so it is principal plus yield combined.
-
-:::code-group
-
-```ts [TypeScript]
-const value6 = await client.readContract({
-  address: cfg.pool, abi: poolAbi,
-  functionName: "getUserSupplyAmount", args: [user, 0n],
-}); // USDC, 6 decimals
-```
-
-```python [Python]
-value6 = pool.functions.getUserSupplyAmount(user, 0).call()  # USDC, 6 decimals
-value_usdc = value6 / 1e6
-
-supply_shares = pool.functions.userPositions(user, 0).call()[0]  # raw shares
-```
-
-:::
-
-The contract does not store a separate principal vs earned split. If your UI shows earned yield, track the user's net deposits yourself (sum of `Deposit.amount` minus `Withdraw.amount` from events) and compute `earned = max(0, currentValue - netDeposited)`. Clamp at zero, since rounding can make a fresh position read slightly below the deposited amount.
-
-## Available to withdraw
-
-`getAvailableLiquidity(0)` returns the idle USDC available to withdraw right now, which is `totalPhysicalSupply - totalPhysicalBorrow`. A user's withdrawable amount is the smaller of their balance and this number.
-
-For a full exit, read the balance and available liquidity right before you build the transaction and pass the smaller of the two. A freshly read value closes the position cleanly. The only catch is the rare case where a liquidation lowers the rate between your read and your send: the withdraw reverts with `InvalidAmount`, so read again and resubmit.
-
-```python
-balance6 = pool.functions.getUserSupplyAmount(user, 0).call()
-avail6   = pool.functions.getAvailableLiquidity(0).call()
-amount   = min(balance6, avail6)   # withdrawable now; for a full exit this is the whole position
-if amount > 0:
-    tx = pool.functions.withdraw(amount).build_transaction({"from": user, "nonce": ...})
-    # reverts with InvalidAmount only if the rate dropped (a liquidation) since the read; re-read and retry
-```
-
-## Read: Supply APY
-
-Read the current Supply APY from the market provider's `getSupplyRate`, which returns basis points (divide by 100 for a percentage). This is the net lender rate, already after the protocol's reserve cut. Read the provider address from `markets(0).provider` rather than hardcoding it, since the protocol can change it.
-
-:::code-group
-
-```ts [TypeScript]
-const market = await client.readContract({
-  address: cfg.pool, abi: poolAbi, functionName: "markets", args: [0n],
-});
-const supplyApyBps = await client.readContract({
-  address: market[0], abi: providerAbi,                        // market[0] = provider
-  functionName: "getSupplyRate", args: [market[7], market[4]], // borrowed, liquidity
-});
-const supplyApyPct = Number(supplyApyBps) / 100;
-```
-
-```python [Python]
-m = pool.functions.markets(0).call()
-provider_addr       = m[0]   # markets(0).provider
-total_supply_assets = m[4]
-total_borrow_assets = m[7]
-
-provider = w3.eth.contract(address=provider_addr, abi=PROVIDER_ABI)
-supply_apy_bps = provider.functions.getSupplyRate(total_borrow_assets, total_supply_assets).call()
-supply_apy_pct = supply_apy_bps / 100
-```
-
-:::
-
-Borrow APR and utilization are direct reads on the pool, also in basis points:
-
-```python
-borrow_apr_pct  = pool.functions.getMarketBorrowRate(0).call() / 100
-utilization_pct = pool.functions.getUtilization(0).call() / 100
-```
-
-TVL is `markets(0).totalSupplyAssets` and total borrowed is `markets(0).totalBorrowAssets`, both USDC with 6 decimals. There is no minimum deposit or lockup on the variable market, so deposits and withdrawals are available at any time, subject to liquidity.
-
-## Field mapping
-
-If you render an earn opportunity and a user position, here is where each value comes from.
-
-| Field | Source |
-| --- | --- |
-| Supply APY | provider `getSupplyRate(borrowed, liquidity)`, basis points / 100 |
-| Borrow APR | `getMarketBorrowRate(0) / 100` |
-| Utilization | `getUtilization(0) / 100` |
-| TVL | `markets(0).totalSupplyAssets`, 6 decimals |
-| Token | USDC, address from config, 6 decimals |
-| Minimum deposit | none (0) |
-| Lock / cooldown | none |
-| Position value (principal + earned) | `getUserSupplyAmount(user, 0)`, 6 decimals |
-| Earned only | `max(0, value - netDeposited)` (track deposits/withdrawals from events) |
-| Withdrawable now | `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))` |
-| Wallet USDC balance | standard ERC-20 `balanceOf` on the USDC address |
-
-## Attribution
-
-If you want the liquidity your app brings to be attributed to you, append a short tag to the deposit transaction. We read it when indexing and attribute those deposits to your account. Two ways to set it up:
-
-- We assign you a partner id that you append to the deposit calldata.
-- Or, if you already append an ERC-8021 builder code on Base, share it and we map that instead.
-
-## Errors
-
-The pool reverts with typed custom errors. Decode these to give users a clear reason instead of a generic failure.
-
-| Error | When |
-| --- | --- |
-| `InvalidAmount()` | Deposit or withdraw amount is `0`, or a withdraw is larger than the user's claimable balance |
-| `InsufficientLiquidity()` | Withdraw is larger than `getAvailableLiquidity(0)` |
-| `MarketNotActive()` | Deposit while the market is deactivated. Withdraw still works |
-| `EnforcedPause()` | Deposit while the pool is paused. Withdraw still works |
-| `SafeERC20FailedOperation(address)` | The USDC `approve` or `transferFrom` failed, usually missing allowance or balance |
-
-## Security and operational notes
-
-These are the things to handle correctly before this carries real volume.
-
-- **Approvals.** Approve the exact deposit amount with the pool as spender. Avoid unlimited approvals so there is no standing allowance left to draw on later.
-- **Withdrawals are liquidity bound.** A withdraw is capped at `min(getUserSupplyAmount(user, 0), getAvailableLiquidity(0))`; when utilization is high this sits below the user's balance, so clamp to it and surface the withdrawable amount separately. Exceeding it reverts with `InsufficientLiquidity`. Read both values right before sending (a full exit is just withdrawing up to this cap), and if a liquidation lowers the rate in between, the withdraw reverts with `InvalidAmount`, so re-read and resubmit.
-- **A position can go down, not only up.** It usually grows as interest accrues, but if a borrower defaults and their collateral does not cover their credit, every lender's value takes a small hit, so `getUserSupplyAmount` can read lower than before. That is why the earned figure is clamped at zero.
-
-<div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
-v0.0.1
-</div>
+- [llms.txt](https://docs.surge.credit/llms.txt): an index of every page.
+- [llms-full.txt](https://docs.surge.credit/llms-full.txt): the full docs as plain text.
 
 
 ========================================
@@ -430,7 +56,7 @@ description: Integrate a Bitcoin-backed USDC credit line with the Surge Borrow S
 Offer a Bitcoin-backed credit line in your app with the headless Surge Borrow SDK.
 </div>
 
-`@surgecredit/borrow-sdk` is public on npm, so installing it needs no access token or registry config. The shapes below match the shipped v0.1.
+[`@surgecredit/borrow-sdk`](https://www.npmjs.com/package/@surgecredit/borrow-sdk) is public on npm, so installing it needs no access token or registry config. The shapes below match the shipped v0.1.
 
 The SDK is **headless and signer-agnostic**: it never holds keys, renders no UI, and runs in the browser, Node, and React Native. You bring a Bitcoin taproot signer, an EVM signer, and a storage adapter; the SDK builds each intent, calls your signer, and talks to the Surge relayer.
 
@@ -446,6 +72,8 @@ Scope: BTC collateral in a per-user taproot vault, USDC on Base (6 decimals), va
 Every action is a single `await` - inject the two signers once, and the SDK handles build → sign → submit inside each call. Almost every action takes a **`positionId`** (see [Position ID](#position-id)).
 
 ## Install and configure
+
+On npm: [`@surgecredit/borrow-sdk`](https://www.npmjs.com/package/@surgecredit/borrow-sdk)
 
 ```ts
 // npm install @surgecredit/borrow-sdk viem
@@ -776,15 +404,11 @@ Gate on `isActive`, not on a term timestamp. `isActive` is the usability signal 
 
 ## Testing on signet
 
-Integrate against signet first. Signet BTC is free from public faucets, and testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). Run a full lifecycle on signet - deposit through withdraw - before you switch `network` to `"mainnet"`. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.
-
-<div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
-v0.1
-</div>
+Integrate against signet first. Surge runs on its own custom signet, so public signet faucets and public signet explorers will not work: check transactions at [esplora.signet.surge.dev](https://esplora.signet.surge.dev), and request test BTC at [developer@surge.credit](mailto:developer@surge.credit). Testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). Run a full lifecycle on signet - deposit through withdraw - before you switch `network` to `"mainnet"`. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.
 
 
 ========================================
-File: /credit-infra (🏗️ Bitcoin-native Credit Infra)
+File: /credit-infra (Bitcoin-native Credit Infra)
 ========================================
 
 ---
@@ -832,7 +456,7 @@ The infrastructure is permissionless. Any team can integrate the same dVaults, T
 - **White-label earn.** Savings apps and treasury products can offer yield on stablecoins, backed by real Bitcoin-collateralized credit, without operating the lending or custody infrastructure.
 - **Same rails, your brand.** Partners plug into the same programmable dVaults, oracle-driven liquidation, and multi-market liquidity that Surge's own apps use. Each credit line is still a verifiable Taproot UTXO; partners can surface proof of non-custodial, unrehypothecated collateral to their users and regulators.
 
-There are no gatekeepers, no exclusive partnerships, and no approval gates. The protocol is integrated through public interfaces.
+There are no gatekeepers, no exclusive partnerships, and no approval gates. The protocol is integrated through public interfaces: see the [SDKs](/sdks).
 
 ## Stewardship - the Surge Foundation
 
@@ -861,15 +485,15 @@ What the Foundation publishes - repos, specs, audits, signer-set composition, or
 
 
 ========================================
-File: /earn/contracts (Smart Contracts)
+File: /earn/contracts (Earn Contracts)
 ========================================
 
 ---
-title: Smart Contracts
+title: Earn Contracts
 description: Integrate Surge earn deposits and withdrawals by calling the LiquidityPool contract directly. Variable market, Base.
 ---
 
-# Smart Contracts
+# Earn Contracts
 
 <div style={{ opacity: 0.65, fontSize: "1.15em", marginBottom: "1.25rem" }}>
 Integrate the Surge earn market with direct contract calls on Base.
@@ -1274,21 +898,21 @@ v0.0.1
 
 
 ========================================
-File: /earn/sdk (TypeScript SDK)
+File: /earn/sdk (Earn SDK)
 ========================================
 
 ---
-title: TypeScript SDK
+title: Earn SDK
 description: Integrate Surge earn deposits, withdrawals, APY and positions with the @surgecredit/earn-sdk TypeScript client. Base, USDC, non-custodial.
 ---
 
-# TypeScript SDK
+# Earn SDK
 
 <div style={{ opacity: 0.65, fontSize: "1.15em", marginBottom: "1.25rem" }}>
 Add a Surge earn opportunity to your app with a few lines of TypeScript.
 </div>
 
-`@surgecredit/earn-sdk` wraps the earn side of Surge: your users deposit USDC into the shared pool on Base and earn the lending yield borrowers pay. It is non-custodial. You bring viem clients, the SDK builds the calls, the user signs in their own wallet. The SDK never holds keys.
+[`@surgecredit/earn-sdk`](https://www.npmjs.com/package/@surgecredit/earn-sdk) wraps the earn side of Surge: your users deposit USDC into the shared pool on Base and earn the lending yield borrowers pay. It is non-custodial. You bring viem clients, the SDK builds the calls, the user signs in their own wallet. The SDK never holds keys.
 
 It is a thin, typed layer over the same contract surface documented in [Smart Contracts](/earn/contracts). Use the SDK if you work in TypeScript and want position, APY and liquidity reads plus safe deposit and withdraw helpers out of the box. Use the raw contract calls if you are in another language or want zero dependencies.
 
@@ -1299,6 +923,8 @@ Scope:
 - Networks: Base (mainnet) and Base Sepolia (`signet`).
 
 ## Install
+
+On npm: [`@surgecredit/earn-sdk`](https://www.npmjs.com/package/@surgecredit/earn-sdk)
 
 ```bash
 npm install @surgecredit/earn-sdk viem
@@ -1443,13 +1069,9 @@ To have the liquidity your app brings attributed to you, append your partner tag
 
 For advanced setups you can pass a full `config` object instead of `network`. See [Smart Contracts](/earn/contracts) for the raw addresses, ABIs, and the equivalent Python flow.
 
-<div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
-v0.2.0
-</div>
-
 
 ========================================
-File: / (👋 Introduction)
+File: / (Introduction)
 ========================================
 
 ---
@@ -1491,19 +1113,19 @@ A credit system designed for Bitcoiners, built on Bitcoin, aligned with its etho
 
 The rest of these docs walk through how that promise is kept - from the Bitcoin script that guards collateral, to the threshold cryptography that produces signatures without ever assembling a private key, to the markets where credit and yield are discovered.
 
-A good place to start is **[Bitcoin-native Credit Infra](/credit-infra)** - the two-layer model that separates Surge's apps from the protocol underneath, and explains who stewards the whole thing.
+Building on Surge? Go to the **[SDKs](/sdks)**. Otherwise, a good place to start is **[Bitcoin-native Credit Infra](/credit-infra)** - the two-layer model that separates Surge's apps from the protocol underneath, and explains who stewards the whole thing.
 
 
 ========================================
-File: /liquidations/contracts (Smart Contracts)
+File: /liquidations/contracts (Auction Contracts)
 ========================================
 
 ---
-title: Smart Contracts
+title: Auction Contracts
 description: Integrate Surge liquidation auctions with direct contract calls on Base. Discover Dutch auctions, buy BTC collateral with USDC, and open auctions. Non-custodial.
 ---
 
-# Smart Contracts
+# Auction Contracts
 
 <div style={{ opacity: 0.65, fontSize: "1.15em", marginBottom: "1.25rem" }}>
 Bid on liquidated BTC collateral, or run a keeper, with direct contract calls on Base.
@@ -1886,7 +1508,7 @@ description: Integrate Surge Credit liquidation auctions with the @surgecredit/a
 Bid on liquidated BTC collateral with a few lines of TypeScript.
 </div>
 
-`@surgecredit/auction-sdk` surfaces the Surge positions up for auction on Base, and the calls
+[`@surgecredit/auction-sdk`](https://www.npmjs.com/package/@surgecredit/auction-sdk) surfaces the Surge positions up for auction on Base, and the calls
 to buy their collateral. It is non-custodial and signer-agnostic. You bring viem clients, the
 SDK builds the calls, the user signs.
 
@@ -1910,6 +1532,8 @@ Every position is a BTC-collateralized, USDC-denominated credit line identified 
    your BTC address as the collateral recipient.
 
 ## Install
+
+On npm: [`@surgecredit/auction-sdk`](https://www.npmjs.com/package/@surgecredit/auction-sdk)
 
 ```bash
 npm install @surgecredit/auction-sdk viem
@@ -2101,13 +1725,9 @@ no custody, so the wallet you pass in stays yours throughout.
 Working in another language, or want zero dependencies? The same flow is available as direct
 contract calls in [Smart Contracts](/liquidations/contracts).
 
-<div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
-v0.1.1
-</div>
-
 
 ========================================
-File: /overview/bitcoin-lending-landscape (🗺️ Market Landscape)
+File: /overview/bitcoin-lending-landscape (Market Landscape)
 ========================================
 
 ---
@@ -2184,7 +1804,7 @@ It’s not a CeFi platform. It’s not DeFi built elsewhere. It’s a **Bitcoin-
 
 
 ========================================
-File: /overview/stablecoins (💵 Stablecoin Adoption)
+File: /overview/stablecoins (Stablecoin Adoption)
 ========================================
 
 ---
@@ -2251,7 +1871,7 @@ That’s what Surge is here to build.
 [Stablecoin adoption stats](https://stablecoins.asxn.xyz/)
 
 ========================================
-File: /product/for-bitcoiners (✊ For Bitcoiners)
+File: /product/for-bitcoiners (For Bitcoiners)
 ========================================
 
 ---
@@ -2326,7 +1946,7 @@ Surge is for Bitcoiners who believe in holding their keys and want access to liq
 
 
 ========================================
-File: /product/for-distribution-partners (🤝 For Distribution Partners)
+File: /product/for-distribution-partners (For Distribution Partners)
 ========================================
 
 ---
@@ -2376,7 +1996,7 @@ If you’re building a borrow or earn product and want to use Surge’s permissi
 
 
 ========================================
-File: /product/for-everyone (✊ For Everyone)
+File: /product/for-everyone (For Everyone)
 ========================================
 
 ---
@@ -2416,7 +2036,7 @@ All of this will be published at [surge.build](https://surge.build): your window
 
 
 ========================================
-File: /product/for-liquidity-providers (💰 For Liquidity Providers)
+File: /product/for-liquidity-providers (For Liquidity Providers)
 ========================================
 
 ---
@@ -2478,7 +2098,7 @@ Unlike ETH-centric DeFi or risky alt-L2 plays, Surge offers Bitcoin-first, credi
 Surge brings yield back to the fundamentals: real users, real assets, and verifiable on-chain logic, not token games or circular lending.
 
 ========================================
-File: /product/our-thesis (🔭  Our Thesis)
+File: /product/our-thesis (Our Thesis)
 ========================================
 
 ---
@@ -2502,7 +2122,7 @@ With dVaults (programmable Bitcoin vaults), market-driven terms, and a decentral
 It’s a credit system designed for Bitcoiners, not institutions. Built on-chain. Aligned with the ethos.
 
 ========================================
-File: /product/overview (🖼️ Product Overview)
+File: /product/overview (Product Overview)
 ========================================
 
 ---
@@ -2686,7 +2306,7 @@ surge-icon-mono-dark:
 
 
 ========================================
-File: /resources/community-guidelines (<h1>🚨 COMMUNITY GUIDELINES 🚨 </h1> <br />)
+File: /resources/community-guidelines (<h1> COMMUNITY GUIDELINES  </h1> <br />)
 ========================================
 
 
@@ -2725,7 +2345,7 @@ Be security conscious, Surgants! All your possible answers are in the docs.
 
 
 ========================================
-File: /resources/faqs (💬 FAQs)
+File: /resources/faqs (FAQs)
 ========================================
 
 ---
@@ -2858,7 +2478,46 @@ Blog: [https://surge.build/blog](https://surge.build/blog)
 
 
 ========================================
-File: /tech/contracts (📜 Smart Contracts)
+File: /sdks (SDKs)
+========================================
+
+---
+title: SDKs
+description: The Surge TypeScript SDKs. Borrow against BTC, earn yield on USDC, or bid on liquidation auctions, without holding user keys.
+---
+
+# SDKs
+
+Three TypeScript packages, one for each side of the market. All three are on npm and hold no keys: your users' wallets sign.
+
+| I want to | Docs | npm |
+| --- | --- | --- |
+| Offer a credit line against BTC | [Borrow SDK](/borrow/sdk) | [`@surgecredit/borrow-sdk`](https://www.npmjs.com/package/@surgecredit/borrow-sdk) |
+| Offer yield on USDC | [Earn SDK](/earn/sdk) | [`@surgecredit/earn-sdk`](https://www.npmjs.com/package/@surgecredit/earn-sdk) |
+| Bid on liquidated BTC collateral | [Auction SDK](/liquidations/sdk) | [`@surgecredit/auction-sdk`](https://www.npmjs.com/package/@surgecredit/auction-sdk) |
+
+Install with `viem`, for example:
+
+```bash
+npm install @surgecredit/borrow-sdk viem
+```
+
+## Not using TypeScript
+
+Earn and auctions can be integrated with direct contract calls on Base: see [Earn Contracts](/earn/contracts) and [Auction Contracts](/liquidations/contracts).
+
+## Testing
+
+Each SDK takes a `network`: `"mainnet"` (Bitcoin and Base) or `"signet"` (Surge's custom signet and Base Sepolia). See [Testing on signet](/borrow/sdk#testing-on-signet) before you start.
+
+## Using these docs with an AI tool
+
+- [llms.txt](https://docs.surge.credit/llms.txt): an index of every page.
+- [llms-full.txt](https://docs.surge.credit/llms-full.txt): the full docs as plain text.
+
+
+========================================
+File: /tech/contracts (Smart Contracts)
 ========================================
 
 ---
@@ -2920,7 +2579,7 @@ Auction lifecycle:
 
 
 ========================================
-File: /tech/credit-markets (📊 Credit Markets)
+File: /tech/credit-markets (Credit Markets)
 ========================================
 
 ---
@@ -2960,7 +2619,7 @@ Surge's credit markets are built for Bitcoin-native finance: transparent, progra
 
 
 ========================================
-File: /tech/disaster-recovery (🛟 Disaster Recovery)
+File: /tech/disaster-recovery (Disaster Recovery)
 ========================================
 
 ---
@@ -3061,7 +2720,7 @@ Create and verify fresh PVE backups for the new key
 
 
 ========================================
-File: /tech/dlcs (⚡ Why DLCs Don’t Work for Surge)
+File: /tech/dlcs (Why DLCs Don’t Work for Surge)
 ========================================
 
 ---
@@ -3102,7 +2761,7 @@ When a DLC settles, the address is "burned" - funds are swept, and the contract 
 
 
 ========================================
-File: /tech/dvaults-liquidation (🎯 Deterministic Liquidation)
+File: /tech/dvaults-liquidation (Deterministic Liquidation)
 ========================================
 
 ---
@@ -3176,7 +2835,7 @@ The on-chain spend uses the same leaf and signature path as undercollateralizati
 
 
 ========================================
-File: /tech/exit (⏳ Unilateral Exit)
+File: /tech/exit (Unilateral Exit)
 ========================================
 
 ---
@@ -3236,7 +2895,7 @@ The tool can also be self-hosted from the **[surge-vault-exit-tool](https://gith
 
 
 ========================================
-File: /tech/key-lifecycle (🔄 Key Lifecycle)
+File: /tech/key-lifecycle (Key Lifecycle)
 ========================================
 
 ---
@@ -3311,7 +2970,7 @@ Below-threshold compromise of a single share is handled by refresh alone: old sh
 
 
 ========================================
-File: /tech/key-shard-security (🛡 Key Shard Security)
+File: /tech/key-shard-security (Key Shard Security)
 ========================================
 
 ---
@@ -3410,7 +3069,7 @@ Surge operates under the explicit assumption that the controls above reduce - no
 
 
 ========================================
-File: /tech/mpc-signing (🧾 Signing Policy)
+File: /tech/mpc-signing (Signing Policy)
 ========================================
 
 ---
@@ -3494,7 +3153,7 @@ Residual risk after these controls: a root-level attacker on the host during the
 
 
 ========================================
-File: /tech/oracles (🌐 Oracle System)
+File: /tech/oracles (Oracle System)
 ========================================
 
 ---
@@ -3553,7 +3212,7 @@ The oracle path will continue to evolve toward broader source diversity, public 
 
 
 ========================================
-File: /tech/overview (🔧 Technical Overview)
+File: /tech/overview (Technical Overview)
 ========================================
 
 ---
@@ -3612,7 +3271,7 @@ Bitcoin script enforces custody. Threshold cryptography enforces "no single sign
 
 
 ========================================
-File: /tech/payment (💰 Repayment Path)
+File: /tech/payment (Repayment Path)
 ========================================
 
 ---
@@ -3654,7 +3313,7 @@ The final `OP_2 OP_NUMEQUAL` requires exactly two valid signatures - both the bo
 
 
 ========================================
-File: /tech/relayer (🛰 Relayer & Workers)
+File: /tech/relayer (Relayer & Workers)
 ========================================
 
 ---
@@ -3762,7 +3421,7 @@ The user-visible shape of an outage is a pause, not a loss. Positions sit where 
 
 
 ========================================
-File: /tech/reshare-onboarding (🔁 Reshare & Signer Onboarding)
+File: /tech/reshare-onboarding (Reshare & Signer Onboarding)
 ========================================
 
 ---
@@ -3830,7 +3489,7 @@ Reshare is distinct from [refresh](/tech/key-lifecycle#6-proactive-key-refresh):
 
 
 ========================================
-File: /tech/self-custody-wallet (🔐 Self-Custody User Wallet)
+File: /tech/self-custody-wallet (Self-Custody User Wallet)
 ========================================
 
 ---
@@ -3924,7 +3583,7 @@ The intent stays the same regardless of platform: the user holds the key, the ru
 
 
 ========================================
-File: /tech/threshold-signer-network (👥 Threshold Signer Network (TSN))
+File: /tech/threshold-signer-network (Threshold Signer Network (TSN))
 ========================================
 
 ---
@@ -4029,7 +3688,7 @@ The adversary model we design against:
 
 
 ========================================
-File: /tech/transfers (🔄 Transfers)
+File: /tech/transfers (Transfers)
 ========================================
 
 ---
@@ -4059,7 +3718,7 @@ Settlement details are implementation-specific and evolve as integrations are fi
 
 
 ========================================
-File: /tech/vaults (🔐 Taproot Vaults)
+File: /tech/vaults (Taproot Vaults)
 ========================================
 
 ---
