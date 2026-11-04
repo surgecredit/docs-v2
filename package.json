@@ -32,26 +32,29 @@
       "esbuild"
     ],
     "overrides": {
-      "hono": "^4.13.5",
-      "@hono/node-server": "^1.19.15",
+      "hono": "^4.13.16",
+      "@hono/node-server": "^2.1.6",
       "minimatch": "^9.0.7",
       "brace-expansion@>=4.0.0 <5.0.6": "^5.0.6",
       "yaml": "^2.8.3",
       "postcss": "^8.5.18",
-      "dompurify": "^3.4.13",
+      "dompurify": "^3.4.17",
       "mermaid": "^11.16.1",
       "uuid@>=11.0.0 <11.1.1": "^11.1.1",
       "lodash-es": "^4.18.1",
       "picomatch@>=4.0.0 <4.0.4": "^4.0.4",
       "picomatch@<2.3.2": "^2.3.2",
       "react-router": "^7.18.2",
-      "vite": "^7.3.5",
+      "vite": "^7.3.7",
       "esbuild": "^0.28.1",
       "@babel/core": "^7.29.6",
       "browserslist": "^4.28.7",
       "baseline-browser-mapping": "^2.11.0",
       "nanoid@<4": "^3.3.18",
-      "toml": "^4.2.0"
+      "compression": "^1.8.2",
+      "source-map-js": "^1.2.2",
+      "katex": "^0.18.2",
+      "toml": "^5.0.1"
     }
   }
 }
