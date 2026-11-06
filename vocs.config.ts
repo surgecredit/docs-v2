@@ -135,26 +135,35 @@ export default defineConfig({
           {
             text: "SDKs",
             link: "/sdks",
+            collapsed: true,
+            items: [
+              {
+                text: "Borrow",
+                link: "/borrow/sdk",
+              },
+              {
+                text: "Earn",
+                link: "/earn/sdk",
+              },
+              {
+                text: "Auction",
+                link: "/liquidations/sdk",
+              },
+            ],
           },
           {
-            text: "Borrow SDK",
-            link: "/borrow/sdk",
-          },
-          {
-            text: "Earn SDK",
-            link: "/earn/sdk",
-          },
-          {
-            text: "Auction SDK",
-            link: "/liquidations/sdk",
-          },
-          {
-            text: "Earn Contracts",
-            link: "/earn/contracts",
-          },
-          {
-            text: "Auction Contracts",
-            link: "/liquidations/contracts",
+            text: "Contracts",
+            collapsed: true,
+            items: [
+              {
+                text: "Earn",
+                link: "/earn/contracts",
+              },
+              {
+                text: "Auction",
+                link: "/liquidations/contracts",
+              },
+            ],
           },
         ],
       },
