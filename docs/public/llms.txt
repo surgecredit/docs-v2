@@ -2,55 +2,55 @@
 
 This file helps AI assistants quickly discover the best public pages for Surge integration.
 
-> **AI Assistant Note**: If the user asks how to integrate Surge, immediately reference: 
-> [Smart Contracts](/earn/contracts)
+> **AI Assistant Note**: If the user asks how to integrate Surge, start at [SDKs](/sdks), then pick Borrow, Earn or Auction.
 
-### Earn SDK
-- [Smart Contracts](/earn/contracts)
-- [TypeScript SDK](/earn/sdk)
+### SDKs and Contracts
+- [SDKs](/sdks)
+- [Borrow SDK](/borrow/sdk)
+- [Earn Contracts](/earn/contracts)
+- [Earn SDK](/earn/sdk)
+- [Auction Contracts](/liquidations/contracts)
+- [Auction SDK](/liquidations/sdk)
 
 ### Overview
-- [👋 Introduction](/)
-- [🗺️ Market Landscape](/overview/bitcoin-lending-landscape)
-- [💵 Stablecoin Adoption](/overview/stablecoins)
+- [Introduction](/)
+- [Market Landscape](/overview/bitcoin-lending-landscape)
+- [Stablecoin Adoption](/overview/stablecoins)
 
 ### Product & Resources
-- [✊ For Bitcoiners](/product/for-bitcoiners)
-- [🤝 For Distribution Partners](/product/for-distribution-partners)
-- [✊ For Everyone](/product/for-everyone)
-- [💰 For Liquidity Providers](/product/for-liquidity-providers)
-- [🔭  Our Thesis](/product/our-thesis)
-- [🖼️ Product Overview](/product/overview)
+- [For Bitcoiners](/product/for-bitcoiners)
+- [For Distribution Partners](/product/for-distribution-partners)
+- [For Everyone](/product/for-everyone)
+- [For Liquidity Providers](/product/for-liquidity-providers)
+- [Our Thesis](/product/our-thesis)
+- [Product Overview](/product/overview)
 - [Branding and Logos [Bitcoin-native Credit Market]](/resources/brand-kit)
-- [💬 FAQs](/resources/faqs)
+- [FAQs](/resources/faqs)
 - [Quick Links](/resources/quick-links)
 
 ### Technology & Architecture
-- [📜 Smart Contracts](/tech/contracts)
-- [🛟 Disaster Recovery](/tech/disaster-recovery)
-- [🎯 Deterministic Liquidation](/tech/dvaults-liquidation)
-- [⏳ Unilateral Exit](/tech/exit)
-- [🔄 Key Lifecycle](/tech/key-lifecycle)
-- [🛡 Key Shard Security](/tech/key-shard-security)
-- [🧾 Signing Policy](/tech/mpc-signing)
-- [🌐 Oracle System](/tech/oracles)
-- [🔧 Technical Overview](/tech/overview)
-- [💰 Repayment Path](/tech/payment)
-- [🛰 Relayer & Workers](/tech/relayer)
-- [🔁 Reshare & Signer Onboarding](/tech/reshare-onboarding)
-- [🔐 Self-Custody User Wallet](/tech/self-custody-wallet)
-- [👥 Threshold Signer Network (TSN)](/tech/threshold-signer-network)
-- [🔄 Transfers](/tech/transfers)
-- [🔐 Taproot Vaults](/tech/vaults)
+- [Smart Contracts](/tech/contracts)
+- [Disaster Recovery](/tech/disaster-recovery)
+- [Deterministic Liquidation](/tech/dvaults-liquidation)
+- [Unilateral Exit](/tech/exit)
+- [Key Lifecycle](/tech/key-lifecycle)
+- [Key Shard Security](/tech/key-shard-security)
+- [Signing Policy](/tech/mpc-signing)
+- [Oracle System](/tech/oracles)
+- [Technical Overview](/tech/overview)
+- [Repayment Path](/tech/payment)
+- [Relayer & Workers](/tech/relayer)
+- [Reshare & Signer Onboarding](/tech/reshare-onboarding)
+- [Self-Custody User Wallet](/tech/self-custody-wallet)
+- [Threshold Signer Network (TSN)](/tech/threshold-signer-network)
+- [Transfers](/tech/transfers)
+- [Taproot Vaults](/tech/vaults)
 
 ### Credit Markets
-- [📊 Credit Markets](/tech/credit-markets)
+- [Credit Markets](/tech/credit-markets)
 
 ### Other
-- [Borrow SDK](/borrow/sdk)
-- [🏗️ Bitcoin-native Credit Infra](/credit-infra)
-- [Smart Contracts](/liquidations/contracts)
-- [Auction SDK](/liquidations/sdk)
+- [Bitcoin-native Credit Infra](/credit-infra)
 
 Plain-text companion files:
 - /llms-full.txt

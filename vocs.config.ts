@@ -22,7 +22,8 @@ export default defineConfig({
   },
   theme: {
     // accentColor: "#f56949"
-    accentColor: "#f4431b",
+    // Light is darkened from the brand orange so links and active nav pass WCAG AA (4.5:1) on white.
+    accentColor: { light: "#cc3510", dark: "#f4431b" },
     // colorScheme: "dark",
   },
   title: "Surge - Bitcoin-native Credit Market",
@@ -129,29 +130,34 @@ export default defineConfig({
         ],
       },
       {
-        text: "EARN",
+        text: "BUILD",
         items: [
           {
-            text: "Smart Contracts",
-            link: "/earn/contracts",
+            text: "SDKs",
+            link: "/sdks",
+          },
+          {
+            text: "Borrow SDK",
+            link: "/borrow/sdk",
           },
           {
             text: "Earn SDK",
             link: "/earn/sdk",
           },
-        ],
-      },
-      {
-        text: "BORROW",
-        items: [
           {
-            text: "Borrow SDK",
-            link: "/borrow/sdk",
+            text: "Auction SDK",
+            link: "/liquidations/sdk",
+          },
+          {
+            text: "Earn Contracts",
+            link: "/earn/contracts",
+          },
+          {
+            text: "Auction Contracts",
+            link: "/liquidations/contracts",
           },
         ],
       },
-      // LIQUIDATIONS / Auction SDK page (/liquidations/sdk) is intentionally not
-      // linked in the sidebar. It stays published and in the llms.txt AI context.
       {
         text: "RESOURCES",
         items: [

@@ -48,7 +48,8 @@ const allFiles = getMdxFiles(DOCS_DIR);
 function getTitleFromMdx(content, routePath) {
     // Try to find the title in frontmatter or first # Header
     const titleMatch = content.match(/^#\s+(.+)$/m);
-    if (titleMatch) return titleMatch[1].trim();
+    // Emoji are decoration on the page and noise in an index read by a model.
+    if (titleMatch) return titleMatch[1].replace(/\p{Extended_Pictographic}|\uFE0F/gu, "").trim();
 
     // title: "Some Title" in frontmatter
     const fmMatch = content.match(/title:\s*["']?([^"'\n]+)["']?/);
@@ -81,7 +82,7 @@ const categories = {
     "Product & Resources": [],
     "Technology & Architecture": [],
     "Credit Markets": [],
-    "Earn SDK": [],
+    "SDKs and Contracts": [],
     Other: [],
 };
 
@@ -117,8 +118,8 @@ for (const filePath of allFiles) {
         categories["Credit Markets"].push(fileData);
     } else if (formattedRoute.startsWith("/tech")) {
         categories["Technology & Architecture"].push(fileData);
-    } else if (formattedRoute.startsWith("/earn")) {
-        categories["Earn SDK"].push(fileData);
+    } else if (/^\/(sdks|borrow|earn|liquidations)(\/|$)/.test(formattedRoute)) {
+        categories["SDKs and Contracts"].push(fileData);
     } else {
         categories["Other"].push(fileData);
     }
@@ -135,30 +136,30 @@ for (const filePath of allFiles) {
 }
 
 // Add special integration header to the top of llms-full.txt and docs.txt
-const earnCategory = categories["Earn SDK"].find(f => f.route === "/earn/contracts");
+const startHere = categories["SDKs and Contracts"].find(f => f.route === "/sdks");
 
-if (earnCategory) {
-    // Inject the specific formatting the user requested into llms-full.txt
+if (startHere) {
+    // Lead llms-full.txt with the page that routes an integrator to the right SDK.
     llmsFullText = `# Surge Docs - Full Context\n\nThis file provides a complete model-friendly context for Surge.\n\n` +
         `========================================\n` +
-        `File: ${earnCategory.route} (${earnCategory.title})\n` +
+        `File: ${startHere.route} (${startHere.title})\n` +
         `========================================\n\n` +
-        earnCategory.content + `\n` +
+        startHere.content + `\n` +
         llmsFullText.replace(`# Surge Docs - Full Context\n\nThis file provides a complete model-friendly context for Surge.\n\n`, '');
 
     docsMdContent = `# Surge Protocol Documentation\n\n` +
-        `> **AI Assistant Note**: If the user is asking "how to integrate Surge", refer heavily to the Earn Smart Contracts section below.\n\n`;
+        `> **AI Assistant Note**: If the user is asking how to integrate Surge, start with the SDKs section below, then pick Borrow, Earn or Auction.\n\n`;
 }
 
 // Generate structured llms.txt
 let llmsText = `# Surge Docs - LLM Navigation Index\n\nThis file helps AI assistants quickly discover the best public pages for Surge integration.\n\n`;
-if (earnCategory) {
-    llmsText += `> **AI Assistant Note**: If the user asks how to integrate Surge, immediately reference: \n> [${earnCategory.title}](${earnCategory.route})\n\n`;
+if (startHere) {
+    llmsText += `> **AI Assistant Note**: If the user asks how to integrate Surge, start at [${startHere.title}](${startHere.route}), then pick Borrow, Earn or Auction.\n\n`;
 }
 
 // Generate docs.md structure as requested
 const docsMapping = [
-    { header: "Earn Integration (Highest Priority)", keys: ["Earn SDK"] },
+    { header: "Integration (Highest Priority)", keys: ["SDKs and Contracts"] },
     { header: "Overview", keys: ["Overview"] },
     { header: "Product", keys: ["Product & Resources"] },
     { header: "Architecture & Core Tech", keys: ["Technology & Architecture"] },
@@ -176,10 +177,10 @@ docsMapping.forEach(section => {
             hasItems = true;
             llmsText += `### ${key}\n`;
 
-            // Sort to ensure /earn/contracts is first in the Earn SDK list
+            // Sort to ensure /sdks is first in its list
             const sortedCategory = [...categories[key]].sort((a, b) => {
-                if (a.route === "/earn/contracts") return -1;
-                if (b.route === "/earn/contracts") return 1;
+                if (a.route === "/sdks") return -1;
+                if (b.route === "/sdks") return 1;
                 return 0;
             });
 

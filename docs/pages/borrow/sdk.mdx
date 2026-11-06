@@ -9,7 +9,7 @@ description: Integrate a Bitcoin-backed USDC credit line with the Surge Borrow S
 Offer a Bitcoin-backed credit line in your app with the headless Surge Borrow SDK.
 </div>
 
-`@surgecredit/borrow-sdk` is public on npm, so installing it needs no access token or registry config. The shapes below match the shipped v0.1.
+[`@surgecredit/borrow-sdk`](https://www.npmjs.com/package/@surgecredit/borrow-sdk) is public on npm, so installing it needs no access token or registry config. The shapes below match the shipped v0.1.
 
 The SDK is **headless and signer-agnostic**: it never holds keys, renders no UI, and runs in the browser, Node, and React Native. You bring a Bitcoin taproot signer, an EVM signer, and a storage adapter; the SDK builds each intent, calls your signer, and talks to the Surge relayer.
 
@@ -25,6 +25,8 @@ Scope: BTC collateral in a per-user taproot vault, USDC on Base (6 decimals), va
 Every action is a single `await` - inject the two signers once, and the SDK handles build → sign → submit inside each call. Almost every action takes a **`positionId`** (see [Position ID](#position-id)).
 
 ## Install and configure
+
+On npm: [`@surgecredit/borrow-sdk`](https://www.npmjs.com/package/@surgecredit/borrow-sdk)
 
 ```ts
 // npm install @surgecredit/borrow-sdk viem
@@ -355,8 +357,4 @@ Gate on `isActive`, not on a term timestamp. `isActive` is the usability signal 
 
 ## Testing on signet
 
-Integrate against signet first. Signet BTC is free from public faucets, and testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). Run a full lifecycle on signet - deposit through withdraw - before you switch `network` to `"mainnet"`. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.
-
-<div style={{ opacity: 0.55, fontSize: "0.8em", marginTop: "3rem" }}>
-v0.1
-</div>
+Integrate against signet first. Surge runs on its own custom signet, so public signet faucets and public signet explorers will not work: check transactions at [esplora.signet.surge.dev](https://esplora.signet.surge.dev), and request test BTC at [developer@surge.credit](mailto:developer@surge.credit). Testnet USDC lives on Base Sepolia (the Circle faucet at [faucet.circle.com](https://faucet.circle.com) covers it). Run a full lifecycle on signet - deposit through withdraw - before you switch `network` to `"mainnet"`. Note the Surge **app is mainnet-only**, so for signet you verify against the SDK itself rather than the app.

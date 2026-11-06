@@ -12,11 +12,19 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 img {
   border-radius: 8px;
 }
 
 :root {
+  /* Passes WCAG AA on white and on the #f6f6f6 search box; the default #838383 does not. */
+  --vocs-color_text3: #6b6b6b;
   --vocs-color_background: #ffffff;
   --vocs-color_background4: #d6d6d6;
   --vocs-color_backgroundDark: "#ffffff";
@@ -613,4 +621,14 @@ details>*:not(summary) {
 .dark .surge-ai-trigger:hover {
   background: #1f2937 !important;
   border-color: #4b5563 !important;
+}
+
+/* Default light theme orange for code tokens is 3.5:1 on white. */
+:root:not(.dark) .vocs_CodeBlock span[style*="color:#E36209"] {
+  color: #b04a00 !important;
+}
+
+/* Image captions: #6B7280 is 3.9:1 on the dark background. */
+.dark .text-\[\#6B7280\] {
+  color: #9ca3af;
 }

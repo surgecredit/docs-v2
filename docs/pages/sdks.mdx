@@ -1,0 +1,33 @@
+---
+title: SDKs
+description: The Surge TypeScript SDKs. Borrow against BTC, earn yield on USDC, or bid on liquidation auctions, without holding user keys.
+---
+
+# SDKs
+
+Three TypeScript packages, one for each side of the market. All three are on npm and hold no keys: your users' wallets sign.
+
+| I want to | Docs | npm |
+| --- | --- | --- |
+| Offer a credit line against BTC | [Borrow SDK](/borrow/sdk) | [`@surgecredit/borrow-sdk`](https://www.npmjs.com/package/@surgecredit/borrow-sdk) |
+| Offer yield on USDC | [Earn SDK](/earn/sdk) | [`@surgecredit/earn-sdk`](https://www.npmjs.com/package/@surgecredit/earn-sdk) |
+| Bid on liquidated BTC collateral | [Auction SDK](/liquidations/sdk) | [`@surgecredit/auction-sdk`](https://www.npmjs.com/package/@surgecredit/auction-sdk) |
+
+Install with `viem`, for example:
+
+```bash
+npm install @surgecredit/borrow-sdk viem
+```
+
+## Not using TypeScript
+
+Earn and auctions can be integrated with direct contract calls on Base: see [Earn Contracts](/earn/contracts) and [Auction Contracts](/liquidations/contracts).
+
+## Testing
+
+Each SDK takes a `network`: `"mainnet"` (Bitcoin and Base) or `"signet"` (Surge's custom signet and Base Sepolia). See [Testing on signet](/borrow/sdk#testing-on-signet) before you start.
+
+## Using these docs with an AI tool
+
+- [llms.txt](https://docs.surge.credit/llms.txt): an index of every page.
+- [llms-full.txt](https://docs.surge.credit/llms-full.txt): the full docs as plain text.
