@@ -91,16 +91,31 @@ const severityOf = (v) => {
   return 'moderate' // unknown severity: treat conservatively rather than ignoring
 }
 
+// Advisories with no fixed release anywhere, reachable only at build time here.
+// Skipped only while OSV lists no fixed version, so the audit fails again once one ships.
+const UNFIXED_ALLOWED = {
+  'GHSA-fc5q-39xc-vjpf': 'picomatch extglob ReDoS; vite/rollup build globs only, fixed patterns',
+}
+const hasFix = (v) =>
+  (v?.affected ?? []).some((a) => (a.ranges ?? []).some((r) => (r.events ?? []).some((e) => e.fixed)))
+
 const findings = []
+const skipped = []
 for (const { pkg, ids } of affected) {
   for (const id of ids) {
     const v = details.get(id)
+    if (UNFIXED_ALLOWED[id] && v && !hasFix(v)) {
+      skipped.push(`${pkg.name}@${pkg.version} ${id} (${UNFIXED_ALLOWED[id]})`)
+      continue
+    }
     const sev = severityOf(v)
     if (ORDER[sev] >= ORDER[minLevel]) {
       findings.push({ pkg: `${pkg.name}@${pkg.version}`, id, sev, summary: v?.summary ?? '' })
     }
   }
 }
+
+for (const s of skipped) console.log(`  skipped, no fix released: ${s}`)
 
 if (!findings.length) {
   console.log(`\n✔ No known vulnerabilities (severity >= ${minLevel}) in ${scope} dependencies.`)
