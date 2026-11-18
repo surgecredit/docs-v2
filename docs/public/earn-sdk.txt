@@ -3,15 +3,15 @@ Surge Earn SDK - Plain Text Integration Guide
 Install:
 npm install @surgecredit/earn-sdk@latest viem
 
-Default network:
-- Base Sepolia (chainId: 84532)
-- Liquidity Pool: 0xA40C833639803132D409E344d1CB9A9DD5aAB411
-- USDC: 0x036CbD53842c5426634e7929541eC2318f3dCF7e
+Networks (pass network, the SDK resolves the pool and USDC addresses):
+- mainnet: Base (chainId: 8453), Liquidity Pool 0xEE755F1BbcbF6e3260469D0f473522d71d3bdDda, USDC 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+- signet: Base Sepolia (chainId: 84532), Liquidity Pool 0xed9613914c004Db819C8f0994a7388770E932Ef0, USDC 0x036CbD53842c5426634e7929541eC2318f3dCF7e
 
 Core client setup:
-- Create a public client with createSurgeEarnPublicClient(rpcUrl, baseSepolia)
+- Create a public client with createSurgeEarnPublicClient(rpcUrl, base) (or baseSepolia for signet)
 - Optionally pass a wallet client for write operations
-- Create SDK: new SurgeEarnClient({ publicClient, walletClient, config: SURGE_BASE_SEPOLIA_CONFIG })
+- Create SDK: new SurgeEarnClient({ publicClient, walletClient, network: "mainnet" })
+- Advanced: pass config: SURGE_BASE_MAINNET_CONFIG or SURGE_BASE_SEPOLIA_CONFIG instead of network
 
 Read APIs:
 - listMarkets({ includeInactive? })
@@ -55,8 +55,8 @@ Withdraw flow:
 - For amount in LP tokens: withdrawByLpTokens
 
 Integration checklist:
-- Ensure wallet is on Base Sepolia
-- Use reliable Base Sepolia RPC
+- Ensure the wallet is on the chain of the network you picked (Base for mainnet, Base Sepolia for signet)
+- Use a reliable RPC for that chain
 - Confirm USDC decimals are 6
 - Wait for transaction receipts before refresh
 - Show explorer links for write transactions
